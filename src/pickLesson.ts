@@ -165,32 +165,55 @@ function limitLines(text: string, maxLines: number): string {
   return lines.slice(0, maxLines).join('\n') + '\n…';
 }
 
-/** Split learning content into 3 chunks for slides 2-4, each within char limit */
+/** Detect if a paragraph is a section heading (short, no period, no special chars) */
+function isSectionHeading(para: string): boolean {
+  const t = para.trim();
+  return t.length < 50 && !t.endsWith('.') && !t.endsWith(';') && !t.endsWith(')')
+    && !t.startsWith('-') && !t.startsWith('•') && !t.startsWith('|')
+    && !t.includes('=') && !t.includes(':') && !/^\d/.test(t);
+}
+
+/** Split learning content into chunks for slides, splitting at section headings.
+ * Each section heading starts a new slide. Max chars per slide enforced. */
 function chunkContent(content: string, maxChunks = 3): string[] {
   if (!content) return [''];
 
   const paragraphs = content.split('\n\n').filter(p => p.trim());
   if (paragraphs.length === 0) return [''];
 
-  // Build chunks that fit within char limit
+  // Group paragraphs into sections (split at headings)
+  const sections: string[][] = [[]];
+  for (const para of paragraphs) {
+    const trimmed = para.trim();
+    // If this looks like a section heading and current section has content, start new section
+    if (isSectionHeading(trimmed) && sections[sections.length - 1].length > 0) {
+      sections.push([trimmed]);
+    } else {
+      sections[sections.length - 1].push(trimmed);
+    }
+  }
+
+  // Now merge small sections and split large ones to fit maxChunks slides
   const chunks: string[] = [];
   let currentChunk = '';
 
-  for (const para of paragraphs) {
-    const trimmed = truncate(para.trim(), 200); // single paragraph max 200 chars
-    if (currentChunk.length + trimmed.length > MAX_CHARS_PER_SLIDE && currentChunk.length > 0) {
+  for (const section of sections) {
+    const sectionText = section.map(p => truncate(p, 200)).join('\n');
+
+    // If adding this section would overflow, push current and start new
+    if (currentChunk.length + sectionText.length > MAX_CHARS_PER_SLIDE && currentChunk.length > 0) {
       chunks.push(limitLines(currentChunk.trim(), MAX_LINES_PER_SLIDE));
-      currentChunk = trimmed;
       if (chunks.length >= maxChunks) break;
+      currentChunk = sectionText;
     } else {
-      currentChunk += (currentChunk ? '\n' : '') + trimmed;
+      currentChunk += (currentChunk ? '\n\n' : '') + sectionText;
     }
   }
+
   if (currentChunk && chunks.length < maxChunks) {
     chunks.push(limitLines(currentChunk.trim(), MAX_LINES_PER_SLIDE));
   }
 
-  // Ensure we have at least 1 chunk
   return chunks.length > 0 ? chunks : [''];
 }
 
@@ -260,6 +283,13 @@ function buildCaption(lesson: LessonData, lang: 'en' | 'sk'): string {
   if (firstPara) {
     const learnTruncated = truncate(firstPara, 600);
     caption += learnTruncated + '\n\n';
+  }
+
+  // If caption is still short (< 400 chars), add real_world content
+  const realWorld = lang === 'sk' ? (lesson.real_world_sk || lesson.real_world) : lesson.real_world;
+  if (caption.length < 400 && realWorld) {
+    const rwFirst = realWorld.split('\n\n').filter(p => p.trim()).slice(0, 2).join('\n\n');
+    caption += truncate(rwFirst, 400) + '\n\n';
   }
 
   // CTA

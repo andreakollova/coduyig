@@ -17,9 +17,6 @@ export const ByteMascot: React.FC<ByteProps> = ({ size = 400, equipment = {} }) 
   const blinkCycle = frame % Math.round(fps * 3.5);
   const blinkPhase = blinkCycle < 6 ? interpolate(blinkCycle, [0, 3, 6], [1, 0.05, 1]) : 1;
 
-  // Entrance spring
-  const entrance = spring({ frame, fps, config: { damping: 12, stiffness: 80 } });
-
   const eyeRy = 9 * blinkPhase;
 
   // Hat rendering based on equipment
@@ -34,7 +31,7 @@ export const ByteMascot: React.FC<ByteProps> = ({ size = 400, equipment = {} }) 
   const hatFill = isGolden ? '#1a1200' : isFire ? '#1a0800' : isIce ? '#001020' : isVoid ? '#0a0010' : isGalaxy ? '#0a0020' : '#111';
 
   return (
-    <div style={{ transform: `translateY(${floatY}px) scale(${entrance})`, display: 'flex', justifyContent: 'center' }}>
+    <div style={{ transform: `translateY(${floatY}px)`, display: 'flex', justifyContent: 'center' }}>
       <svg width={size} height={size} viewBox="0 0 120 130" fill="none">
         {/* Aura glow for epic+ */}
         {(isGolden || isFire || isVoid || isGalaxy) && (

@@ -117,7 +117,8 @@ export const SlideLearn: React.FC<{
       {/* Content */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 20, overflow: 'hidden' }}>
         {paragraphs.slice(0, 7).map((para, i) => {
-          const isHeading = para.length < 80 && !para.endsWith('.') && !para.startsWith('-') && !para.startsWith('•');
+          const looksLikeCode = /[=();{}\[\]<>]/.test(para) || para.startsWith('SELECT') || para.startsWith('INSERT') || para.startsWith('CREATE') || para.startsWith('UPDATE') || para.startsWith('DELETE');
+          const isHeading = !looksLikeCode && para.length < 50 && !para.endsWith('.') && !para.endsWith(';') && !para.endsWith(')') && !para.startsWith('-') && !para.startsWith('•') && !para.startsWith('|') && !para.includes(':') && i === 0;
           if (isHeading) {
             return (
               <h2 key={i} style={{
