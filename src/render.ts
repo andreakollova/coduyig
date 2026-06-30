@@ -76,8 +76,9 @@ export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promis
       inputProps: {
         content: learningChunks[i],
         slideNumber: i + 2,
-        totalSlides: learningChunks.length + 3, // learning + realworld + cta
+        totalSlides: learningChunks.length + 3,
         equipment: model.equipment,
+        lang,
       },
     });
     files.push({ path: imgPath, type: 'image', slideIndex: i + 1 });
@@ -99,7 +100,7 @@ export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promis
       },
       serveUrl,
       output: rwPath,
-      inputProps: { content: realWorld.slice(0, 1500), equipment: model.equipment },
+      inputProps: { content: realWorld.slice(0, 1500), equipment: model.equipment, lang },
     });
     files.push({ path: rwPath, type: 'image', slideIndex: learningChunks.length + 1 });
   }

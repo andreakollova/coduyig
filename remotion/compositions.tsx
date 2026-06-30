@@ -73,7 +73,8 @@ export const SlideLearn: React.FC<{
   slideNumber: number;
   totalSlides: number;
   equipment: Record<string, string>;
-}> = ({ content, slideNumber, totalSlides, equipment }) => {
+  lang?: string;
+}> = ({ content, slideNumber, totalSlides, equipment, lang = 'en' }) => {
   const paragraphs = (content || '').split('\n').filter(l => l.trim());
 
   return (
@@ -83,7 +84,7 @@ export const SlideLearn: React.FC<{
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{ width: 12, height: 12, borderRadius: 6, background: '#fff' }} />
           <span style={{ fontSize: 20, color: '#aaa', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>
-            Learning
+            {lang === 'sk' ? 'Teória' : 'Learning'}
           </span>
         </div>
         <div style={{
@@ -140,7 +141,8 @@ export const SlideLearn: React.FC<{
 export const SlideRealWorld: React.FC<{
   content: string;
   equipment: Record<string, string>;
-}> = ({ content, equipment }) => {
+  lang?: string;
+}> = ({ content, equipment, lang = 'en' }) => {
   const paragraphs = (content || '').split('\n').filter(l => l.trim()).slice(0, 8);
 
   return (
@@ -152,7 +154,7 @@ export const SlideRealWorld: React.FC<{
           fontSize: 20, color: '#f59e0b', fontWeight: 700,
           letterSpacing: '0.1em', textTransform: 'uppercase' as const,
         }}>
-          Why should a programmer care?
+          {lang === 'sk' ? 'Prečo na tom záleží pri programovaní?' : 'Why should a programmer care?'}
         </span>
       </div>
 
