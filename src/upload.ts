@@ -25,16 +25,25 @@ export async function uploadSlides(lessonId: number, result: RenderResult, lang:
 
     const fileData = fs.readFileSync(file.path);
 
-    const { error } = await sb.storage
-      .from(BUCKET)
-      .upload(remotePath, fileData, {
-        contentType: file.type === 'video' ? 'video/mp4' : 'image/png',
-        upsert: true,
-      });
+    // Retry up to 3 times
+    let lastError = '';
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const { error } = await sb.storage
+        .from(BUCKET)
+        .upload(remotePath, fileData, {
+          contentType: file.type === 'video' ? 'video/mp4' : 'image/png',
+          upsert: true,
+        });
 
-    if (error) {
-      console.error(`Upload failed for ${remotePath}:`, error.message);
-      throw new Error(`Upload failed: ${error.message}`);
+      if (!error) { lastError = ''; break; }
+      lastError = error.message;
+      console.log(`  ⚠️ Upload attempt ${attempt + 1} failed: ${error.message}, retrying...`);
+      await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+    }
+
+    if (lastError) {
+      console.error(`Upload failed for ${remotePath}: ${lastError}`);
+      throw new Error(`Upload failed: ${lastError}`);
     }
 
     const { data: urlData } = sb.storage.from(BUCKET).getPublicUrl(remotePath);
