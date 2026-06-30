@@ -116,10 +116,6 @@ export const SlideLearn: React.FC<{
         </div>
       </div>
 
-      {/* Byte mini */}
-      <div style={{ marginBottom: 24 }}>
-        <ByteMascot size={120} equipment={equipment} />
-      </div>
 
       {/* Heading — big, bold, white */}
       {heading && (
@@ -175,10 +171,6 @@ export const SlideRealWorld: React.FC<{
         </span>
       </div>
 
-      {/* Byte */}
-      <div style={{ marginBottom: 28 }}>
-        <ByteMascot size={140} equipment={equipment} />
-      </div>
 
       {/* Content */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 18, overflow: 'hidden' }}>
