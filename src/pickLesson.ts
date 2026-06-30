@@ -53,6 +53,16 @@ function pickEquipment(moduleNumber: number): Record<string, string> {
   return { hat: 'hat-beanie', glasses: 'glasses-round' };
 }
 
+/** Replace em dashes (—) with regular dashes (-) and clean up text */
+function cleanText(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/—/g, '-')
+    .replace(/–/g, '-')
+    .replace(/\u2014/g, '-')
+    .replace(/\u2013/g, '-');
+}
+
 // Max characters per slide (1080x1440 at 26px font fits ~600 chars comfortably)
 const MAX_CHARS_PER_SLIDE = 500;
 const MAX_LINES_PER_SLIDE = 12;
@@ -192,28 +202,28 @@ export async function pickLesson(lessonId?: number): Promise<SlideModel | null> 
 
   const equipment = pickEquipment(lesson.module_number);
 
-  // Apply safe limits to lesson data for slides
+  // Clean all text (em dashes → regular dashes) and apply safe limits
   const safeLessonEn = {
     ...lesson,
-    title: safeTitle(lesson.title),
-    real_world: safeRealWorld(lesson.real_world),
+    title: safeTitle(cleanText(lesson.title)),
+    real_world: safeRealWorld(cleanText(lesson.real_world)),
   };
   const safeLessonSk = {
     ...lesson,
-    title: safeTitle(lesson.title_sk || lesson.title),
-    title_sk: safeTitle(lesson.title_sk || lesson.title),
-    real_world: safeRealWorld(lesson.real_world),
-    real_world_sk: safeRealWorld(lesson.real_world_sk || lesson.real_world),
+    title: safeTitle(cleanText(lesson.title_sk || lesson.title)),
+    title_sk: safeTitle(cleanText(lesson.title_sk || lesson.title)),
+    real_world: safeRealWorld(cleanText(lesson.real_world)),
+    real_world_sk: safeRealWorld(cleanText(lesson.real_world_sk || lesson.real_world)),
   };
 
   return {
     lesson: safeLessonEn,
     lessonSk: safeLessonSk,
     equipment,
-    learningChunks: chunkContent(lesson.learning_content || ''),
-    learningChunksSk: chunkContent(lesson.learning_content_sk || lesson.learning_content || ''),
-    caption: buildCaption(lesson, 'en'),
-    captionSk: buildCaption(lesson, 'sk'),
+    learningChunks: chunkContent(cleanText(lesson.learning_content || '')),
+    learningChunksSk: chunkContent(cleanText(lesson.learning_content_sk || lesson.learning_content || '')),
+    caption: cleanText(buildCaption(lesson, 'en')),
+    captionSk: cleanText(buildCaption(lesson, 'sk')),
   };
 }
 
