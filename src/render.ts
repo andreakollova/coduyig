@@ -83,23 +83,24 @@ export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promis
     files.push({ path: imgPath, type: 'image', slideIndex: i + 1 });
   }
 
-  // Slide 5: Real World / Why Care
+  // Examples slide
   if (realWorld) {
-    const rwProps = { content: realWorld.slice(0, 1500), equipment: model.equipment, lang };
-    const rwPath = path.join(OUT_DIR, `${prefix}_slide_rw.png`);
-    console.log(`🖼️  Rendering real-world slide (${lang})`);
-    const rwComp = await getComposition(serveUrl, 'SlideRealWorld', rwProps);
+    const exProps = { content: realWorld.slice(0, 1500), equipment: model.equipment, lang };
+    const exPath = path.join(OUT_DIR, `${prefix}_slide_examples.png`);
+    console.log(`🖼️  Rendering examples slide (${lang})`);
+    const exComp = await getComposition(serveUrl, 'SlideExamples', exProps);
     await renderStill({
-      composition: rwComp,
+      composition: exComp,
       serveUrl,
-      output: rwPath,
-      inputProps: rwProps,
+      output: exPath,
+      inputProps: exProps,
     });
-    files.push({ path: rwPath, type: 'image', slideIndex: learningChunks.length + 1 });
+    files.push({ path: exPath, type: 'image', slideIndex: learningChunks.length + 1 });
   }
 
-  // Slide 6: CTA
-  const ctaProps = { lang, equipment: model.equipment };
+  // CTA slide (with whyCare text)
+  const whyCare = model.whyCare?.[lang] || '';
+  const ctaProps = { lang, equipment: model.equipment, whyCare };
   const ctaPath = path.join(OUT_DIR, `${prefix}_slide_cta.png`);
   console.log(`🖼️  Rendering CTA slide (${lang})`);
   const ctaComp = await getComposition(serveUrl, 'SlideCTA', ctaProps);

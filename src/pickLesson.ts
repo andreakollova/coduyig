@@ -28,10 +28,11 @@ export interface SlideModel {
   lessonSk: LessonData;
   equipment: Record<string, string>;
   levelBadge: { en: string; sk: string };
-  learningChunks: string[];      // EN — split for slides 2-4
-  learningChunksSk: string[];    // SK
-  caption: string;               // EN
-  captionSk: string;             // SK
+  whyCare: { en: string; sk: string };
+  learningChunks: string[];
+  learningChunksSk: string[];
+  caption: string;
+  captionSk: string;
 }
 
 /** Difficulty levels */
@@ -464,12 +465,13 @@ export async function pickLesson(lessonId?: number): Promise<SlideModel | null> 
   const formatSlides = (set: Awaited<ReturnType<typeof generateSlideContent>>) =>
     set.slides.map(s => s.heading ? `${s.heading}\n${s.body}` : s.body);
 
-  const formatRealWorld = (set: Awaited<ReturnType<typeof generateSlideContent>>) =>
-    set.realWorld.heading ? `${set.realWorld.heading}\n${set.realWorld.body}` : set.realWorld.body;
+  const formatExamples = (set: Awaited<ReturnType<typeof generateSlideContent>>) =>
+    set.examples.heading ? `${set.examples.heading}\n${set.examples.body}` : set.examples.body;
 
   return {
-    lesson: { ...safeLessonEn, real_world: formatRealWorld(slidesEn) },
-    lessonSk: { ...safeLessonSk, real_world: formatRealWorld(slidesSk), real_world_sk: formatRealWorld(slidesSk) },
+    lesson: { ...safeLessonEn, real_world: formatExamples(slidesEn) },
+    lessonSk: { ...safeLessonSk, real_world: formatExamples(slidesSk), real_world_sk: formatExamples(slidesSk) },
+    whyCare: { en: slidesEn.whyCare, sk: slidesSk.whyCare },
     equipment,
     levelBadge: {
       en: `${lvl.emoji} ${lvl.en}`,
