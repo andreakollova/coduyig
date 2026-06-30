@@ -142,30 +142,70 @@ function safeRealWorld(content: string): string {
   return limitLines(result, MAX_LINES_PER_SLIDE);
 }
 
-/** Extract first definition/paragraph for caption (max ~1500 chars for safety) */
+/** Topic emoji by module number */
+const moduleEmoji: Record<number, string> = {
+  1: '💻',  // What is Programming?
+  2: '🖥️',  // How Computers Work
+  3: '🔧',  // Hardware vs Software
+  4: '🏗️',  // Computer Architecture
+  5: '⚡',  // CPU Explained
+  6: '🧠',  // Memory Explained
+  7: '💾',  // Storage Explained
+  8: '🖱️',  // Operating Systems
+  9: '🔤',  // How Computers Understand Code
+  10: '📊', // Data Structures & Algorithms
+  12: '🌐', // Programming Languages
+  13: '⚙️',  // Compilers & Interpreters
+  15: '🌍', // Networking
+  16: '🔗', // The Internet
+  17: '📡', // Clients & Servers
+  18: '🔌', // APIs
+  19: '🗄️',  // Databases
+  22: '🤖', // AI
+  30: '🐍', // Python Basics
+};
+
 function buildCaption(lesson: LessonData, lang: 'en' | 'sk'): string {
-  const title = lang === 'sk' ? lesson.title_sk : lesson.title;
-  const intro = lang === 'sk' ? lesson.introduction_sk : lesson.introduction;
-  const learning = lang === 'sk' ? lesson.learning_content_sk : lesson.learning_content;
+  const title = lang === 'sk' ? (lesson.title_sk || lesson.title) : lesson.title;
+  const intro = lang === 'sk' ? (lesson.introduction_sk || lesson.introduction) : lesson.introduction;
+  const learning = lang === 'sk' ? (lesson.learning_content_sk || lesson.learning_content) : lesson.learning_content;
+  const emoji = moduleEmoji[lesson.module_number] || '📚';
 
-  // Get first meaningful paragraph from learning
-  const firstParagraphs = learning?.split('\n\n').slice(0, 3).join('\n\n') || '';
+  // Get first definition paragraph from learning
+  const firstPara = learning?.split('\n\n').filter(p => p.trim()).slice(0, 2).join('\n\n') || '';
 
-  let caption = `📚 ${title}\n\n`;
-  caption += intro ? intro.slice(0, 500) + '\n\n' : '';
-  caption += firstParagraphs.slice(0, 800) + '\n\n';
+  let caption = '';
 
   if (lang === 'sk') {
-    caption += '👉 Viac na Coduy app\n\n';
+    caption += `LEKCIA ${lesson.lesson_number} | ${emoji} ${title}\n\n`;
   } else {
-    caption += '👉 Learn more on Coduy app\n\n';
+    caption += `LESSON ${lesson.lesson_number} | ${emoji} ${title}\n\n`;
+  }
+
+  // Intro
+  if (intro) {
+    const introTruncated = truncate(intro, 500);
+    caption += introTruncated + '\n\n';
+  }
+
+  // First definition from learning
+  if (firstPara) {
+    const learnTruncated = truncate(firstPara, 600);
+    caption += learnTruncated + '\n\n';
+  }
+
+  // CTA
+  if (lang === 'sk') {
+    caption += '📲 Cela lekcia na Coduy app. Stiahni si free na App Store.\n\n';
+  } else {
+    caption += '📲 Full lesson on Coduy app. Download free on the App Store.\n\n';
   }
 
   caption += '#coding #programming #learntocode #coduy #tech #computerscience #developer #software';
 
   // IG caption limit is 2200 chars
   if (caption.length > 2200) {
-    caption = caption.slice(0, 2150) + '...\n\n#coding #programming #learntocode #coduy';
+    caption = caption.slice(0, 2100) + '\n\n📲 Coduy app - free on App Store\n\n#coding #programming #learntocode #coduy';
   }
 
   return caption;

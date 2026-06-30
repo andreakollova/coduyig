@@ -152,7 +152,7 @@ export const SlideRealWorld: React.FC<{
           fontSize: 20, color: '#f59e0b', fontWeight: 700,
           letterSpacing: '0.1em', textTransform: 'uppercase' as const,
         }}>
-          Why should you care?
+          Why should a programmer care?
         </span>
       </div>
 
