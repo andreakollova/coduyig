@@ -1,11 +1,16 @@
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, useVideoConfig } from 'remotion';
+import { AbsoluteFill, useCurrentFrame, interpolate, useVideoConfig, staticFile, Img } from 'remotion';
 import { loadFont } from '@remotion/google-fonts/Inter';
 import { ByteMascot } from './Byte';
 
 const { fontFamily } = loadFont();
 
 const BG = '#0A0A0A';
+const LOGO_SRC = staticFile('logocoduy.png');
+
+const CoduyLogo: React.FC<{ height?: number; opacity?: number }> = ({ height = 28, opacity = 0.5 }) => (
+  <Img src={LOGO_SRC} style={{ height, opacity, objectFit: 'contain' }} />
+);
 
 /* ========== SLIDE 1: Video — Byte + Lesson Title ========== */
 export const Slide1Video: React.FC<{
@@ -56,12 +61,9 @@ export const Slide1Video: React.FC<{
         <p style={{ fontSize: 28, color: '#aaa', fontWeight: 600, margin: 0 }}>Swipe to learn →</p>
       </div>
 
-      {/* Coduy watermark */}
-      <div style={{
-        position: 'absolute', bottom: 48,
-        fontSize: 22, color: '#555', fontWeight: 800, letterSpacing: '0.2em',
-      }}>
-        CODUY
+      {/* Coduy logo */}
+      <div style={{ position: 'absolute', bottom: 48 }}>
+        <CoduyLogo height={36} opacity={0.4} />
       </div>
     </AbsoluteFill>
   );
@@ -130,8 +132,8 @@ export const SlideLearn: React.FC<{
         borderTop: '1px solid #222', paddingTop: 24,
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
-        <span style={{ fontSize: 20, color: '#555', fontWeight: 800, letterSpacing: '0.2em' }}>CODUY</span>
-        <span style={{ fontSize: 20, color: '#555', fontWeight: 500 }}>coduy.app</span>
+        <CoduyLogo height={24} opacity={0.35} />
+        <span style={{ fontSize: 18, color: '#555', fontWeight: 500 }}>coduy.app</span>
       </div>
     </AbsoluteFill>
   );
@@ -178,8 +180,8 @@ export const SlideRealWorld: React.FC<{
         borderTop: '1px solid #222', paddingTop: 24,
         display: 'flex', justifyContent: 'space-between',
       }}>
-        <span style={{ fontSize: 20, color: '#555', fontWeight: 800, letterSpacing: '0.2em' }}>CODUY</span>
-        <span style={{ fontSize: 20, color: '#555', fontWeight: 500 }}>coduy.app</span>
+        <CoduyLogo height={24} opacity={0.35} />
+        <span style={{ fontSize: 18, color: '#555', fontWeight: 500 }}>coduy.app</span>
       </div>
     </AbsoluteFill>
   );
@@ -228,11 +230,8 @@ export const SlideCTA: React.FC<{
         coduy.app
       </div>
 
-      <div style={{
-        position: 'absolute', bottom: 48,
-        fontSize: 22, color: '#666', fontWeight: 700,
-      }}>
-        @coduy
+      <div style={{ position: 'absolute', bottom: 48 }}>
+        <CoduyLogo height={36} opacity={0.5} />
       </div>
     </AbsoluteFill>
   );
