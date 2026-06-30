@@ -165,56 +165,98 @@ function limitLines(text: string, maxLines: number): string {
   return lines.slice(0, maxLines).join('\n') + '\n…';
 }
 
-/** Detect if a paragraph is a section heading (short, no period, no special chars) */
-function isSectionHeading(para: string): boolean {
-  const t = para.trim();
-  return t.length < 50 && !t.endsWith('.') && !t.endsWith(';') && !t.endsWith(')')
-    && !t.startsWith('-') && !t.startsWith('•') && !t.startsWith('|')
-    && !t.includes('=') && !t.includes(':') && !/^\d/.test(t);
+/** A slide has a heading and body text */
+interface SlideContent {
+  heading: string;
+  body: string;
 }
 
-/** Split learning content into chunks for slides, splitting at section headings.
- * Each section heading starts a new slide. Max chars per slide enforced. */
-function chunkContent(content: string, maxChunks = 3): string[] {
-  if (!content) return [''];
+/** Detect if a line looks like a section heading */
+function isHeadingLine(line: string): boolean {
+  const t = line.trim();
+  if (t.length > 60 || t.length < 3) return false;
+  if (t.endsWith('.') || t.endsWith(';') || t.endsWith(')')) return false;
+  if (t.startsWith('-') || t.startsWith('•') || t.startsWith('|')) return false;
+  if (/[=(){}\[\]<>;]/.test(t)) return false; // code
+  if (/^\d+\./.test(t)) return false; // numbered list
+  // Headings are typically short, no punctuation at end, often Title Case
+  return true;
+}
+
+/** Parse learning content into structured sections (heading + body) */
+function parseIntoSections(content: string): SlideContent[] {
+  if (!content) return [];
 
   const paragraphs = content.split('\n\n').filter(p => p.trim());
-  if (paragraphs.length === 0) return [''];
+  const sections: SlideContent[] = [];
+  let currentHeading = '';
+  let currentBody: string[] = [];
 
-  // Group paragraphs into sections (split at headings)
-  const sections: string[][] = [[]];
   for (const para of paragraphs) {
     const trimmed = para.trim();
-    // If this looks like a section heading and current section has content, start new section
-    if (isSectionHeading(trimmed) && sections[sections.length - 1].length > 0) {
-      sections.push([trimmed]);
+
+    if (isHeadingLine(trimmed) && currentBody.length > 0) {
+      // Save current section, start new one
+      sections.push({
+        heading: currentHeading,
+        body: currentBody.join('\n\n'),
+      });
+      currentHeading = trimmed;
+      currentBody = [];
+    } else if (isHeadingLine(trimmed) && currentBody.length === 0 && !currentHeading) {
+      // First heading
+      currentHeading = trimmed;
     } else {
-      sections[sections.length - 1].push(trimmed);
+      currentBody.push(trimmed);
     }
   }
 
-  // Now merge small sections and split large ones to fit maxChunks slides
-  const chunks: string[] = [];
-  let currentChunk = '';
-
-  for (const section of sections) {
-    const sectionText = section.map(p => truncate(p, 200)).join('\n');
-
-    // If adding this section would overflow, push current and start new
-    if (currentChunk.length + sectionText.length > MAX_CHARS_PER_SLIDE && currentChunk.length > 0) {
-      chunks.push(limitLines(currentChunk.trim(), MAX_LINES_PER_SLIDE));
-      if (chunks.length >= maxChunks) break;
-      currentChunk = sectionText;
-    } else {
-      currentChunk += (currentChunk ? '\n\n' : '') + sectionText;
-    }
+  // Push last section
+  if (currentBody.length > 0 || currentHeading) {
+    sections.push({
+      heading: currentHeading,
+      body: currentBody.join('\n\n'),
+    });
   }
 
-  if (currentChunk && chunks.length < maxChunks) {
-    chunks.push(limitLines(currentChunk.trim(), MAX_LINES_PER_SLIDE));
+  return sections;
+}
+
+/** Build 3 slide contents from learning content.
+ * Each slide has a heading + body. Body truncated at sentence boundary. */
+function buildSlideContents(content: string, maxSlides = 3): SlideContent[] {
+  const sections = parseIntoSections(content);
+  if (sections.length === 0) return [{ heading: '', body: truncate(content || '', MAX_CHARS_PER_SLIDE) }];
+
+  // If we have <= maxSlides sections, use them directly
+  if (sections.length <= maxSlides) {
+    return sections.map(s => ({
+      heading: s.heading,
+      body: truncate(s.body, MAX_CHARS_PER_SLIDE),
+    }));
   }
 
-  return chunks.length > 0 ? chunks : [''];
+  // Too many sections — pick evenly spaced ones
+  const slides: SlideContent[] = [];
+  const step = sections.length / maxSlides;
+  for (let i = 0; i < maxSlides; i++) {
+    const idx = Math.floor(i * step);
+    const section = sections[idx];
+    slides.push({
+      heading: section.heading,
+      body: truncate(section.body, MAX_CHARS_PER_SLIDE),
+    });
+  }
+
+  return slides;
+}
+
+/** Convert SlideContent[] to string[] for backward compat with render */
+function slideContentsToChunks(slides: SlideContent[]): string[] {
+  return slides.map(s => {
+    if (s.heading) return s.heading + '\n' + s.body;
+    return s.body;
+  });
 }
 
 /** Truncate title for slide 1 */
@@ -399,8 +441,8 @@ export async function pickLesson(lessonId?: number): Promise<SlideModel | null> 
       en: `${lvl.emoji} ${lvl.en}`,
       sk: `${lvl.emoji} ${lvl.sk}`,
     },
-    learningChunks: chunkContent(cleanText(lesson.learning_content || '')),
-    learningChunksSk: chunkContent(cleanText(lesson.learning_content_sk || lesson.learning_content || '')),
+    learningChunks: slideContentsToChunks(buildSlideContents(cleanText(lesson.learning_content || ''))),
+    learningChunksSk: slideContentsToChunks(buildSlideContents(cleanText(lesson.learning_content_sk || lesson.learning_content || ''))),
     caption: cleanText(buildCaption(lesson, 'en')),
     captionSk: cleanText(buildCaption(lesson, 'sk')),
   };

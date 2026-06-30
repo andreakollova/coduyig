@@ -88,12 +88,18 @@ export const SlideLearn: React.FC<{
   equipment: Record<string, string>;
   lang?: string;
 }> = ({ content, slideNumber, totalSlides, equipment, lang = 'en' }) => {
-  const paragraphs = (content || '').split('\n').filter(l => l.trim());
+  // Content format: first line may be heading (from pickLesson), rest is body
+  const lines = (content || '').split('\n').filter(l => l.trim());
+  const firstLine = lines[0] || '';
+  const isFirstHeading = firstLine.length < 55 && !firstLine.endsWith('.') && !firstLine.endsWith(';')
+    && !/[=(){}\[\]<>]/.test(firstLine) && !firstLine.startsWith('-');
+  const heading = isFirstHeading ? firstLine : '';
+  const bodyLines = isFirstHeading ? lines.slice(1) : lines;
 
   return (
     <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', padding: '64px 56px' }}>
       {/* Top bar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 36 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{ width: 12, height: 12, borderRadius: 6, background: '#fff' }} />
           <span style={{ fontSize: 20, color: '#aaa', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>
@@ -110,30 +116,27 @@ export const SlideLearn: React.FC<{
       </div>
 
       {/* Byte mini */}
-      <div style={{ marginBottom: 28 }}>
-        <ByteMascot size={140} equipment={equipment} />
+      <div style={{ marginBottom: 24 }}>
+        <ByteMascot size={120} equipment={equipment} />
       </div>
 
-      {/* Content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 20, overflow: 'hidden' }}>
-        {paragraphs.slice(0, 7).map((para, i) => {
-          const looksLikeCode = /[=();{}\[\]<>]/.test(para) || para.startsWith('SELECT') || para.startsWith('INSERT') || para.startsWith('CREATE') || para.startsWith('UPDATE') || para.startsWith('DELETE');
-          const isHeading = !looksLikeCode && para.length < 50 && !para.endsWith('.') && !para.endsWith(';') && !para.endsWith(')') && !para.startsWith('-') && !para.startsWith('•') && !para.startsWith('|') && !para.includes(':') && i === 0;
-          if (isHeading) {
-            return (
-              <h2 key={i} style={{
-                fontSize: 46, fontWeight: 800, color: '#ffffff',
-                margin: 0, letterSpacing: '-0.02em', lineHeight: 1.12,
-              }}>
-                {para}
-              </h2>
-            );
-          }
-          return (
-            <p key={i} style={{
-              fontSize: 30, color: '#cccccc', lineHeight: 1.55, margin: 0,
-            }}>
-              {para}
+      {/* Heading — big, bold, white */}
+      {heading && (
+        <h2 style={{
+          fontSize: 44, fontWeight: 800, color: '#ffffff',
+          margin: '0 0 20px 0', letterSpacing: '-0.02em', lineHeight: 1.1,
+        }}>
+          {heading}
+        </h2>
+      )}
+
+      {/* Body text — readable, lighter */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 14, overflow: 'hidden' }}>
+        {bodyLines.slice(0, 8).map((para, i) => (
+          <p key={i} style={{
+            fontSize: 28, color: '#cccccc', lineHeight: 1.5, margin: 0,
+          }}>
+            {para}
             </p>
           );
         })}

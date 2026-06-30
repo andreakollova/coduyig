@@ -61,11 +61,13 @@ export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promis
   files.push({ path: videoPath, type: 'video', slideIndex: 0 });
 
   // Slides 2-4: Learning content
+  const hasRealWorld = !!realWorld;
+  const totalSlides = 1 + learningChunks.length + (hasRealWorld ? 1 : 0) + 1; // video + learning + realworld + cta
   for (let i = 0; i < learningChunks.length; i++) {
     const slideProps = {
       content: learningChunks[i],
       slideNumber: i + 2,
-      totalSlides: learningChunks.length + 3,
+      totalSlides,
       equipment: model.equipment,
       lang,
     };
