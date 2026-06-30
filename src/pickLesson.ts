@@ -132,8 +132,8 @@ export async function pickLesson(lessonId?: number): Promise<SlideModel | null> 
   return {
     lesson,
     equipment,
-    learningChunks: chunkContent(lesson.learning_content),
-    learningChunksSk: chunkContent(lesson.learning_content_sk),
+    learningChunks: chunkContent(lesson.learning_content || ''),
+    learningChunksSk: chunkContent(lesson.learning_content_sk || lesson.learning_content || ''),
     caption: buildCaption(lesson, 'en'),
     captionSk: buildCaption(lesson, 'sk'),
   };

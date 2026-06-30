@@ -60,7 +60,7 @@ export const SlideLearn: React.FC<{
   equipment: Record<string, string>;
 }> = ({ content, slideNumber, totalSlides, equipment }) => {
   // Split content into paragraphs
-  const paragraphs = content.split('\n').filter(l => l.trim());
+  const paragraphs = (content || '').split('\n').filter(l => l.trim());
 
   return (
     <AbsoluteFill style={{ background: BG, fontFamily: FONT, display: 'flex', flexDirection: 'column', padding: '80px 72px' }}>
@@ -113,7 +113,7 @@ export const SlideRealWorld: React.FC<{
   content: string;
   equipment: Record<string, string>;
 }> = ({ content, equipment }) => {
-  const paragraphs = content.split('\n').filter(l => l.trim()).slice(0, 12);
+  const paragraphs = (content || '').split('\n').filter(l => l.trim()).slice(0, 12);
 
   return (
     <AbsoluteFill style={{ background: BG, fontFamily: FONT, display: 'flex', flexDirection: 'column', padding: '80px 72px' }}>
