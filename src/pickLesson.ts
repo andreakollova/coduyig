@@ -59,12 +59,23 @@ const MAX_LINES_PER_SLIDE = 12;
 const MAX_TITLE_CHARS = 80;
 const MAX_REAL_WORLD_CHARS = 550;
 
-/** Truncate text to max length, breaking at word boundary */
+/** Truncate text to max length, keeping only complete sentences */
 function truncate(text: string, max: number): string {
   if (text.length <= max) return text;
+  // Find all sentence endings (. ! ?) within the limit
+  const sentenceEnds = ['.', '!', '?'];
+  let lastEnd = -1;
+  for (let i = 0; i < max; i++) {
+    if (sentenceEnds.includes(text[i]) && (i + 1 >= text.length || text[i + 1] === ' ' || text[i + 1] === '\n')) {
+      lastEnd = i + 1;
+    }
+  }
+  // If we found a sentence end, cut there (no "…" needed — it's a clean sentence)
+  if (lastEnd > max * 0.3) return text.slice(0, lastEnd).trim();
+  // Fallback: cut at word boundary with "…"
   const cut = text.slice(0, max);
   const lastSpace = cut.lastIndexOf(' ');
-  return (lastSpace > max * 0.7 ? cut.slice(0, lastSpace) : cut) + '…';
+  return (lastSpace > max * 0.5 ? cut.slice(0, lastSpace) : cut).trim() + '…';
 }
 
 /** Limit lines in a chunk */
