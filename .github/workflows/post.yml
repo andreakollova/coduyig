@@ -1,0 +1,53 @@
+name: Daily Instagram Post
+
+on:
+  schedule:
+    - cron: '0 7 * * *'  # 07:00 UTC = 09:00 CEST
+  workflow_dispatch:
+    inputs:
+      lesson_id:
+        description: 'Specific lesson ID (leave empty for next unposted)'
+        required: false
+      dry_run:
+        description: 'Dry run (render + upload only, no publish)'
+        type: boolean
+        default: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser ffmpeg
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run publisher
+        env:
+          IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
+          IG_PAGE_TOKEN_SK: ${{ secrets.IG_PAGE_TOKEN_SK }}
+          IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
+          IG_USER_ID_SK: ${{ secrets.IG_USER_ID_SK }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          ARGS=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          if [ -n "${{ inputs.lesson_id }}" ]; then
+            ARGS="$ARGS --lesson-id ${{ inputs.lesson_id }}"
+          fi
+          npx tsx src/index.ts $ARGS
