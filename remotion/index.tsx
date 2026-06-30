@@ -1,4 +1,3 @@
-import React from 'react';
 import { registerRoot, Composition } from 'remotion';
 import { Slide1Video, SlideLearn, SlideRealWorld, SlideCTA } from './compositions';
 
@@ -16,11 +15,7 @@ export const RemotionRoot: React.FC = () => {
         fps={FPS}
         width={W}
         height={H}
-        defaultProps={{
-          title: 'What is a Program?',
-          moduleTitle: 'Programming Basics',
-          equipment: {} as Record<string, string>,
-        }}
+        defaultProps={{ title: 'What is a Program?', moduleTitle: 'Programming Basics', equipment: {} }}
       />
       <Composition
         id="SlideLearn"
@@ -29,13 +24,7 @@ export const RemotionRoot: React.FC = () => {
         fps={FPS}
         width={W}
         height={H}
-        defaultProps={{
-          content: 'A program is a sequence of instructions that tells a computer exactly what to do.',
-          slideNumber: 2,
-          totalSlides: 6,
-          equipment: {} as Record<string, string>,
-          lang: 'en' as string,
-        }}
+        defaultProps={{ content: 'A program is a set of instructions.', slideNumber: 2, totalSlides: 6, equipment: {} }}
       />
       <Composition
         id="SlideRealWorld"
@@ -44,11 +33,7 @@ export const RemotionRoot: React.FC = () => {
         fps={FPS}
         width={W}
         height={H}
-        defaultProps={{
-          content: 'Programs are everywhere - in your phone, your car, your fridge.',
-          equipment: {} as Record<string, string>,
-          lang: 'en' as string,
-        }}
+        defaultProps={{ content: 'Programs are everywhere.', equipment: {} }}
       />
       <Composition
         id="SlideCTA"
@@ -57,10 +42,7 @@ export const RemotionRoot: React.FC = () => {
         fps={FPS}
         width={W}
         height={H}
-        defaultProps={{
-          lang: 'en' as 'en' | 'sk',
-          equipment: {} as Record<string, string>,
-        }}
+        defaultProps={{ lang: 'en' as const, equipment: {} }}
       />
     </>
   );

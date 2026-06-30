@@ -25,6 +25,14 @@ export interface RenderResult {
   files: { path: string; type: 'video' | 'image'; slideIndex: number }[];
 }
 
+async function getComposition(serveUrl: string, id: string, props: Record<string, any>) {
+  return selectComposition({
+    serveUrl,
+    id,
+    inputProps: props,
+  });
+}
+
 export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promise<RenderResult> {
   fs.mkdirSync(OUT_DIR, { recursive: true });
   const serveUrl = await getBundled();
@@ -39,13 +47,9 @@ export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promis
 
   // Slide 1: Video (mascot + title)
   const videoProps = { title, moduleTitle, equipment: model.equipment };
-  const videoComp = await selectComposition({
-    serveUrl,
-    id: 'Slide1Video',
-    inputProps: videoProps,
-  });
   const videoPath = path.join(OUT_DIR, `${prefix}_slide1.mp4`);
   console.log(`🎬 Rendering video slide (${lang}): "${title}"`);
+  const videoComp = await getComposition(serveUrl, 'Slide1Video', videoProps);
   await renderMedia({
     composition: videoComp,
     serveUrl,
@@ -57,25 +61,21 @@ export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promis
 
   // Slides 2-4: Learning content
   for (let i = 0; i < learningChunks.length; i++) {
-    const props = {
+    const slideProps = {
       content: learningChunks[i],
       slideNumber: i + 2,
       totalSlides: learningChunks.length + 3,
       equipment: model.equipment,
       lang,
     };
-    const comp = await selectComposition({
-      serveUrl,
-      id: 'SlideLearn',
-      inputProps: props,
-    });
     const imgPath = path.join(OUT_DIR, `${prefix}_slide${i + 2}.png`);
-    console.log(`🖼️  Rendering learning slide ${i + 2} (${lang}): ${learningChunks[i].slice(0, 50)}...`);
+    console.log(`🖼️  Rendering learning slide ${i + 2} (${lang}): ${learningChunks[i].slice(0, 60)}...`);
+    const learnComp = await getComposition(serveUrl, 'SlideLearn', slideProps);
     await renderStill({
-      composition: comp,
+      composition: learnComp,
       serveUrl,
       output: imgPath,
-      inputProps: props,
+      inputProps: slideProps,
     });
     files.push({ path: imgPath, type: 'image', slideIndex: i + 1 });
   }
@@ -83,13 +83,9 @@ export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promis
   // Slide 5: Real World / Why Care
   if (realWorld) {
     const rwProps = { content: realWorld.slice(0, 1500), equipment: model.equipment, lang };
-    const rwComp = await selectComposition({
-      serveUrl,
-      id: 'SlideRealWorld',
-      inputProps: rwProps,
-    });
     const rwPath = path.join(OUT_DIR, `${prefix}_slide_rw.png`);
     console.log(`🖼️  Rendering real-world slide (${lang})`);
+    const rwComp = await getComposition(serveUrl, 'SlideRealWorld', rwProps);
     await renderStill({
       composition: rwComp,
       serveUrl,
@@ -101,13 +97,9 @@ export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promis
 
   // Slide 6: CTA
   const ctaProps = { lang, equipment: model.equipment };
-  const ctaComp = await selectComposition({
-    serveUrl,
-    id: 'SlideCTA',
-    inputProps: ctaProps,
-  });
   const ctaPath = path.join(OUT_DIR, `${prefix}_slide_cta.png`);
   console.log(`🖼️  Rendering CTA slide (${lang})`);
+  const ctaComp = await getComposition(serveUrl, 'SlideCTA', ctaProps);
   await renderStill({
     composition: ctaComp,
     serveUrl,
