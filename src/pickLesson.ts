@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { generateSlideContent } from './slideAI';
 
 const sb = createClient(
   process.env.SUPABASE_URL!,
@@ -315,23 +316,29 @@ function buildCaption(lesson: LessonData, lang: 'en' | 'sk'): string {
 
   caption += `CODUY #${lesson.id} (${lvl.emoji} ${lang === 'sk' ? lvl.sk : lvl.en}) | ${title}\n\n`;
 
-  // Intro
+  // Full introduction — the main explanation in the caption
   if (intro) {
-    const introTruncated = truncate(intro, 500);
-    caption += introTruncated + '\n\n';
+    caption += truncate(intro, 800) + '\n\n';
   }
 
-  // First definition from learning
+  // Add learning content definition/first paragraphs to fill out the caption
   if (firstPara) {
-    const learnTruncated = truncate(firstPara, 600);
-    caption += learnTruncated + '\n\n';
+    caption += truncate(firstPara, 700) + '\n\n';
   }
 
-  // If caption is still short (< 400 chars), add real_world content
+  // If still short, add more learning content
+  if (caption.length < 600 && learning) {
+    const moreLearning = learning.split('\n\n').filter(p => p.trim()).slice(2, 5).join('\n\n');
+    if (moreLearning) {
+      caption += truncate(moreLearning, 500) + '\n\n';
+    }
+  }
+
+  // If still short, add real_world
   const realWorld = lang === 'sk' ? (lesson.real_world_sk || lesson.real_world) : lesson.real_world;
-  if (caption.length < 400 && realWorld) {
-    const rwFirst = realWorld.split('\n\n').filter(p => p.trim()).slice(0, 2).join('\n\n');
-    caption += truncate(rwFirst, 400) + '\n\n';
+  if (caption.length < 800 && realWorld) {
+    const rwFirst = realWorld.split('\n\n').filter(p => p.trim()).slice(0, 3).join('\n\n');
+    caption += truncate(rwFirst, 500) + '\n\n';
   }
 
   // CTA
@@ -433,16 +440,38 @@ export async function pickLesson(lessonId?: number): Promise<SlideModel | null> 
   const level = getLevel(lesson.module_number);
   const lvl = levelLabel[level];
 
+  // Generate slide content with GPT-4o (EN + SK)
+  console.log('✨ Generating slide content with GPT-4o...');
+  const [slidesEn, slidesSk] = await Promise.all([
+    generateSlideContent(
+      cleanText(lesson.learning_content || ''),
+      cleanText(lesson.real_world || ''),
+      'en'
+    ),
+    generateSlideContent(
+      cleanText(lesson.learning_content_sk || lesson.learning_content || ''),
+      cleanText(lesson.real_world_sk || lesson.real_world || ''),
+      'sk'
+    ),
+  ]);
+
+  // Format slides: "heading\nbody" per chunk
+  const formatSlides = (set: Awaited<ReturnType<typeof generateSlideContent>>) =>
+    set.slides.map(s => s.heading ? `${s.heading}\n${s.body}` : s.body);
+
+  const formatRealWorld = (set: Awaited<ReturnType<typeof generateSlideContent>>) =>
+    set.realWorld.heading ? `${set.realWorld.heading}\n${set.realWorld.body}` : set.realWorld.body;
+
   return {
-    lesson: safeLessonEn,
-    lessonSk: safeLessonSk,
+    lesson: { ...safeLessonEn, real_world: formatRealWorld(slidesEn) },
+    lessonSk: { ...safeLessonSk, real_world: formatRealWorld(slidesSk), real_world_sk: formatRealWorld(slidesSk) },
     equipment,
     levelBadge: {
       en: `${lvl.emoji} ${lvl.en}`,
       sk: `${lvl.emoji} ${lvl.sk}`,
     },
-    learningChunks: slideContentsToChunks(buildSlideContents(cleanText(lesson.learning_content || ''))),
-    learningChunksSk: slideContentsToChunks(buildSlideContents(cleanText(lesson.learning_content_sk || lesson.learning_content || ''))),
+    learningChunks: formatSlides(slidesEn),
+    learningChunksSk: formatSlides(slidesSk),
     caption: cleanText(buildCaption(lesson, 'en')),
     captionSk: cleanText(buildCaption(lesson, 'sk')),
   };
