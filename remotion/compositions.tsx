@@ -18,15 +18,15 @@ export const Slide1Video: React.FC<{
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const titleSpring = spring({ frame: frame - 25, fps, config: { damping: 14 } });
-  const subtitleSpring = spring({ frame: frame - 40, fps, config: { damping: 14 } });
-  const badgeSpring = spring({ frame: frame - 10, fps, config: { damping: 12 } });
+  // Everything visible from frame 0 — only subtle scale animation (no fade-in)
+  const breathe = interpolate(Math.sin(frame / fps * Math.PI * 0.5), [-1, 1], [0.97, 1.03]);
+  const swipeOpacity = interpolate(frame, [0, fps * 2, fps * 2.5, fps * 3, fps * 3.5], [1, 1, 0.4, 1, 0.4], { extrapolateRight: 'clamp' });
 
   return (
     <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 60 }}>
-      {/* Module badge */}
+      {/* Module badge — always visible */}
       <div style={{
-        transform: `scale(${badgeSpring})`, marginBottom: 50,
+        marginBottom: 50,
         padding: '14px 32px', borderRadius: 40,
         background: '#1a1a1a', border: '2px solid #333',
         fontSize: 18, color: '#aaa', fontWeight: 700,
@@ -35,15 +35,13 @@ export const Slide1Video: React.FC<{
         {moduleTitle}
       </div>
 
-      {/* Byte — BIG */}
-      <ByteMascot size={420} equipment={equipment} />
+      {/* Byte — BIG, gentle breathe animation */}
+      <div style={{ transform: `scale(${breathe})` }}>
+        <ByteMascot size={420} equipment={equipment} />
+      </div>
 
-      {/* Title */}
-      <div style={{
-        marginTop: 60, textAlign: 'center',
-        transform: `translateY(${(1 - titleSpring) * 40}px)`,
-        opacity: titleSpring, padding: '0 40px',
-      }}>
+      {/* Title — always visible */}
+      <div style={{ marginTop: 60, textAlign: 'center', padding: '0 40px' }}>
         <h1 style={{
           fontSize: 64, fontWeight: 800, color: '#ffffff',
           lineHeight: 1.1, letterSpacing: '-0.03em', margin: 0,
@@ -52,12 +50,8 @@ export const Slide1Video: React.FC<{
         </h1>
       </div>
 
-      {/* Swipe hint */}
-      <div style={{
-        marginTop: 30,
-        transform: `translateY(${(1 - subtitleSpring) * 20}px)`,
-        opacity: subtitleSpring,
-      }}>
+      {/* Swipe hint — blinks to draw attention */}
+      <div style={{ marginTop: 30, opacity: swipeOpacity }}>
         <p style={{ fontSize: 24, color: '#888', fontWeight: 500 }}>Swipe to learn →</p>
       </div>
 
