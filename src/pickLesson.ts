@@ -8,6 +8,7 @@ const sb = createClient(
 
 export interface LessonData {
   id: number;
+  postNumber?: number;
   title: string;
   title_sk: string;
   module_title: string;
@@ -314,7 +315,7 @@ function buildCaption(lesson: LessonData, lang: 'en' | 'sk'): string {
 
   let caption = '';
 
-  caption += `CODUY #${lesson.id} (${lvl.emoji} ${lang === 'sk' ? lvl.sk : lvl.en}) | ${title}\n\n`;
+  caption += `CODUY #${lesson.postNumber || lesson.id} (${lvl.emoji} ${lang === 'sk' ? lvl.sk : lvl.en}) | ${title}\n\n`;
 
   // Full introduction — the main explanation in the caption
   if (intro) {
@@ -419,7 +420,11 @@ export async function pickLesson(lessonId?: number): Promise<SlideModel | null> 
     console.log(`🎯 Level rotation: beginner=${postedCounts.beginner} advanced=${postedCounts.advanced} professional=${postedCounts.professional} → picked ${targetLevel}`);
   }
 
-  console.log(`📖 Picked lesson: ${lesson.title} (id=${lesson.id}, module=${lesson.module_number})`);
+  // Count total posted so far for sequential numbering
+  const { count } = await sb.from('cb_lessons').select('id', { count: 'exact', head: true }).not('posted_at', 'is', null);
+  lesson.postNumber = (count || 0) + 1;
+
+  console.log(`📖 Picked lesson: ${lesson.title} (id=${lesson.id}, module=${lesson.module_number}, post #${lesson.postNumber})`);
 
   const equipment = pickEquipment(lesson.module_number, lesson.lesson_number, lesson.id);
 
