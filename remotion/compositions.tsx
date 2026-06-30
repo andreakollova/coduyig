@@ -17,7 +17,8 @@ export const Slide1Video: React.FC<{
   title: string;
   moduleTitle: string;
   equipment: Record<string, string>;
-}> = ({ title, moduleTitle, equipment }) => {
+  levelBadge?: string;
+}> = ({ title, moduleTitle, equipment, levelBadge }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -26,15 +27,25 @@ export const Slide1Video: React.FC<{
 
   return (
     <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 50px' }}>
-      {/* Module badge */}
-      <div style={{
-        marginBottom: 44,
-        padding: '18px 40px', borderRadius: 50,
-        background: '#1a1a1a', border: '2px solid #333',
-        fontSize: 22, color: '#bbb', fontWeight: 700,
-        letterSpacing: '0.1em', textTransform: 'uppercase' as const,
-      }}>
-        {moduleTitle}
+      {/* Module + level badge */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, marginBottom: 40 }}>
+        <div style={{
+          padding: '14px 36px', borderRadius: 50,
+          background: '#1a1a1a', border: '2px solid #333',
+          fontSize: 20, color: '#bbb', fontWeight: 700,
+          letterSpacing: '0.1em', textTransform: 'uppercase' as const,
+        }}>
+          {moduleTitle}
+        </div>
+        {levelBadge && (
+          <div style={{
+            padding: '8px 24px', borderRadius: 30,
+            background: '#111', border: '1px solid #2a2a2a',
+            fontSize: 18, color: '#999', fontWeight: 600,
+          }}>
+            {levelBadge}
+          </div>
+        )}
       </div>
 
       {/* Byte */}

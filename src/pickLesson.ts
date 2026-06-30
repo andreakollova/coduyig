@@ -25,32 +25,102 @@ export interface SlideModel {
   lesson: LessonData;
   lessonSk: LessonData;
   equipment: Record<string, string>;
+  levelBadge: { en: string; sk: string };
   learningChunks: string[];      // EN — split for slides 2-4
   learningChunksSk: string[];    // SK
   caption: string;               // EN
   captionSk: string;             // SK
 }
 
-/** Pick outfit based on module difficulty */
-function pickEquipment(moduleNumber: number): Record<string, string> {
-  if (moduleNumber >= 19) {
-    // Mythic tier
-    return { hat: 'hat-void-crown', glasses: 'glasses-void', accessory: 'acc-cosmic-cape', aura: 'aura-cosmic' };
+/** Difficulty levels */
+type DiffLevel = 'beginner' | 'advanced' | 'professional';
+
+function getLevel(moduleNumber: number): DiffLevel {
+  if (moduleNumber >= 18) return 'professional'; // M18-M30: Databases, AI, Python
+  if (moduleNumber >= 9) return 'advanced';       // M9-M17: Code, algorithms, languages, networking, APIs
+  return 'beginner';                               // M1-M8: Basics, HW/SW, OS, CPU, Memory, Storage
+}
+
+const levelLabel = {
+  beginner:     { en: 'Beginner',      sk: 'Začiatočník',  emoji: '🟢' },
+  advanced:     { en: 'Advanced',      sk: 'Pokročilý',    emoji: '🟡' },
+  professional: { en: 'Professional',  sk: 'Profesionál',  emoji: '🔴' },
+};
+
+/** Beginner outfits — basic, clean, occasionally one nice piece */
+const beginnerOutfits: Record<string, string>[] = [
+  { hat: 'hat-beanie' },
+  { glasses: 'glasses-round' },
+  { hat: 'hat-headband', accessory: 'acc-bowtie' },
+  { hat: 'hat-party' },
+  { glasses: 'glasses-reading', accessory: 'acc-scarf' },
+  { hat: 'hat-beanie', glasses: 'glasses-round' },
+  { hat: 'hat-headband' },
+  { accessory: 'acc-bowtie', antenna: 'ant-heart' },
+];
+
+/** Advanced outfits — rare + epic items, looks cool */
+const advancedOutfits: Record<string, string>[] = [
+  { hat: 'hat-graduation', glasses: 'glasses-cool', accessory: 'acc-medal' },
+  { hat: 'hat-cowboy', glasses: 'glasses-aviator', antenna: 'ant-lightning' },
+  { hat: 'hat-pilot', glasses: 'glasses-cool', accessory: 'acc-chain' },
+  { hat: 'hat-samurai', glasses: 'glasses-frost', antenna: 'ant-diamond' },
+  { hat: 'hat-fire-crown', glasses: 'glasses-flame', accessory: 'acc-fire-cape' },
+  { hat: 'hat-ice-crown', glasses: 'glasses-frost', antenna: 'ant-frost-crystal' },
+  { hat: 'hat-graduation', glasses: 'glasses-aviator', accessory: 'acc-crystal', aura: 'aura-blue' },
+  { hat: 'hat-cowboy', glasses: 'glasses-cool', accessory: 'acc-medal', aura: 'aura-green' },
+  { hat: 'hat-samurai', accessory: 'acc-fire-cape', aura: 'aura-fire' },
+];
+
+/** Professional outfits — legendary + mythic, fully loaded, glowing */
+const professionalOutfits: Record<string, string>[] = [
+  { hat: 'hat-golden-crown', glasses: 'glasses-golden', accessory: 'acc-wings-gold', aura: 'aura-golden', antenna: 'ant-golden-star' },
+  { hat: 'hat-galaxy', glasses: 'glasses-laser', accessory: 'acc-diamond', aura: 'aura-galaxy', antenna: 'ant-sun' },
+  { hat: 'hat-void-crown', glasses: 'glasses-void', accessory: 'acc-cosmic-cape', aura: 'aura-void', antenna: 'ant-blackhole' },
+  { hat: 'hat-golden-crown', glasses: 'glasses-laser', accessory: 'acc-cosmic-cape', aura: 'aura-cosmic', antenna: 'ant-golden-star' },
+  { hat: 'hat-void-crown', glasses: 'glasses-golden', accessory: 'acc-wings-gold', aura: 'aura-golden', antenna: 'ant-sun' },
+  { hat: 'hat-galaxy', glasses: 'glasses-void', accessory: 'acc-diamond', aura: 'aura-cosmic', antenna: 'ant-blackhole' },
+];
+
+/** Pick outfit based on module difficulty + lesson position within module.
+ * Early lessons in a module get simpler outfits, later lessons get better ones.
+ * This means even in a professional module, lesson 1 starts lighter and builds up. */
+function pickEquipment(moduleNumber: number, lessonNumber: number, lessonId: number): Record<string, string> {
+  const level = getLevel(moduleNumber);
+
+  if (level === 'professional') {
+    // Lesson 1-2: advanced outfit, 3+: full professional
+    if (lessonNumber <= 2) {
+      return advancedOutfits[(lessonId + 3) % advancedOutfits.length]; // pick different advanced ones
+    }
+    return professionalOutfits[lessonId % professionalOutfits.length];
   }
-  if (moduleNumber >= 15) {
-    // Legendary tier
-    return { hat: 'hat-golden-crown', glasses: 'glasses-golden', accessory: 'acc-wings-gold', aura: 'aura-golden' };
+
+  if (level === 'advanced') {
+    // Lesson 1-2: beginner with one nice piece, 3-4: advanced, 5+: advanced with aura
+    if (lessonNumber <= 2) {
+      // Beginner base + one rare item
+      const base = beginnerOutfits[lessonId % beginnerOutfits.length];
+      return { ...base, antenna: 'ant-lightning' };
+    }
+    return advancedOutfits[lessonId % advancedOutfits.length];
   }
-  if (moduleNumber >= 10) {
-    // Epic tier
-    return { hat: 'hat-fire-crown', glasses: 'glasses-flame', accessory: 'acc-fire-cape', aura: 'aura-fire' };
+
+  // Beginner level
+  // Lesson 1-3: very basic, 4+: beginner with occasional extra
+  if (lessonNumber <= 3) {
+    // Very minimal — just one item
+    const minimal: Record<string, string>[] = [
+      { hat: 'hat-beanie' },
+      { glasses: 'glasses-round' },
+      { hat: 'hat-headband' },
+      {},
+      { accessory: 'acc-bowtie' },
+      { antenna: 'ant-heart' },
+    ];
+    return minimal[lessonId % minimal.length];
   }
-  if (moduleNumber >= 5) {
-    // Rare tier
-    return { hat: 'hat-graduation', glasses: 'glasses-cool', accessory: 'acc-medal' };
-  }
-  // Common tier
-  return { hat: 'hat-beanie', glasses: 'glasses-round' };
+  return beginnerOutfits[lessonId % beginnerOutfits.length];
 }
 
 /** Replace em dashes (—) with regular dashes (-) and clean up text */
@@ -170,6 +240,8 @@ function buildCaption(lesson: LessonData, lang: 'en' | 'sk'): string {
   const intro = lang === 'sk' ? (lesson.introduction_sk || lesson.introduction) : lesson.introduction;
   const learning = lang === 'sk' ? (lesson.learning_content_sk || lesson.learning_content) : lesson.learning_content;
   const emoji = moduleEmoji[lesson.module_number] || '📚';
+  const level = getLevel(lesson.module_number);
+  const lvl = levelLabel[level];
 
   // Get first definition paragraph from learning
   const firstPara = learning?.split('\n\n').filter(p => p.trim()).slice(0, 2).join('\n\n') || '';
@@ -177,9 +249,9 @@ function buildCaption(lesson: LessonData, lang: 'en' | 'sk'): string {
   let caption = '';
 
   if (lang === 'sk') {
-    caption += `LEKCIA ${lesson.lesson_number} | ${emoji} ${title}\n\n`;
+    caption += `LEKCIA ${lesson.lesson_number} (${lvl.emoji} ${lvl.sk}) | ${emoji} ${title}\n\n`;
   } else {
-    caption += `LESSON ${lesson.lesson_number} | ${emoji} ${title}\n\n`;
+    caption += `LESSON ${lesson.lesson_number} (${lvl.emoji} ${lvl.en}) | ${emoji} ${title}\n\n`;
   }
 
   // Intro
@@ -225,22 +297,56 @@ export async function pickLesson(lessonId?: number): Promise<SlideModel | null> 
     const { data: mod } = await sb.from('cb_modules').select('title, title_sk, module_number').eq('id', data.module_id).single();
     lesson = { ...data, module_title: mod?.title || '', module_title_sk: mod?.title_sk || '', module_number: mod?.module_number || 1 };
   } else {
-    // Pick next unposted lesson
-    const { data, error } = await sb
+    // Pick random unposted lesson, rotating between levels
+    // Get all unposted lessons grouped by level
+    const { data: allUnposted, error } = await sb
       .from('cb_lessons')
       .select('id, title, title_sk, introduction, introduction_sk, learning_content, learning_content_sk, real_world, real_world_sk, lesson_number, module_id, posted_at')
-      .is('posted_at', null)
-      .order('id')
-      .limit(1)
-      .maybeSingle();
-    if (error || !data) { console.log('No unposted lessons remaining'); return null; }
-    const { data: mod } = await sb.from('cb_modules').select('title, title_sk, module_number').eq('id', data.module_id).single();
+      .is('posted_at', null);
+    if (error || !allUnposted || allUnposted.length === 0) { console.log('No unposted lessons remaining'); return null; }
+
+    // Get all modules for level mapping
+    const { data: allMods } = await sb.from('cb_modules').select('id, title, title_sk, module_number');
+    const modMap = new Map((allMods || []).map(m => [m.id, m]));
+
+    // Group by level
+    const byLevel: Record<DiffLevel, typeof allUnposted> = { beginner: [], advanced: [], professional: [] };
+    for (const l of allUnposted) {
+      const mod = modMap.get(l.module_id);
+      const level = getLevel(mod?.module_number || 1);
+      byLevel[level].push(l);
+    }
+
+    // Count how many of each level have been posted (to rotate)
+    const { data: posted } = await sb.from('cb_lessons').select('id, module_id').not('posted_at', 'is', null);
+    const postedCounts = { beginner: 0, advanced: 0, professional: 0 };
+    for (const p of (posted || [])) {
+      const mod = modMap.get(p.module_id);
+      const level = getLevel(mod?.module_number || 1);
+      postedCounts[level]++;
+    }
+
+    // Pick the level with fewest posts (that still has unposted lessons)
+    const levelOrder: DiffLevel[] = ['beginner', 'advanced', 'professional'];
+    const availableLevels = levelOrder.filter(l => byLevel[l].length > 0);
+    if (availableLevels.length === 0) { console.log('No unposted lessons remaining'); return null; }
+
+    // Sort by least posted → pick that level, then random within it
+    availableLevels.sort((a, b) => postedCounts[a] - postedCounts[b]);
+    const targetLevel = availableLevels[0];
+    const pool = byLevel[targetLevel];
+
+    // Random pick from that level
+    const data = pool[Math.floor(Math.random() * pool.length)];
+    const mod = modMap.get(data.module_id);
     lesson = { ...data, module_title: mod?.title || '', module_title_sk: mod?.title_sk || '', module_number: mod?.module_number || 1 };
+
+    console.log(`🎯 Level rotation: beginner=${postedCounts.beginner} advanced=${postedCounts.advanced} professional=${postedCounts.professional} → picked ${targetLevel}`);
   }
 
   console.log(`📖 Picked lesson: ${lesson.title} (id=${lesson.id}, module=${lesson.module_number})`);
 
-  const equipment = pickEquipment(lesson.module_number);
+  const equipment = pickEquipment(lesson.module_number, lesson.lesson_number, lesson.id);
 
   // Clean all text (em dashes → regular dashes) and apply safe limits
   const safeLessonEn = {
@@ -256,10 +362,17 @@ export async function pickLesson(lessonId?: number): Promise<SlideModel | null> 
     real_world_sk: safeRealWorld(cleanText(lesson.real_world_sk || lesson.real_world)),
   };
 
+  const level = getLevel(lesson.module_number);
+  const lvl = levelLabel[level];
+
   return {
     lesson: safeLessonEn,
     lessonSk: safeLessonSk,
     equipment,
+    levelBadge: {
+      en: `${lvl.emoji} ${lvl.en}`,
+      sk: `${lvl.emoji} ${lvl.sk}`,
+    },
     learningChunks: chunkContent(cleanText(lesson.learning_content || '')),
     learningChunksSk: chunkContent(cleanText(lesson.learning_content_sk || lesson.learning_content || '')),
     caption: cleanText(buildCaption(lesson, 'en')),

@@ -42,11 +42,12 @@ export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promis
   const les = lang === 'sk' ? model.lessonSk : model.lesson;
   const title = les.title;
   const moduleTitle = lang === 'sk' ? les.module_title_sk : les.module_title;
+  const levelBadge = model.levelBadge?.[lang] || '';
   const learningChunks = lang === 'sk' ? model.learningChunksSk : model.learningChunks;
   const realWorld = les.real_world;
 
   // Slide 1: Video (mascot + title)
-  const videoProps = { title, moduleTitle, equipment: model.equipment };
+  const videoProps = { title, moduleTitle, equipment: model.equipment, levelBadge };
   const videoPath = path.join(OUT_DIR, `${prefix}_slide1.mp4`);
   console.log(`🎬 Rendering video slide (${lang}): "${title}"`);
   const videoComp = await getComposition(serveUrl, 'Slide1Video', videoProps);
