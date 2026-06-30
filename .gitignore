@@ -3,4 +3,4 @@ dist/
 .env
 out/
 *.mp4
-*.png
+out/*.png
