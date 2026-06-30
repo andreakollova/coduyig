@@ -1,8 +1,8 @@
 import { registerRoot, Composition } from 'remotion';
 import { Slide1Video, SlideLearn, SlideRealWorld, SlideCTA } from './compositions';
 
-const W = 1087;
-const H = 1447;
+const W = 1080;
+const H = 1440;
 const FPS = 30;
 
 export const RemotionRoot: React.FC = () => {

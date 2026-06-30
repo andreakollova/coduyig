@@ -5,8 +5,8 @@ import { renderMedia, renderStill } from '@remotion/renderer';
 import type { SlideModel } from './pickLesson';
 
 const OUT_DIR = path.join(process.cwd(), 'out');
-const W = 1087;
-const H = 1447;
+const W = 1080;
+const H = 1440;
 const FPS = 30;
 const VIDEO_DURATION = 5; // seconds
 

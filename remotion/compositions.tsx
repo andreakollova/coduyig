@@ -3,8 +3,8 @@ import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Seq
 import { ByteMascot } from './Byte';
 
 // Shared constants
-const W = 1087;
-const H = 1447;
+const W = 1080;
+const H = 1440;
 const BG = '#0A0A0A';
 const FONT = "-apple-system, 'SF Pro Display', system-ui, sans-serif";
 const MONO = "'SF Mono', 'JetBrains Mono', monospace";
