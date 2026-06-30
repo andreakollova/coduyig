@@ -19,6 +19,8 @@ export interface LessonData {
   learning_content_sk: string;
   real_world: string;
   real_world_sk: string;
+  interesting_facts: string;
+  interesting_facts_sk: string;
   module_number: number;
   lesson_number: number;
 }
@@ -29,6 +31,7 @@ export interface SlideModel {
   equipment: Record<string, string>;
   levelBadge: { en: string; sk: string };
   whyCare: { en: string; sk: string };
+  funFact: { en: string; sk: string };
   learningChunks: string[];
   learningChunksSk: string[];
   caption: string;
@@ -366,7 +369,7 @@ export async function pickLesson(lessonId?: number): Promise<SlideModel | null> 
   if (lessonId) {
     const { data, error } = await sb
       .from('cb_lessons')
-      .select('id, title, title_sk, introduction, introduction_sk, learning_content, learning_content_sk, real_world, real_world_sk, lesson_number, module_id, posted_at')
+      .select('id, title, title_sk, introduction, introduction_sk, learning_content, learning_content_sk, real_world, real_world_sk, interesting_facts, interesting_facts_sk, lesson_number, module_id, posted_at')
       .eq('id', lessonId)
       .maybeSingle();
     if (error || !data) { console.error('Lesson not found:', lessonId); return null; }
@@ -378,7 +381,7 @@ export async function pickLesson(lessonId?: number): Promise<SlideModel | null> 
     // Get all unposted lessons grouped by level
     const { data: allUnposted, error } = await sb
       .from('cb_lessons')
-      .select('id, title, title_sk, introduction, introduction_sk, learning_content, learning_content_sk, real_world, real_world_sk, lesson_number, module_id, posted_at')
+      .select('id, title, title_sk, introduction, introduction_sk, learning_content, learning_content_sk, real_world, real_world_sk, interesting_facts, interesting_facts_sk, lesson_number, module_id, posted_at')
       .is('posted_at', null);
     if (error || !allUnposted || allUnposted.length === 0) { console.log('No unposted lessons remaining'); return null; }
 
@@ -452,31 +455,30 @@ export async function pickLesson(lessonId?: number): Promise<SlideModel | null> 
     generateSlideContent(
       cleanText(lesson.learning_content || ''),
       cleanText(lesson.real_world || ''),
+      cleanText(lesson.interesting_facts || ''),
       'en'
     ),
     generateSlideContent(
       cleanText(lesson.learning_content_sk || lesson.learning_content || ''),
       cleanText(lesson.real_world_sk || lesson.real_world || ''),
+      cleanText(lesson.interesting_facts_sk || lesson.interesting_facts || ''),
       'sk'
     ),
   ]);
 
-  // Format slides: "heading\nbody" per chunk
   const formatSlides = (set: Awaited<ReturnType<typeof generateSlideContent>>) =>
     set.slides.map(s => s.heading ? `${s.heading}\n${s.body}` : s.body);
 
-  const formatExamples = (set: Awaited<ReturnType<typeof generateSlideContent>>) =>
-    set.examples.heading ? `${set.examples.heading}\n${set.examples.body}` : set.examples.body;
-
   return {
-    lesson: { ...safeLessonEn, real_world: formatExamples(slidesEn) },
-    lessonSk: { ...safeLessonSk, real_world: formatExamples(slidesSk), real_world_sk: formatExamples(slidesSk) },
-    whyCare: { en: slidesEn.whyCare, sk: slidesSk.whyCare },
+    lesson: safeLessonEn,
+    lessonSk: safeLessonSk,
     equipment,
     levelBadge: {
       en: `${lvl.emoji} ${lvl.en}`,
       sk: `${lvl.emoji} ${lvl.sk}`,
     },
+    whyCare: { en: slidesEn.whyCare, sk: slidesSk.whyCare },
+    funFact: { en: slidesEn.funFact, sk: slidesSk.funFact },
     learningChunks: formatSlides(slidesEn),
     learningChunksSk: formatSlides(slidesSk),
     caption: cleanText(buildCaption(lesson, 'en')),

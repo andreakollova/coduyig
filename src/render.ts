@@ -8,29 +8,21 @@ const OUT_DIR = path.join(process.cwd(), 'out');
 const W = 1080;
 const H = 1440;
 const FPS = 30;
-const VIDEO_DURATION = 5; // seconds
 
 let bundled: string | null = null;
-
 async function getBundled(): Promise<string> {
   if (bundled) return bundled;
-  console.log('📦 Bundling Remotion compositions...');
-  bundled = await bundle({
-    entryPoint: path.join(process.cwd(), 'remotion', 'index.tsx'),
-  });
+  console.log('📦 Bundling Remotion...');
+  bundled = await bundle({ entryPoint: path.join(process.cwd(), 'remotion', 'index.tsx') });
   return bundled;
+}
+
+async function comp(serveUrl: string, id: string, props: Record<string, any>) {
+  return selectComposition({ serveUrl, id, inputProps: props });
 }
 
 export interface RenderResult {
   files: { path: string; type: 'video' | 'image'; slideIndex: number }[];
-}
-
-async function getComposition(serveUrl: string, id: string, props: Record<string, any>) {
-  return selectComposition({
-    serveUrl,
-    id,
-    inputProps: props,
-  });
 }
 
 export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promise<RenderResult> {
@@ -42,76 +34,62 @@ export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promis
   const les = lang === 'sk' ? model.lessonSk : model.lesson;
   const title = les.title;
   const moduleTitle = lang === 'sk' ? les.module_title_sk : les.module_title;
-  const levelBadge = model.levelBadge?.[lang] || '';
-  const learningChunks = lang === 'sk' ? model.learningChunksSk : model.learningChunks;
-  const realWorld = les.real_world;
+  const intro = lang === 'sk' ? (les.introduction_sk || les.introduction) : les.introduction;
+  const chunks = lang === 'sk' ? model.learningChunksSk : model.learningChunks;
+  const funFact = lang === 'sk' ? model.funFact.sk : model.funFact.en;
+  const whyCare = lang === 'sk' ? model.whyCare.sk : model.whyCare.en;
+  const totalSlides = 1 + 1 + chunks.length + 1 + 1 + 1; // video + intro + learning + funfact + whycare + cta
 
-  // Slide 1: Video (mascot + title)
-  const videoProps = { title, moduleTitle, equipment: model.equipment, levelBadge, lang };
-  const videoPath = path.join(OUT_DIR, `${prefix}_slide1.mp4`);
-  console.log(`🎬 Rendering video slide (${lang}): "${title}"`);
-  const videoComp = await getComposition(serveUrl, 'Slide1Video', videoProps);
-  await renderMedia({
-    composition: videoComp,
-    serveUrl,
-    codec: 'h264',
-    outputLocation: videoPath,
-    inputProps: videoProps,
-  });
-  files.push({ path: videoPath, type: 'video', slideIndex: 0 });
+  // 1. Video slide
+  const vProps = { title, moduleTitle, equipment: model.equipment, levelBadge: model.levelBadge?.[lang], lang };
+  console.log(`🎬 [${lang}] Video: "${title}"`);
+  const vComp = await comp(serveUrl, 'Slide1Video', vProps);
+  const vPath = path.join(OUT_DIR, `${prefix}_s1.mp4`);
+  await renderMedia({ composition: vComp, serveUrl, codec: 'h264', outputLocation: vPath, inputProps: vProps });
+  files.push({ path: vPath, type: 'video', slideIndex: 0 });
 
-  // Slides 2-4: Learning content
-  const hasRealWorld = !!realWorld;
-  const totalSlides = 1 + learningChunks.length + (hasRealWorld ? 1 : 0) + 1; // video + learning + realworld + cta
-  for (let i = 0; i < learningChunks.length; i++) {
-    const slideProps = {
-      content: learningChunks[i],
-      slideNumber: i + 2,
-      totalSlides,
-      equipment: model.equipment,
-      lang,
-    };
-    const imgPath = path.join(OUT_DIR, `${prefix}_slide${i + 2}.png`);
-    console.log(`🖼️  Rendering learning slide ${i + 2} (${lang}): ${learningChunks[i].slice(0, 60)}...`);
-    const learnComp = await getComposition(serveUrl, 'SlideLearn', slideProps);
-    await renderStill({
-      composition: learnComp,
-      serveUrl,
-      output: imgPath,
-      inputProps: slideProps,
-    });
-    files.push({ path: imgPath, type: 'image', slideIndex: i + 1 });
+  // 2. Intro slide
+  const iProps = { content: intro || '', title, lang };
+  console.log(`🖼️ [${lang}] Intro`);
+  const iComp = await comp(serveUrl, 'SlideIntro', iProps);
+  const iPath = path.join(OUT_DIR, `${prefix}_s2.png`);
+  await renderStill({ composition: iComp, serveUrl, output: iPath, inputProps: iProps });
+  files.push({ path: iPath, type: 'image', slideIndex: 1 });
+
+  // 3-5. Learning slides
+  for (let i = 0; i < chunks.length; i++) {
+    const lProps = { content: chunks[i], slideNumber: i + 3, totalSlides, lang };
+    console.log(`🖼️ [${lang}] Learning ${i + 1}: ${chunks[i].slice(0, 50)}...`);
+    const lComp = await comp(serveUrl, 'SlideLearn', lProps);
+    const lPath = path.join(OUT_DIR, `${prefix}_s${i + 3}.png`);
+    await renderStill({ composition: lComp, serveUrl, output: lPath, inputProps: lProps });
+    files.push({ path: lPath, type: 'image', slideIndex: i + 2 });
   }
 
-  // Examples slide
-  if (realWorld) {
-    const exProps = { content: realWorld.slice(0, 1500), equipment: model.equipment, lang };
-    const exPath = path.join(OUT_DIR, `${prefix}_slide_examples.png`);
-    console.log(`🖼️  Rendering examples slide (${lang})`);
-    const exComp = await getComposition(serveUrl, 'SlideExamples', exProps);
-    await renderStill({
-      composition: exComp,
-      serveUrl,
-      output: exPath,
-      inputProps: exProps,
-    });
-    files.push({ path: exPath, type: 'image', slideIndex: learningChunks.length + 1 });
-  }
+  // 6. Fun Fact slide
+  const ffProps = { content: funFact, type: 'funfact' as const, lang };
+  console.log(`🖼️ [${lang}] Fun Fact`);
+  const ffComp = await comp(serveUrl, 'SlideFunFact', ffProps);
+  const ffPath = path.join(OUT_DIR, `${prefix}_s_ff.png`);
+  await renderStill({ composition: ffComp, serveUrl, output: ffPath, inputProps: ffProps });
+  files.push({ path: ffPath, type: 'image', slideIndex: files.length });
 
-  // CTA slide (with whyCare text)
-  const whyCare = model.whyCare?.[lang] || '';
-  const ctaProps = { lang, equipment: model.equipment, whyCare };
-  const ctaPath = path.join(OUT_DIR, `${prefix}_slide_cta.png`);
-  console.log(`🖼️  Rendering CTA slide (${lang})`);
-  const ctaComp = await getComposition(serveUrl, 'SlideCTA', ctaProps);
-  await renderStill({
-    composition: ctaComp,
-    serveUrl,
-    output: ctaPath,
-    inputProps: ctaProps,
-  });
+  // 7. Why Care slide
+  const wcProps = { content: whyCare, equipment: model.equipment, lang };
+  console.log(`🖼️ [${lang}] Why Care`);
+  const wcComp = await comp(serveUrl, 'SlideWhyCare', wcProps);
+  const wcPath = path.join(OUT_DIR, `${prefix}_s_wc.png`);
+  await renderStill({ composition: wcComp, serveUrl, output: wcPath, inputProps: wcProps });
+  files.push({ path: wcPath, type: 'image', slideIndex: files.length });
+
+  // 8. CTA slide
+  const ctaProps = { lang, equipment: model.equipment };
+  console.log(`🖼️ [${lang}] CTA`);
+  const ctaComp = await comp(serveUrl, 'SlideCTA', ctaProps);
+  const ctaPath = path.join(OUT_DIR, `${prefix}_s_cta.png`);
+  await renderStill({ composition: ctaComp, serveUrl, output: ctaPath, inputProps: ctaProps });
   files.push({ path: ctaPath, type: 'image', slideIndex: files.length });
 
-  console.log(`✅ Rendered ${files.length} slides for ${lang.toUpperCase()}`);
+  console.log(`✅ ${files.length} slides rendered for ${lang.toUpperCase()}`);
   return { files };
 }

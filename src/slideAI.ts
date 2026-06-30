@@ -1,116 +1,84 @@
-/**
- * Uses GPT-4o to transform raw lesson content into perfectly formatted slide content.
- */
-
 const OPENAI_KEY = process.env.OPENAI_API_KEY || '';
 
-interface SlideData {
-  heading: string;
-  body: string;
+interface SlideData { heading: string; body: string; }
+
+export interface SlideSet {
+  slides: SlideData[];  // 3 learning slides
+  funFact: string;      // one fun fact or real example
+  whyCare: string;      // why programmer should care (3-5 sentences)
 }
 
-interface SlideSet {
-  slides: SlideData[];
-  examples: SlideData;
-  whyCare: string; // short text for CTA slide
-}
+const SYSTEM_PROMPT = `You create Instagram carousel content for Coduy, a coding education app.
 
-const SYSTEM_PROMPT = `You create Instagram carousel slide content for a coding education app called Coduy.
+Given a lesson's learning content, real-world examples, and interesting facts, create:
 
-You receive a lesson's FULL learning content and real-world examples. Transform them into carousel slides.
+"slides" — EXACTLY 3 learning slides:
+- "heading": catchy topic title, max 28 characters
+- "body": 3-5 clear sentences (max 280 chars). Write conversationally, like explaining to a friend.
+- Cover the 3 most important concepts from the lesson
+- NO code, NO bullet points, NO markdown, NO special chars
 
-CREATE EXACTLY THIS:
+"funFact" — ONE interesting/surprising fact from the lesson (1-3 sentences, max 200 chars). Something that makes people go "wow, I didn't know that!"
 
-"slides" — 4 to 5 learning slides. Each slide covers ONE topic from the lesson:
-- "heading": catchy title, max 30 characters
-- "body": 3-5 sentences explaining this topic clearly. Max 250 characters. Write like you're explaining to a smart friend, not a textbook.
-- Cover ALL the important concepts from the learning content
-- NO code snippets, NO bullet points, NO markdown
-- Use plain, engaging language
+"whyCare" — Why a programmer should care about this topic. 3-5 sentences (max 300 chars). Practical, real-world perspective. Motivating.
 
-"examples" — 1 slide with real-world examples:
-- "heading": max 30 characters (e.g. "Real-World Examples")
-- "body": 2-3 concrete examples of where this topic is used in real life. Max 250 characters.
-
-"whyCare" — ONE sentence (max 100 characters) explaining why a programmer should care about this topic. This goes on the final CTA slide.
-
-RESPOND IN VALID JSON ONLY:
+VALID JSON ONLY:
 {
   "slides": [
     {"heading": "...", "body": "..."},
     {"heading": "...", "body": "..."},
-    {"heading": "...", "body": "..."},
     {"heading": "...", "body": "..."}
   ],
-  "examples": {"heading": "...", "body": "..."},
+  "funFact": "...",
   "whyCare": "..."
 }`;
 
 export async function generateSlideContent(
   learningContent: string,
   realWorldContent: string,
+  interestingFacts: string,
   lang: 'en' | 'sk'
 ): Promise<SlideSet> {
   if (!OPENAI_KEY) {
-    console.log('⚠️  No OPENAI_API_KEY — using raw content fallback');
+    console.log('⚠️  No OPENAI_API_KEY — using fallback');
     return fallback(learningContent, realWorldContent);
   }
 
-  const langInstruction = lang === 'sk'
-    ? '\n\nIMPORTANT: Write ALL content in SLOVAK (slovenčina). Proper Slovak grammar. Never Czech. Remove "vysvetlené/vysvetlenie" from headings — just the core topic.'
+  const langNote = lang === 'sk'
+    ? '\n\nWRITE EVERYTHING IN SLOVAK (slovenčina). Proper grammar. Never Czech. Remove "vysvetlené" from headings.'
     : '';
 
-  const userPrompt = `LEARNING CONTENT:\n${learningContent.slice(0, 4000)}\n\nREAL WORLD EXAMPLES:\n${(realWorldContent || '').slice(0, 2000)}${langInstruction}`;
+  const prompt = `LEARNING:\n${learningContent.slice(0, 4000)}\n\nREAL WORLD:\n${(realWorldContent || '').slice(0, 1500)}\n\nFUN FACTS:\n${(interestingFacts || '').slice(0, 1000)}${langNote}`;
 
   try {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_KEY}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Authorization': `Bearer ${OPENAI_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'gpt-4o',
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: userPrompt },
-        ],
+        messages: [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: prompt }],
         temperature: 0.4,
         max_tokens: 1500,
         response_format: { type: 'json_object' },
       }),
     });
-
     const data = await res.json();
-    const content = data.choices?.[0]?.message?.content;
-    if (!content) throw new Error('Empty GPT response');
-
-    const parsed: SlideSet = JSON.parse(content);
-
-    if (!parsed.slides || parsed.slides.length < 3 || !parsed.examples || !parsed.whyCare) {
-      throw new Error('Invalid slide structure from GPT');
-    }
-
-    console.log(`✨ GPT generated ${parsed.slides.length} learning slides + examples + whyCare`);
+    const parsed: SlideSet = JSON.parse(data.choices?.[0]?.message?.content || '{}');
+    if (!parsed.slides || parsed.slides.length < 3 || !parsed.funFact || !parsed.whyCare) throw new Error('Invalid');
+    console.log(`✨ GPT: ${parsed.slides.length} slides + funFact + whyCare`);
     return parsed;
   } catch (err) {
-    console.error('⚠️  GPT slide generation failed, using fallback:', err);
+    console.error('⚠️  GPT failed:', err);
     return fallback(learningContent, realWorldContent);
   }
 }
 
 function fallback(learning: string, realWorld: string): SlideSet {
-  const paragraphs = (learning || '').split('\n\n').filter(p => p.trim());
-  const chunkSize = Math.ceil(paragraphs.length / 4);
-  const slides: SlideData[] = [];
-  for (let i = 0; i < 4; i++) {
-    const chunk = paragraphs.slice(i * chunkSize, (i + 1) * chunkSize);
-    slides.push({ heading: '', body: chunk.join(' ').slice(0, 250) });
-  }
-  const rwParas = (realWorld || '').split('\n\n').filter(p => p.trim());
+  const p = (learning || '').split('\n\n').filter(p => p.trim());
+  const c = Math.ceil(p.length / 3);
   return {
-    slides,
-    examples: { heading: 'Examples', body: rwParas.slice(0, 3).join(' ').slice(0, 250) },
-    whyCare: rwParas[0]?.slice(0, 100) || 'Understanding this makes you a better developer.',
+    slides: [0, 1, 2].map(i => ({ heading: '', body: p.slice(i * c, (i + 1) * c).join(' ').slice(0, 280) })),
+    funFact: 'This is one of the most important concepts in computer science.',
+    whyCare: (realWorld || '').split('\n\n')[0]?.slice(0, 300) || 'Understanding this makes you a better developer.',
   };
 }
