@@ -137,9 +137,8 @@ export const SlideLearn: React.FC<{
             fontSize: 28, color: '#cccccc', lineHeight: 1.5, margin: 0,
           }}>
             {para}
-            </p>
-          );
-        })}
+          </p>
+        ))}
       </div>
 
       {/* Footer */}
