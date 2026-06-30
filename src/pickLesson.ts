@@ -23,6 +23,7 @@ export interface LessonData {
 
 export interface SlideModel {
   lesson: LessonData;
+  lessonSk: LessonData;
   equipment: Record<string, string>;
   learningChunks: string[];      // EN — split for slides 2-4
   learningChunksSk: string[];    // SK
@@ -52,21 +53,72 @@ function pickEquipment(moduleNumber: number): Record<string, string> {
   return { hat: 'hat-beanie', glasses: 'glasses-round' };
 }
 
-/** Split learning content into 3 chunks for slides 2-4 */
+// Max characters per slide (1080x1440 at 26px font fits ~600 chars comfortably)
+const MAX_CHARS_PER_SLIDE = 500;
+const MAX_LINES_PER_SLIDE = 12;
+const MAX_TITLE_CHARS = 80;
+const MAX_REAL_WORLD_CHARS = 550;
+
+/** Truncate text to max length, breaking at word boundary */
+function truncate(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  const lastSpace = cut.lastIndexOf(' ');
+  return (lastSpace > max * 0.7 ? cut.slice(0, lastSpace) : cut) + '…';
+}
+
+/** Limit lines in a chunk */
+function limitLines(text: string, maxLines: number): string {
+  const lines = text.split('\n');
+  if (lines.length <= maxLines) return text;
+  return lines.slice(0, maxLines).join('\n') + '\n…';
+}
+
+/** Split learning content into 3 chunks for slides 2-4, each within char limit */
 function chunkContent(content: string, maxChunks = 3): string[] {
   if (!content) return [''];
 
   const paragraphs = content.split('\n\n').filter(p => p.trim());
-  if (paragraphs.length <= maxChunks) return paragraphs;
+  if (paragraphs.length === 0) return [''];
 
-  // Split into roughly equal groups
-  const chunkSize = Math.ceil(paragraphs.length / maxChunks);
+  // Build chunks that fit within char limit
   const chunks: string[] = [];
-  for (let i = 0; i < maxChunks; i++) {
-    const slice = paragraphs.slice(i * chunkSize, (i + 1) * chunkSize);
-    chunks.push(slice.join('\n\n'));
+  let currentChunk = '';
+
+  for (const para of paragraphs) {
+    const trimmed = truncate(para.trim(), 200); // single paragraph max 200 chars
+    if (currentChunk.length + trimmed.length > MAX_CHARS_PER_SLIDE && currentChunk.length > 0) {
+      chunks.push(limitLines(currentChunk.trim(), MAX_LINES_PER_SLIDE));
+      currentChunk = trimmed;
+      if (chunks.length >= maxChunks) break;
+    } else {
+      currentChunk += (currentChunk ? '\n' : '') + trimmed;
+    }
   }
-  return chunks;
+  if (currentChunk && chunks.length < maxChunks) {
+    chunks.push(limitLines(currentChunk.trim(), MAX_LINES_PER_SLIDE));
+  }
+
+  // Ensure we have at least 1 chunk
+  return chunks.length > 0 ? chunks : [''];
+}
+
+/** Truncate title for slide 1 */
+function safeTitle(title: string): string {
+  return truncate(title, MAX_TITLE_CHARS);
+}
+
+/** Truncate real-world content for slide 5 */
+function safeRealWorld(content: string): string {
+  if (!content) return '';
+  const paragraphs = content.split('\n\n').filter(p => p.trim());
+  let result = '';
+  for (const p of paragraphs) {
+    const trimmed = truncate(p.trim(), 200);
+    if (result.length + trimmed.length > MAX_REAL_WORLD_CHARS) break;
+    result += (result ? '\n' : '') + trimmed;
+  }
+  return limitLines(result, MAX_LINES_PER_SLIDE);
 }
 
 /** Extract first definition/paragraph for caption (max ~1500 chars for safety) */
@@ -129,8 +181,23 @@ export async function pickLesson(lessonId?: number): Promise<SlideModel | null> 
 
   const equipment = pickEquipment(lesson.module_number);
 
+  // Apply safe limits to lesson data for slides
+  const safeLessonEn = {
+    ...lesson,
+    title: safeTitle(lesson.title),
+    real_world: safeRealWorld(lesson.real_world),
+  };
+  const safeLessonSk = {
+    ...lesson,
+    title: safeTitle(lesson.title_sk || lesson.title),
+    title_sk: safeTitle(lesson.title_sk || lesson.title),
+    real_world: safeRealWorld(lesson.real_world),
+    real_world_sk: safeRealWorld(lesson.real_world_sk || lesson.real_world),
+  };
+
   return {
-    lesson,
+    lesson: safeLessonEn,
+    lessonSk: safeLessonSk,
     equipment,
     learningChunks: chunkContent(lesson.learning_content || ''),
     learningChunksSk: chunkContent(lesson.learning_content_sk || lesson.learning_content || ''),

@@ -31,10 +31,11 @@ export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promis
   const prefix = lang;
   const files: RenderResult['files'] = [];
 
-  const title = lang === 'sk' ? model.lesson.title_sk : model.lesson.title;
-  const moduleTitle = lang === 'sk' ? model.lesson.module_title_sk : model.lesson.module_title;
+  const les = lang === 'sk' ? model.lessonSk : model.lesson;
+  const title = les.title;
+  const moduleTitle = lang === 'sk' ? les.module_title_sk : les.module_title;
   const learningChunks = lang === 'sk' ? model.learningChunksSk : model.learningChunks;
-  const realWorld = lang === 'sk' ? model.lesson.real_world_sk : model.lesson.real_world;
+  const realWorld = les.real_world;
 
   // Slide 1: Video (mascot + title)
   const videoPath = path.join(OUT_DIR, `${prefix}_slide1.mp4`);
