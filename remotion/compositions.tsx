@@ -75,7 +75,7 @@ export const Slide1Video: React.FC<{
 
       {/* Coduy logo */}
       <div style={{ position: 'absolute', bottom: 48 }}>
-        <CoduyLogo height={36} opacity={0.4} />
+        <CoduyLogo height={36} opacity={1} />
       </div>
     </AbsoluteFill>
   );
@@ -147,7 +147,7 @@ export const SlideLearn: React.FC<{
         borderTop: '1px solid #222', paddingTop: 24,
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
-        <CoduyLogo height={22} opacity={0.35} />
+        <CoduyLogo height={22} opacity={1} />
         <span style={{ fontSize: 16, color: '#555', fontWeight: 600 }}>{lang === 'sk' ? '@coduy.sk' : '@coduyapp'}</span>
       </div>
     </AbsoluteFill>
@@ -195,7 +195,7 @@ export const SlideRealWorld: React.FC<{
         borderTop: '1px solid #222', paddingTop: 24,
         display: 'flex', justifyContent: 'space-between',
       }}>
-        <CoduyLogo height={22} opacity={0.35} />
+        <CoduyLogo height={22} opacity={1} />
         <span style={{ fontSize: 16, color: '#555', fontWeight: 600 }}>{lang === 'sk' ? '@coduy.sk' : '@coduyapp'}</span>
       </div>
     </AbsoluteFill>
@@ -273,7 +273,7 @@ export const SlideCTA: React.FC<{
 
       {/* Handle */}
       <div style={{ position: 'absolute', bottom: 48, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-        <CoduyLogo height={32} opacity={0.4} />
+        <CoduyLogo height={32} opacity={1} />
         <span style={{ fontSize: 20, color: '#666', fontWeight: 600 }}>
           {lang === 'sk' ? '@coduy.sk' : '@coduyapp'}
         </span>
