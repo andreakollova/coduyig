@@ -183,29 +183,29 @@ export const SlideCTA: React.FC<{
   whyCare?: string;
 }> = ({ lang, whyCare }) => {
   return (
-    <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '44px 50px' }}>
+    <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '36px 50px 40px' }}>
       {/* Logo on top */}
-      <CoduyLogo height={36} />
+      <CoduyLogo height={32} />
 
-      {/* Mockup */}
-      <div style={{ marginTop: 20, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Img src={MOCKUP_SRC} style={{ height: 520, objectFit: 'contain' }} />
+      {/* Mockup — pushed up */}
+      <div style={{ marginTop: 12 }}>
+        <Img src={MOCKUP_SRC} style={{ height: 560, objectFit: 'contain' }} />
       </div>
 
       {/* Why care text */}
       {whyCare && (
-        <p style={{ fontSize: 22, color: '#999', marginTop: 16, textAlign: 'center', fontStyle: 'italic', maxWidth: 800, lineHeight: 1.4 }}>
+        <p style={{ fontSize: 22, color: '#999', marginTop: 12, textAlign: 'center', fontStyle: 'italic', maxWidth: 800, lineHeight: 1.4 }}>
           {whyCare}
         </p>
       )}
 
       {/* Title */}
-      <h1 style={{ fontSize: 48, fontWeight: 800, color: '#ffffff', textAlign: 'center', marginTop: 16, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+      <h1 style={{ fontSize: 48, fontWeight: 800, color: '#ffffff', textAlign: 'center', marginTop: 12, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
         {lang === 'sk' ? 'Celá lekcia na Coduy' : 'Full lesson on Coduy'}
       </h1>
 
       {/* App Store + Google Play */}
-      <div style={{ marginTop: 20, display: 'flex', gap: 12 }}>
+      <div style={{ marginTop: 16, display: 'flex', gap: 12 }}>
         <div style={{ padding: '12px 24px', borderRadius: 12, background: '#fff', color: '#000', fontSize: 16, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="#000"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.97 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
           App Store
@@ -217,11 +217,11 @@ export const SlideCTA: React.FC<{
       </div>
 
       {/* Divider */}
-      <div style={{ width: '70%', height: 1, background: '#222', marginTop: 24 }} />
+      <div style={{ width: '70%', height: 1, background: '#222', marginTop: 18 }} />
 
       {/* Save for later — BIG */}
       <div style={{
-        marginTop: 24, display: 'flex', alignItems: 'center', gap: 18,
+        marginTop: 18, display: 'flex', alignItems: 'center', gap: 18,
         padding: '26px 60px', borderRadius: 22,
         background: '#1a1a1a', border: '2px solid #333',
       }}>
