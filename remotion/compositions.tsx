@@ -163,21 +163,29 @@ export const SlideCTA: React.FC<{
         {lang === 'sk' ? 'Stiahni si Coduy' : 'Download Coduy'}
       </h1>
 
-      <p style={{ fontSize: 22, color: '#888', marginTop: 16, textAlign: 'center' }}>
+      <p style={{ fontSize: 22, color: '#888', marginTop: 16, textAlign: 'center', lineHeight: 1.6 }}>
         {lang === 'sk' ? 'Nauč sa programovať zadarmo' : 'Learn to code for free'}
       </p>
 
+      {/* Save for later */}
+      <div style={{ marginTop: 40, display: 'flex', alignItems: 'center', gap: 12, padding: '16px 32px', borderRadius: 14, background: '#161616', border: '1px solid #2a2a2a' }}>
+        <span style={{ fontSize: 24 }}>🔖</span>
+        <span style={{ fontSize: 18, color: '#aaa', fontWeight: 500 }}>
+          {lang === 'sk' ? 'Ulož si na neskôr' : 'Save for later'}
+        </span>
+      </div>
+
       {/* CTA button */}
       <div style={{
-        marginTop: 48, padding: '20px 64px', borderRadius: 16,
+        marginTop: 28, padding: '22px 64px', borderRadius: 16,
         background: '#fff', color: '#000',
         fontSize: 22, fontWeight: 700,
       }}>
-        coduy.app
+        {lang === 'sk' ? 'Nájdi v Coduy app' : 'Find it in Coduy app'}
       </div>
 
-      <div style={{ position: 'absolute', bottom: 50, fontSize: 14, color: '#333', fontWeight: 600 }}>
-        @coduy.app
+      <div style={{ position: 'absolute', bottom: 50, fontSize: 14, color: '#444', fontWeight: 600 }}>
+        @coduy
       </div>
     </AbsoluteFill>
   );
