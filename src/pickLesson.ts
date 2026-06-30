@@ -248,11 +248,7 @@ function buildCaption(lesson: LessonData, lang: 'en' | 'sk'): string {
 
   let caption = '';
 
-  if (lang === 'sk') {
-    caption += `LEKCIA ${lesson.lesson_number} (${lvl.emoji} ${lvl.sk}) | ${emoji} ${title}\n\n`;
-  } else {
-    caption += `LESSON ${lesson.lesson_number} (${lvl.emoji} ${lvl.en}) | ${emoji} ${title}\n\n`;
-  }
+  caption += `CODUY #${lesson.id} (${lvl.emoji} ${lang === 'sk' ? lvl.sk : lvl.en}) | ${emoji} ${title}\n\n`;
 
   // Intro
   if (intro) {
