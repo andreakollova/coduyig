@@ -29,21 +29,21 @@ export const Slide1Video: React.FC<{
   return (
     <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '50px 50px', textAlign: 'center' }}>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, marginBottom: 32 }}>
-        <div style={{ padding: '12px 32px', borderRadius: 50, background: '#1a1a1a', border: '2px solid #333', fontSize: 20, color: '#ccc', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
+        <div style={{ padding: '14px 36px', borderRadius: 50, background: '#1a1a1a', border: '2px solid #333', fontSize: 24, color: '#ccc', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
           {moduleTitle}
         </div>
         {levelBadge && (
-          <div style={{ padding: '6px 20px', borderRadius: 30, background: '#111', border: '1px solid #2a2a2a', fontSize: 18, color: '#aaa', fontWeight: 600 }}>{levelBadge}</div>
+          <div style={{ padding: '8px 24px', borderRadius: 30, background: '#111', border: '1px solid #2a2a2a', fontSize: 22, color: '#aaa', fontWeight: 600 }}>{levelBadge}</div>
         )}
       </div>
-      <div style={{ transform: `scale(${breathe})` }}>
-        <ByteMascot size={380} equipment={equipment} />
+      <div style={{ transform: `scale(${breathe})`, marginTop: -8 }}>
+        <ByteMascot size={360} equipment={equipment} />
       </div>
-      <h1 style={{ fontSize: 72, fontWeight: 800, color: '#fff', lineHeight: 1.08, letterSpacing: '-0.03em', margin: '40px 0 0', padding: '0 20px' }}>
+      <h1 style={{ fontSize: 80, fontWeight: 800, color: '#fff', lineHeight: 1.06, letterSpacing: '-0.03em', margin: '36px 0 0', padding: '0 20px' }}>
         {title}
       </h1>
-      <div style={{ marginTop: 56, opacity: swipeOp, padding: '14px 40px', borderRadius: 50, background: '#161616', border: '2px solid #2a2a2a' }}>
-        <p style={{ fontSize: 28, color: '#aaa', fontWeight: 600, margin: 0 }}>{lang === 'sk' ? 'Pokračuj potiahnutím →' : 'Swipe to learn →'}</p>
+      <div style={{ marginTop: 48, opacity: swipeOp, padding: '16px 44px', borderRadius: 50, background: '#161616', border: '2px solid #2a2a2a' }}>
+        <p style={{ fontSize: 32, color: '#bbb', fontWeight: 600, margin: 0 }}>{lang === 'sk' ? 'Pokračuj potiahnutím →' : 'Swipe to learn →'}</p>
       </div>
       <div style={{ position: 'absolute', bottom: 44 }}><CoduyLogo height={32} /></div>
     </AbsoluteFill>
@@ -62,16 +62,16 @@ export const SlideIntro: React.FC<{
     <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 56px', textAlign: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
         <div style={{ width: 10, height: 10, borderRadius: 5, background: '#fff' }} />
-        <span style={{ fontSize: 20, color: '#bbb', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>
+        <span style={{ fontSize: 22, color: '#bbb', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>
           {lang === 'sk' ? 'Úvod' : 'Introduction'}
         </span>
       </div>
-      <h2 style={{ fontSize: 56, fontWeight: 800, color: '#fff', margin: '0 0 32px', letterSpacing: '-0.02em', lineHeight: 1.08 }}>
+      <h2 style={{ fontSize: 62, fontWeight: 800, color: '#fff', margin: '0 0 32px', letterSpacing: '-0.02em', lineHeight: 1.08 }}>
         {title}
       </h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 900 }}>
         {lines.map((line, i) => (
-          <p key={i} style={{ fontSize: 32, color: '#e0e0e0', lineHeight: 1.5, margin: 0 }}>{line}</p>
+          <p key={i} style={{ fontSize: 36, color: '#e0e0e0', lineHeight: 1.45, margin: 0 }}>{line}</p>
         ))}
       </div>
       <div style={{ position: 'absolute', bottom: 44 }}><CoduyLogo height={20} /></div>
@@ -97,22 +97,22 @@ export const SlideLearn: React.FC<{
       <div style={{ position: 'absolute', top: 56, left: 56, right: 56, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ width: 10, height: 10, borderRadius: 5, background: '#fff' }} />
-          <span style={{ fontSize: 20, color: '#bbb', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>
+          <span style={{ fontSize: 22, color: '#bbb', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>
             {lang === 'sk' ? 'Teória' : 'Learning'}
           </span>
         </div>
-        <div style={{ padding: '6px 18px', borderRadius: 20, background: '#1a1a1a', border: '1px solid #333', fontSize: 20, color: '#aaa', fontWeight: 700 }}>
+        <div style={{ padding: '8px 20px', borderRadius: 22, background: '#1a1a1a', border: '1px solid #333', fontSize: 22, color: '#aaa', fontWeight: 700 }}>
           {slideNumber}/{totalSlides}
         </div>
       </div>
       {heading && (
-        <h2 style={{ fontSize: 64, fontWeight: 800, color: '#ffffff', margin: '0 0 28px', letterSpacing: '-0.02em', lineHeight: 1.08, maxWidth: 900 }}>
+        <h2 style={{ fontSize: 72, fontWeight: 800, color: '#ffffff', margin: '0 0 28px', letterSpacing: '-0.02em', lineHeight: 1.06, maxWidth: 920 }}>
           {heading}
         </h2>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 18, maxWidth: 900 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 18, maxWidth: 920 }}>
         {bodyLines.slice(0, 5).map((para, i) => (
-          <p key={i} style={{ fontSize: 36, color: '#e0e0e0', lineHeight: 1.45, margin: 0 }}>{para}</p>
+          <p key={i} style={{ fontSize: 38, color: '#e0e0e0', lineHeight: 1.42, margin: 0 }}>{para}</p>
         ))}
       </div>
       <div style={{ position: 'absolute', bottom: 44 }}><CoduyLogo height={20} /></div>
@@ -133,12 +133,12 @@ export const SlideFunFact: React.FC<{
 
   return (
     <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 56px', textAlign: 'center' }}>
-      <div style={{ padding: '16px 40px', borderRadius: 50, background: '#1a1a1a', border: '2px solid #333', fontSize: 26, color: '#fff', fontWeight: 700, marginBottom: 44 }}>
+      <div style={{ padding: '18px 44px', borderRadius: 50, background: '#1a1a1a', border: '2px solid #333', fontSize: 30, color: '#fff', fontWeight: 700, marginBottom: 44 }}>
         {label}
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 900 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 920 }}>
         {lines.map((line, i) => (
-          <p key={i} style={{ fontSize: 36, color: '#e0e0e0', lineHeight: 1.5, margin: 0 }}>{line}</p>
+          <p key={i} style={{ fontSize: 40, color: '#e0e0e0', lineHeight: 1.45, margin: 0 }}>{line}</p>
         ))}
       </div>
       <div style={{ position: 'absolute', bottom: 44 }}><CoduyLogo height={20} /></div>
@@ -156,18 +156,18 @@ export const SlideWhyCare: React.FC<{
 
   return (
     <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 56px', textAlign: 'center' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
-        <div style={{ width: 10, height: 10, borderRadius: 5, background: '#f59e0b' }} />
-        <span style={{ fontSize: 20, color: '#f59e0b', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 36 }}>
+        <div style={{ width: 12, height: 12, borderRadius: 6, background: '#4ade80' }} />
+        <span style={{ fontSize: 22, color: '#4ade80', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
           {lang === 'sk' ? 'Prečo na tom záleží?' : 'Why should a programmer care?'}
         </span>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 18, maxWidth: 900, marginBottom: 32 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 18, maxWidth: 920, marginBottom: 28 }}>
         {lines.map((line, i) => (
-          <p key={i} style={{ fontSize: 34, color: '#e0e0e0', lineHeight: 1.5, margin: 0 }}>{line}</p>
+          <p key={i} style={{ fontSize: 38, color: '#e0e0e0', lineHeight: 1.45, margin: 0 }}>{line}</p>
         ))}
       </div>
-      <ByteMascot size={180} equipment={equipment} />
+      <ByteMascot size={200} equipment={equipment} />
       <div style={{ position: 'absolute', bottom: 44 }}><CoduyLogo height={20} /></div>
     </AbsoluteFill>
   );
