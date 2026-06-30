@@ -18,7 +18,8 @@ export const Slide1Video: React.FC<{
   moduleTitle: string;
   equipment: Record<string, string>;
   levelBadge?: string;
-}> = ({ title, moduleTitle, equipment, levelBadge }) => {
+  lang?: string;
+}> = ({ title, moduleTitle, equipment, levelBadge, lang = 'en' }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -69,7 +70,7 @@ export const Slide1Video: React.FC<{
         padding: '16px 44px', borderRadius: 50,
         background: '#161616', border: '2px solid #2a2a2a',
       }}>
-        <p style={{ fontSize: 28, color: '#aaa', fontWeight: 600, margin: 0 }}>Swipe to learn →</p>
+        <p style={{ fontSize: 28, color: '#aaa', fontWeight: 600, margin: 0 }}>{lang === 'sk' ? 'Pokračuj potiahnutím →' : 'Swipe to learn →'}</p>
       </div>
 
       {/* Coduy logo */}

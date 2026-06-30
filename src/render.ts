@@ -47,7 +47,7 @@ export async function renderSlides(model: SlideModel, lang: 'en' | 'sk'): Promis
   const realWorld = les.real_world;
 
   // Slide 1: Video (mascot + title)
-  const videoProps = { title, moduleTitle, equipment: model.equipment, levelBadge };
+  const videoProps = { title, moduleTitle, equipment: model.equipment, levelBadge, lang };
   const videoPath = path.join(OUT_DIR, `${prefix}_slide1.mp4`);
   console.log(`🎬 Rendering video slide (${lang}): "${title}"`);
   const videoComp = await getComposition(serveUrl, 'Slide1Video', videoProps);
