@@ -196,9 +196,9 @@ function buildCaption(lesson: LessonData, lang: 'en' | 'sk'): string {
 
   // CTA
   if (lang === 'sk') {
-    caption += '📲 Cela lekcia na Coduy app. Stiahni si free na App Store.\n\n';
+    caption += '📲 Celá lekcia na Coduy app. Navštív coduy.sk alebo sťahuj free na App Store a Google Play.\n\n';
   } else {
-    caption += '📲 Full lesson on Coduy app. Download free on the App Store.\n\n';
+    caption += '📲 Full lesson on Coduy app. Visit coduy.com or download free on the App Store and Google Play.\n\n';
   }
 
   caption += '#coding #programming #learntocode #coduy #tech #computerscience #developer #software';
