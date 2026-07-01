@@ -1,6 +1,7 @@
 import { registerRoot, Composition } from 'remotion';
 import { Slide1Video, SlideIntro, SlideLearn, SlideFunFact, SlideWhyCare, SlideCTA } from './compositions';
 import { SlideQuestion, SlideAnswer, SlideExplanation } from './quizCompositions';
+import { SlideGlossaryTerm, SlideGlossarySimple } from './glossaryCompositions';
 
 const W = 1080;
 const H = 1440;
@@ -30,6 +31,10 @@ export const RemotionRoot: React.FC = () => (
       defaultProps={defaultQuizProps} />
     <Composition id="SlideExplanation" component={SlideExplanation} durationInFrames={1} fps={FPS} width={W} height={H}
       defaultProps={{ ...defaultQuizProps, explanation: 'Because...' }} />
+    <Composition id="SlideGlossaryTerm" component={SlideGlossaryTerm} durationInFrames={1} fps={FPS} width={W} height={H}
+      defaultProps={{ term: 'API', short: 'Application Programming Interface', category: 'skratka', explanation: 'Def', example: 'code', antenna: 'ant-star', lang: 'en' }} />
+    <Composition id="SlideGlossarySimple" component={SlideGlossarySimple} durationInFrames={1} fps={FPS} width={W} height={H}
+      defaultProps={{ term: 'API', simpleExplanation: 'Simple', lang: 'en' }} />
   </>
 );
 

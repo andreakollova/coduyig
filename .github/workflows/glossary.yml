@@ -1,0 +1,33 @@
+name: Daily Glossary Post
+
+on:
+  schedule:
+    - cron: '0 15 * * *'  # 15:00 UTC = 17:00 CEST
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run'
+        type: boolean
+        default: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: sudo apt-get update && sudo apt-get install -y chromium-browser ffmpeg
+      - run: npm install
+      - name: Run glossary publisher
+        env:
+          IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
+          IG_PAGE_TOKEN_SK: ${{ secrets.IG_PAGE_TOKEN_SK }}
+          IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
+          IG_USER_ID_SK: ${{ secrets.IG_USER_ID_SK }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: npx tsx src/indexGlossary.ts ${{ inputs.dry_run == 'true' && '--dry-run' || '' }}
