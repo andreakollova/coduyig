@@ -35,7 +35,7 @@ async function main() {
     const question = lang === 'sk' ? quiz.question_text_sk : quiz.question_text;
     const options = quiz.options.map(o => ({
       label: o.option_label,
-      text: lang === 'sk' ? o.option_text_sk : o.option_text,
+      text: (lang === 'sk' ? (o.option_text_sk || o.option_text) : o.option_text) || '',
       isCorrect: o.is_correct,
     }));
     const explanation = lang === 'sk' ? quiz.explanation.sk : quiz.explanation.en;
