@@ -24,16 +24,16 @@ export const SlideQuestion: React.FC<{
   const breathe = interpolate(Math.sin(frame / fps * Math.PI * 0.5), [-1, 1], [0.97, 1.03]);
 
   return (
-    <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '48px 48px', textAlign: 'center' }}>
-      {/* Title ABOVE Byte */}
-      <h1 style={{ fontSize: 68, fontWeight: 800, color: '#fff', margin: '0 0 20px', lineHeight: 1.06, letterSpacing: '-0.03em' }}>
-        {lang === 'sk' ? 'Vieš správnu odpoveď?' : 'Do you know the answer?'}
-      </h1>
-
-      {/* Byte animated */}
+    <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 48px', textAlign: 'center' }}>
+      {/* Byte ABOVE title, animated */}
       <div style={{ transform: `scale(${breathe})`, marginBottom: 16 }}>
         <ByteMascot size={140} equipment={{}} />
       </div>
+
+      {/* Title */}
+      <h1 style={{ fontSize: 68, fontWeight: 800, color: '#fff', margin: '0 0 20px', lineHeight: 1.06, letterSpacing: '-0.03em' }}>
+        {lang === 'sk' ? 'Vieš správnu odpoveď?' : 'Do you know the answer?'}
+      </h1>
 
       {/* Question */}
       <p style={{ fontSize: 40, color: '#e0e0e0', margin: '0 0 20px', lineHeight: 1.35, maxWidth: 920 }}>
@@ -66,18 +66,18 @@ export const SlideQuestion: React.FC<{
               width: 42, height: 42, borderRadius: 12, flexShrink: 0,
               background: '#222', border: '2px solid #333',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 22, fontWeight: 700, color: '#aaa',
+              fontSize: 24, fontWeight: 700, color: "#aaa",
             }}>
               {opt.label}
             </div>
-            <span style={{ fontSize: 30, color: '#ddd', fontWeight: 500 }}>{opt.text}</span>
+            <span style={{ fontSize: 32, color: "#ddd", fontWeight: 500 }}>{opt.text}</span>
           </div>
         ))}
       </div>
 
       {/* Swipe hint */}
       <div style={{ marginTop: 24, padding: '16px 40px', borderRadius: 50, background: '#161616', border: '2px solid #2a2a2a' }}>
-        <p style={{ fontSize: 28, color: '#bbb', fontWeight: 600, margin: 0 }}>
+        <p style={{ fontSize: 30, color: '#bbb', fontWeight: 600, margin: 0 }}>
           {lang === 'sk' ? 'Swipni doľava →' : 'Swipe left →'}
         </p>
       </div>
@@ -99,16 +99,16 @@ export const SlideAnswer: React.FC<{
   const breathe = interpolate(Math.sin(frame / fps * Math.PI * 0.5), [-1, 1], [0.97, 1.03]);
 
   return (
-    <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '48px 48px', textAlign: 'center' }}>
-      {/* Title ABOVE Byte — green */}
-      <h1 style={{ fontSize: 68, fontWeight: 800, color: '#4ade80', margin: '0 0 20px', lineHeight: 1.06, letterSpacing: '-0.03em' }}>
-        {lang === 'sk' ? 'Správna odpoveď!' : 'Correct Answer!'}
-      </h1>
-
-      {/* Byte animated */}
+    <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 48px', textAlign: 'center' }}>
+      {/* Byte ABOVE title, animated */}
       <div style={{ transform: `scale(${breathe})`, marginBottom: 16 }}>
         <ByteMascot size={140} equipment={{}} />
       </div>
+
+      {/* Title — green */}
+      <h1 style={{ fontSize: 68, fontWeight: 800, color: '#4ade80', margin: '0 0 20px', lineHeight: 1.06, letterSpacing: '-0.03em' }}>
+        {lang === 'sk' ? 'Správna odpoveď!' : 'Correct Answer!'}
+      </h1>
 
       {/* Question */}
       <p style={{ fontSize: 38, color: '#ccc', margin: '0 0 20px', lineHeight: 1.35, maxWidth: 920 }}>
