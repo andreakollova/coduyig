@@ -130,15 +130,17 @@ export const SlideGlossarySimple: React.FC<{
 }> = ({ term, simpleExplanation, lang, equipment = {} }) => {
   return (
     <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 52px', textAlign: 'center' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
-        <div style={{ width: 12, height: 12, borderRadius: 6, background: '#4ade80' }} />
-        <span style={{ fontSize: 24, color: '#4ade80', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
+      {/* Term name — smaller, above title */}
+      <p style={{ fontSize: 28, color: '#999', fontWeight: 700, margin: '0 0 12px', letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
+        {term}
+      </p>
+
+      {/* Main title */}
+      <h2 style={{ fontSize: 64, fontWeight: 800, color: '#fff', margin: '0 0 36px', letterSpacing: '-0.02em', lineHeight: 1.08 }}>
+        <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
+          <span style={{ width: 14, height: 14, borderRadius: 7, background: '#4ade80', flexShrink: 0 }} />
           {lang === 'sk' ? 'Vysvetlené ľudskou rečou' : 'Explained Simply'}
         </span>
-      </div>
-
-      <h2 style={{ fontSize: 80, fontWeight: 800, color: '#fff', margin: '0 0 40px', letterSpacing: '-0.03em', lineHeight: 1.06 }}>
-        {term}
       </h2>
 
       <p style={{ fontSize: 40, color: '#e0e0e0', lineHeight: 1.5, margin: '0 0 36px', maxWidth: 900 }}>
