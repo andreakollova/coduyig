@@ -10,11 +10,7 @@ const CoduyLogo: React.FC<{ height?: number }> = ({ height = 28 }) => (
   <Img src={LOGO_SRC} style={{ height, objectFit: 'contain' }} />
 );
 
-interface QuizOption {
-  label: string;
-  text: string;
-  isCorrect: boolean;
-}
+interface QuizOption { label: string; text: string; isCorrect: boolean; }
 
 /* ========== SLIDE 1: Question ========== */
 export const SlideQuestion: React.FC<{
@@ -28,71 +24,70 @@ export const SlideQuestion: React.FC<{
   const breathe = interpolate(Math.sin(frame / fps * Math.PI * 0.5), [-1, 1], [0.97, 1.03]);
 
   return (
-    <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '52px 52px', textAlign: 'center' }}>
+    <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '48px 48px', textAlign: 'center' }}>
+      {/* Title ABOVE Byte */}
+      <h1 style={{ fontSize: 68, fontWeight: 800, color: '#fff', margin: '0 0 20px', lineHeight: 1.06, letterSpacing: '-0.03em' }}>
+        {lang === 'sk' ? 'Vieš správnu odpoveď?' : 'Do you know the answer?'}
+      </h1>
+
       {/* Byte animated */}
-      <div style={{ transform: `scale(${breathe})`, marginBottom: 20 }}>
+      <div style={{ transform: `scale(${breathe})`, marginBottom: 16 }}>
         <ByteMascot size={140} equipment={{}} />
       </div>
 
-      {/* Title */}
-      <h1 style={{ fontSize: 56, fontWeight: 800, color: '#fff', margin: '0 0 28px', lineHeight: 1.08, letterSpacing: '-0.02em' }}>
-        {lang === 'sk' ? 'Vieš odpoveď?' : 'Do you know?'}
-      </h1>
-
       {/* Question */}
-      <p style={{ fontSize: 36, color: '#e0e0e0', margin: '0 0 24px', lineHeight: 1.4, maxWidth: 920 }}>
+      <p style={{ fontSize: 40, color: '#e0e0e0', margin: '0 0 20px', lineHeight: 1.35, maxWidth: 920 }}>
         {question}
       </p>
 
       {/* Code snippet */}
-      {codeSnippet && (
-        <div style={{ width: '100%', maxWidth: 900, borderRadius: 18, overflow: 'hidden', border: '1px solid #222', marginBottom: 24 }}>
+      {codeSnippet && codeSnippet.trim() && (
+        <div style={{ width: '100%', maxWidth: 900, borderRadius: 18, overflow: 'hidden', border: '1px solid #222', marginBottom: 20 }}>
           <div style={{ background: '#161616', padding: '10px 18px', display: 'flex', gap: 7 }}>
             <div style={{ width: 12, height: 12, borderRadius: 6, background: '#ff5f57' }} />
             <div style={{ width: 12, height: 12, borderRadius: 6, background: '#febc2e' }} />
             <div style={{ width: 12, height: 12, borderRadius: 6, background: '#28c840' }} />
           </div>
-          <pre style={{ background: '#111', padding: '20px', fontSize: 26, color: '#e0e0e0', margin: 0, textAlign: 'left', lineHeight: 1.6, fontFamily: "'JetBrains Mono', monospace" }}>
+          <pre style={{ background: '#111', padding: '20px', fontSize: 28, color: '#e0e0e0', margin: 0, textAlign: 'left', lineHeight: 1.6, fontFamily: "'JetBrains Mono', monospace" }}>
             {codeSnippet}
           </pre>
         </div>
       )}
 
-      {/* Options */}
+      {/* Options — centered */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%', maxWidth: 900 }}>
         {(options || []).map((opt) => (
           <div key={opt.label} style={{
-            display: 'flex', alignItems: 'center', gap: 16,
-            padding: '18px 24px', borderRadius: 14,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16,
+            padding: '18px 28px', borderRadius: 16,
             background: '#161616', border: '2px solid #2a2a2a',
-            textAlign: 'left',
           }}>
             <div style={{
-              width: 40, height: 40, borderRadius: 10, flexShrink: 0,
+              width: 42, height: 42, borderRadius: 12, flexShrink: 0,
               background: '#222', border: '2px solid #333',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 20, fontWeight: 700, color: '#aaa',
+              fontSize: 22, fontWeight: 700, color: '#aaa',
             }}>
               {opt.label}
             </div>
-            <span style={{ fontSize: 26, color: '#ddd', fontWeight: 500 }}>{opt.text}</span>
+            <span style={{ fontSize: 30, color: '#ddd', fontWeight: 500 }}>{opt.text}</span>
           </div>
         ))}
       </div>
 
       {/* Swipe hint */}
-      <div style={{ marginTop: 28, padding: '14px 36px', borderRadius: 50, background: '#161616', border: '2px solid #2a2a2a' }}>
-        <p style={{ fontSize: 24, color: '#bbb', fontWeight: 600, margin: 0 }}>
+      <div style={{ marginTop: 24, padding: '16px 40px', borderRadius: 50, background: '#161616', border: '2px solid #2a2a2a' }}>
+        <p style={{ fontSize: 28, color: '#bbb', fontWeight: 600, margin: 0 }}>
           {lang === 'sk' ? 'Swipni doľava →' : 'Swipe left →'}
         </p>
       </div>
 
-      <div style={{ position: 'absolute', bottom: 40 }}><CoduyLogo height={22} /></div>
+      <div style={{ position: 'absolute', bottom: 40 }}><CoduyLogo height={24} /></div>
     </AbsoluteFill>
   );
 };
 
-/* ========== SLIDE 2: Answer revealed ========== */
+/* ========== SLIDE 2: Answer ========== */
 export const SlideAnswer: React.FC<{
   question: string;
   options: QuizOption[];
@@ -104,63 +99,62 @@ export const SlideAnswer: React.FC<{
   const breathe = interpolate(Math.sin(frame / fps * Math.PI * 0.5), [-1, 1], [0.97, 1.03]);
 
   return (
-    <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '52px 52px', textAlign: 'center' }}>
-      {/* Byte animated */}
-      <div style={{ transform: `scale(${breathe})`, marginBottom: 20 }}>
-        <ByteMascot size={140} equipment={{}} />
-      </div>
-
-      {/* Title */}
-      <h1 style={{ fontSize: 56, fontWeight: 800, color: '#4ade80', margin: '0 0 28px', lineHeight: 1.08, letterSpacing: '-0.02em' }}>
+    <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '48px 48px', textAlign: 'center' }}>
+      {/* Title ABOVE Byte — green */}
+      <h1 style={{ fontSize: 68, fontWeight: 800, color: '#4ade80', margin: '0 0 20px', lineHeight: 1.06, letterSpacing: '-0.03em' }}>
         {lang === 'sk' ? 'Správna odpoveď!' : 'Correct Answer!'}
       </h1>
 
+      {/* Byte animated */}
+      <div style={{ transform: `scale(${breathe})`, marginBottom: 16 }}>
+        <ByteMascot size={140} equipment={{}} />
+      </div>
+
       {/* Question */}
-      <p style={{ fontSize: 34, color: '#ccc', margin: '0 0 24px', lineHeight: 1.4, maxWidth: 920 }}>
+      <p style={{ fontSize: 38, color: '#ccc', margin: '0 0 20px', lineHeight: 1.35, maxWidth: 920 }}>
         {question}
       </p>
 
       {/* Code snippet */}
-      {codeSnippet && (
-        <div style={{ width: '100%', maxWidth: 900, borderRadius: 18, overflow: 'hidden', border: '1px solid #222', marginBottom: 24 }}>
+      {codeSnippet && codeSnippet.trim() && (
+        <div style={{ width: '100%', maxWidth: 900, borderRadius: 18, overflow: 'hidden', border: '1px solid #222', marginBottom: 20 }}>
           <div style={{ background: '#161616', padding: '10px 18px', display: 'flex', gap: 7 }}>
             <div style={{ width: 12, height: 12, borderRadius: 6, background: '#ff5f57' }} />
             <div style={{ width: 12, height: 12, borderRadius: 6, background: '#febc2e' }} />
             <div style={{ width: 12, height: 12, borderRadius: 6, background: '#28c840' }} />
           </div>
-          <pre style={{ background: '#111', padding: '20px', fontSize: 26, color: '#e0e0e0', margin: 0, textAlign: 'left', lineHeight: 1.6, fontFamily: "'JetBrains Mono', monospace" }}>
+          <pre style={{ background: '#111', padding: '20px', fontSize: 28, color: '#e0e0e0', margin: 0, textAlign: 'left', lineHeight: 1.6, fontFamily: "'JetBrains Mono', monospace" }}>
             {codeSnippet}
           </pre>
         </div>
       )}
 
-      {/* Options — correct highlighted */}
+      {/* Options — correct highlighted, centered */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%', maxWidth: 900 }}>
         {(options || []).map((opt) => (
           <div key={opt.label} style={{
-            display: 'flex', alignItems: 'center', gap: 16,
-            padding: '18px 24px', borderRadius: 14,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16,
+            padding: '18px 28px', borderRadius: 16,
             background: opt.isCorrect ? 'rgba(74,222,128,0.1)' : '#161616',
             border: `2px solid ${opt.isCorrect ? '#4ade80' : '#1a1a1a'}`,
-            textAlign: 'left',
           }}>
             <div style={{
-              width: 40, height: 40, borderRadius: 10, flexShrink: 0,
+              width: 42, height: 42, borderRadius: 12, flexShrink: 0,
               background: opt.isCorrect ? '#4ade80' : '#222',
               border: `2px solid ${opt.isCorrect ? '#4ade80' : '#333'}`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 20, fontWeight: 700, color: opt.isCorrect ? '#052e16' : '#666',
+              fontSize: 22, fontWeight: 700, color: opt.isCorrect ? '#052e16' : '#666',
             }}>
               {opt.isCorrect ? '✓' : opt.label}
             </div>
-            <span style={{ fontSize: 26, color: opt.isCorrect ? '#4ade80' : '#666', fontWeight: opt.isCorrect ? 700 : 500 }}>
+            <span style={{ fontSize: 30, color: opt.isCorrect ? '#4ade80' : '#666', fontWeight: opt.isCorrect ? 700 : 500 }}>
               {opt.text}
             </span>
           </div>
         ))}
       </div>
 
-      <div style={{ position: 'absolute', bottom: 40 }}><CoduyLogo height={22} /></div>
+      <div style={{ position: 'absolute', bottom: 40 }}><CoduyLogo height={24} /></div>
     </AbsoluteFill>
   );
 };
@@ -172,23 +166,23 @@ export const SlideExplanation: React.FC<{
   lang: string;
 }> = ({ question, explanation, lang }) => {
   return (
-    <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 56px', textAlign: 'center' }}>
+    <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 52px', textAlign: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 36 }}>
         <div style={{ width: 12, height: 12, borderRadius: 6, background: '#4ade80' }} />
-        <span style={{ fontSize: 22, color: '#4ade80', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
+        <span style={{ fontSize: 26, color: '#4ade80', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
           {lang === 'sk' ? 'Vysvetlenie' : 'Explanation'}
         </span>
       </div>
 
-      <h2 style={{ fontSize: 42, fontWeight: 800, color: '#fff', margin: '0 0 32px', lineHeight: 1.12, maxWidth: 920 }}>
+      <h2 style={{ fontSize: 48, fontWeight: 800, color: '#fff', margin: '0 0 36px', lineHeight: 1.1, maxWidth: 920 }}>
         {question}
       </h2>
 
-      <p style={{ fontSize: 38, color: '#e0e0e0', lineHeight: 1.5, margin: 0, maxWidth: 900 }}>
+      <p style={{ fontSize: 42, color: '#e0e0e0', lineHeight: 1.45, margin: 0, maxWidth: 900 }}>
         {explanation}
       </p>
 
-      <div style={{ position: 'absolute', bottom: 44 }}><CoduyLogo height={20} /></div>
+      <div style={{ position: 'absolute', bottom: 44 }}><CoduyLogo height={22} /></div>
     </AbsoluteFill>
   );
 };
