@@ -35,7 +35,7 @@ export const RemotionRoot: React.FC = () => (
       defaultProps={{ lang: 'en' as const, equipment: {} }} />
     <Composition id="SlideQuestion" component={SlideQuestion} durationInFrames={5 * FPS} fps={FPS} width={W} height={H}
       defaultProps={defaultQuizProps} />
-    <Composition id="SlideAnswer" component={SlideAnswer} durationInFrames={1} fps={FPS} width={W} height={H}
+    <Composition id="SlideAnswer" component={SlideAnswer} durationInFrames={5 * FPS} fps={FPS} width={W} height={H}
       defaultProps={defaultQuizProps} />
     <Composition id="SlideExplanation" component={SlideExplanation} durationInFrames={1} fps={FPS} width={W} height={H}
       defaultProps={{ ...defaultQuizProps, explanation: 'Because...' }} />

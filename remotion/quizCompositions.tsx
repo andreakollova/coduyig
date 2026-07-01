@@ -100,18 +100,33 @@ export const SlideQuestion: React.FC<{
   );
 };
 
-/* ========== SLIDE 2: Answer (static PNG) ========== */
+/* ========== SLIDE 2: Answer (VIDEO — celebrating Byte) ========== */
 export const SlideAnswer: React.FC<{
   question: string;
   options: QuizOption[];
   codeSnippet?: string | null;
   lang: string;
 }> = ({ question, options = [], codeSnippet, lang }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  // Celebrating animation — wiggle + bounce
+  const wiggle = interpolate(Math.sin(frame / fps * Math.PI * 4), [-1, 1], [-3, 3]);
+  const bounce = interpolate(Math.sin(frame / fps * Math.PI * 2), [-1, 1], [0, -10]);
+
+  // Sparkle opacity
+  const sparkle1 = interpolate(Math.sin(frame / fps * Math.PI * 3), [-1, 1], [0.2, 1]);
+  const sparkle2 = interpolate(Math.sin(frame / fps * Math.PI * 3 + 2), [-1, 1], [0.2, 1]);
+
   return (
     <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '44px 48px', textAlign: 'center' }}>
-      {/* Byte */}
-      <div style={{ marginBottom: 12 }}>
+      {/* Byte — celebrating! */}
+      <div style={{ marginBottom: 12, transform: `rotate(${wiggle}deg) translateY(${bounce}px)`, position: 'relative' }}>
         <ByteMascot size={140} equipment={{}} />
+        {/* Sparkles around Byte */}
+        <div style={{ position: 'absolute', top: -5, left: -15, fontSize: 20, opacity: sparkle1 }}>✦</div>
+        <div style={{ position: 'absolute', top: 10, right: -15, fontSize: 16, opacity: sparkle2 }}>✦</div>
+        <div style={{ position: 'absolute', bottom: 20, left: -10, fontSize: 14, opacity: sparkle1 * 0.8 }}>✦</div>
       </div>
 
       {/* Title — green */}

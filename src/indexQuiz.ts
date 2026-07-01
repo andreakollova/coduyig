@@ -51,11 +51,11 @@ async function main() {
     const p1 = path.join(OUT_DIR, `${lang}_quiz1.mp4`);
     await renderMedia({ composition: q1, serveUrl, codec: 'h264', outputLocation: p1, inputProps: baseProps });
 
-    // Slide 2: Answer
-    console.log(`🖼️ [${lang}] Answer slide`);
+    // Slide 2: Answer — VIDEO (celebrating Byte)
+    console.log(`🎬 [${lang}] Answer video`);
     const q2 = await comp('SlideAnswer', baseProps);
-    const p2 = path.join(OUT_DIR, `${lang}_quiz2.png`);
-    await renderStill({ composition: q2, serveUrl, output: p2, inputProps: baseProps });
+    const p2 = path.join(OUT_DIR, `${lang}_quiz2.mp4`);
+    await renderMedia({ composition: q2, serveUrl, codec: 'h264', outputLocation: p2, inputProps: baseProps });
 
     // Slide 3: Explanation
     console.log(`🖼️ [${lang}] Explanation slide`);
@@ -77,7 +77,7 @@ async function main() {
   const mkFiles = (lang: string) => ({
     files: [
       { path: path.join(OUT_DIR, `${lang}_quiz1.mp4`), type: 'video' as const, slideIndex: 0 },
-      { path: path.join(OUT_DIR, `${lang}_quiz2.png`), type: 'image' as const, slideIndex: 1 },
+      { path: path.join(OUT_DIR, `${lang}_quiz2.mp4`), type: 'video' as const, slideIndex: 1 },
       { path: path.join(OUT_DIR, `${lang}_quiz3.png`), type: 'image' as const, slideIndex: 2 },
       { path: path.join(OUT_DIR, `${lang}_quiz4.png`), type: 'image' as const, slideIndex: 3 },
     ],
