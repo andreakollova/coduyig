@@ -8,7 +8,15 @@ const H = 1440;
 const FPS = 30;
 
 const defaultQuizProps = {
-  question: 'Example?', options: [{ label: 'A', text: 'Yes', isCorrect: true }], lang: 'en',
+  question: 'Example question?',
+  options: [
+    { label: 'A', text: 'First option', isCorrect: false },
+    { label: 'B', text: 'Second option', isCorrect: true },
+    { label: 'C', text: 'Third option', isCorrect: false },
+    { label: 'D', text: 'Fourth option', isCorrect: false },
+  ],
+  codeSnippet: '',
+  lang: 'en',
 };
 
 export const RemotionRoot: React.FC = () => (

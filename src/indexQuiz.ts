@@ -40,7 +40,10 @@ async function main() {
     }));
     const explanation = lang === 'sk' ? quiz.explanation.sk : quiz.explanation.en;
 
-    const baseProps = { question, options, codeSnippet: quiz.code_snippet, lang };
+    const baseProps = { question, options, codeSnippet: quiz.code_snippet || '', lang };
+
+    // Log options for debugging
+    console.log(`   Options: ${options.map(o => `${o.label}: ${o.text} ${o.isCorrect ? '✓' : ''}`).join(' | ')}`);
 
     // Slide 1: Question
     console.log(`🖼️ [${lang}] Question slide`);
@@ -50,9 +53,9 @@ async function main() {
 
     // Slide 2: Answer
     console.log(`🖼️ [${lang}] Answer slide`);
-    const q2 = await comp('SlideAnswer', { ...baseProps, showAnswer: true });
+    const q2 = await comp('SlideAnswer', baseProps);
     const p2 = path.join(OUT_DIR, `${lang}_quiz2.png`);
-    await renderStill({ composition: q2, serveUrl, output: p2, inputProps: { ...baseProps, showAnswer: true } });
+    await renderStill({ composition: q2, serveUrl, output: p2, inputProps: baseProps });
 
     // Slide 3: Explanation
     console.log(`🖼️ [${lang}] Explanation slide`);
