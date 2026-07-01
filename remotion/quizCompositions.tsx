@@ -36,15 +36,15 @@ export const SlideQuestion: React.FC<{
         <ByteMascot size={140} equipment={{}} />
       </div>
 
-      {/* Title */}
-      <h1 style={{ fontSize: 68, fontWeight: 800, color: '#fff', margin: '0 0 16px', lineHeight: 1.06, letterSpacing: '-0.03em' }}>
+      {/* Title — smaller, not bold */}
+      <p style={{ fontSize: 28, color: '#999', margin: '0 0 12px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>
         {lang === 'sk' ? 'Vieš správnu odpoveď?' : 'Do you know the answer?'}
-      </h1>
-
-      {/* Question */}
-      <p style={{ fontSize: 40, color: '#e0e0e0', margin: '0 0 32px', lineHeight: 1.35, maxWidth: 920 }}>
-        {question}
       </p>
+
+      {/* Question — big heading */}
+      <h1 style={{ fontSize: 52, fontWeight: 800, color: '#fff', margin: '0 0 40px', lineHeight: 1.12, letterSpacing: '-0.02em', maxWidth: 920 }}>
+        {question}
+      </h1>
 
       {/* Code snippet */}
       {codeSnippet && codeSnippet.trim() && (
@@ -82,8 +82,8 @@ export const SlideQuestion: React.FC<{
       </div>
 
       {/* Swipe hint — animated blink */}
-      <div style={{ marginTop: 32, opacity: swipeOp, padding: '16px 44px', borderRadius: 50, background: '#161616', border: '2px solid #2a2a2a', position: 'relative' }}>
-        <p style={{ fontSize: 32, color: '#bbb', fontWeight: 600, margin: 0 }}>
+      <div style={{ marginTop: 36, opacity: swipeOp, padding: '18px 48px', borderRadius: 50, background: '#161616', border: '2px solid #2a2a2a', position: 'relative' }}>
+        <p style={{ fontSize: 34, color: '#bbb', fontWeight: 600, margin: 0 }}>
           {lang === 'sk' ? 'Swipni doľava →' : 'Swipe left →'}
         </p>
       </div>
@@ -129,15 +129,15 @@ export const SlideAnswer: React.FC<{
         <div style={{ position: 'absolute', bottom: 20, left: -10, fontSize: 14, opacity: sparkle1 * 0.8 }}>✦</div>
       </div>
 
-      {/* Title — green */}
-      <h1 style={{ fontSize: 68, fontWeight: 800, color: '#4ade80', margin: '0 0 16px', lineHeight: 1.06, letterSpacing: '-0.03em' }}>
+      {/* Title — smaller, green, not bold */}
+      <p style={{ fontSize: 28, color: '#4ade80', margin: '0 0 12px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>
         {lang === 'sk' ? 'Správna odpoveď!' : 'Correct Answer!'}
-      </h1>
-
-      {/* Question */}
-      <p style={{ fontSize: 38, color: '#ccc', margin: '0 0 32px', lineHeight: 1.35, maxWidth: 920 }}>
-        {question}
       </p>
+
+      {/* Question — big heading */}
+      <h1 style={{ fontSize: 52, fontWeight: 800, color: '#fff', margin: '0 0 40px', lineHeight: 1.12, letterSpacing: '-0.02em', maxWidth: 920 }}>
+        {question}
+      </h1>
 
       {/* Code snippet */}
       {codeSnippet && codeSnippet.trim() && (

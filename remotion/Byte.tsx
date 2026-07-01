@@ -13,8 +13,8 @@ export const ByteMascot: React.FC<ByteProps> = ({ size = 400, equipment = {} }) 
   // Float animation
   const floatY = interpolate(Math.sin(frame / fps * Math.PI * 0.7), [-1, 1], [-8, 8]);
 
-  // Blink animation (every ~3.5s)
-  const blinkCycle = frame % Math.round(fps * 3.5);
+  // Blink animation (every ~1.5s — frequent blinking)
+  const blinkCycle = frame % Math.round(fps * 1.5);
   const blinkPhase = blinkCycle < 6 ? interpolate(blinkCycle, [0, 3, 6], [1, 0.05, 1]) : 1;
 
   const eyeRy = 9 * blinkPhase;
