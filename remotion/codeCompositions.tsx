@@ -201,12 +201,12 @@ export const SlideCodeExplanation: React.FC<{
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
         <div style={{ width: 12, height: 12, borderRadius: 6, background: '#4ade80' }} />
         <span style={{ fontSize: 28, color: '#4ade80', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
-          {lang === 'sk' ? 'Vysvetlenie' : 'Explanation'}
+          {lang === 'sk' ? 'Doplňovačka' : 'Fill in the code'}
         </span>
       </div>
 
       <h2 style={{ fontSize: 50, fontWeight: 800, color: '#fff', margin: '0 0 24px', lineHeight: 1.1, maxWidth: 920 }}>
-        {prompt}
+        {lang === 'sk' ? 'Vysvetlenie' : 'Explanation'}
       </h2>
 
       <div style={{
