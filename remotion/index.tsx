@@ -39,7 +39,7 @@ export const RemotionRoot: React.FC = () => (
       defaultProps={defaultQuizProps} />
     <Composition id="SlideExplanation" component={SlideExplanation} durationInFrames={1} fps={FPS} width={W} height={H}
       defaultProps={{ ...defaultQuizProps, explanation: 'Because...' }} />
-    <Composition id="SlideGlossaryTerm" component={SlideGlossaryTerm} durationInFrames={1} fps={FPS} width={W} height={H}
+    <Composition id="SlideGlossaryTerm" component={SlideGlossaryTerm} durationInFrames={5 * FPS} fps={FPS} width={W} height={H}
       defaultProps={{ term: 'API', short: 'Application Programming Interface', category: 'skratka', explanation: 'Def', example: 'code', antenna: 'ant-star', lang: 'en' }} />
     <Composition id="SlideGlossarySimple" component={SlideGlossarySimple} durationInFrames={1} fps={FPS} width={W} height={H}
       defaultProps={{ term: 'API', simpleExplanation: 'Simple', lang: 'en' }} />

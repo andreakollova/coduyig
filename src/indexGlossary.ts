@@ -2,7 +2,7 @@ import 'dotenv/config';
 import path from 'path';
 import fs from 'fs';
 import { bundle } from '@remotion/bundler';
-import { renderStill, selectComposition } from '@remotion/renderer';
+import { renderMedia, renderStill, selectComposition } from '@remotion/renderer';
 import { pickGlossary } from './pickGlossary';
 import { uploadSlides } from './upload';
 import { publishCarousel } from './instagram';
@@ -29,12 +29,12 @@ async function main() {
     const explanation = lang === 'sk' ? entry.explanation_sk : entry.explanation_en;
     const simpleExp = lang === 'sk' ? entry.simpleExplanation.sk : entry.simpleExplanation.en;
 
-    // Slide 1: Term + definition + code
+    // Slide 1: Term + definition + code — VIDEO (animated antenna)
     const s1Props = { term: entry.term, short: entry.short, category: entry.category, explanation, example: entry.example, antenna: entry.antenna, lang };
-    console.log(`🖼️ [${lang}] Term slide: ${entry.term}`);
+    console.log(`🎬 [${lang}] Term video: ${entry.term}`);
     const c1 = await comp('SlideGlossaryTerm', s1Props);
-    const p1 = path.join(OUT_DIR, `${lang}_gloss1.png`);
-    await renderStill({ composition: c1, serveUrl, output: p1, inputProps: s1Props });
+    const p1 = path.join(OUT_DIR, `${lang}_gloss1.mp4`);
+    await renderMedia({ composition: c1, serveUrl, codec: 'h264', outputLocation: p1, inputProps: s1Props });
 
     // Slide 2: Simple explanation
     const s2Props = { term: entry.term, simpleExplanation: simpleExp, lang };
@@ -55,7 +55,13 @@ async function main() {
 
   // Upload
   console.log('\n=== Uploading ===');
-  const mkFiles = (lang: string) => ({ files: [0, 1, 2].map(i => ({ path: path.join(OUT_DIR, `${lang}_gloss${i + 1}.png`), type: 'image' as const, slideIndex: i })) });
+  const mkFiles = (lang: string) => ({
+    files: [
+      { path: path.join(OUT_DIR, `${lang}_gloss1.mp4`), type: 'video' as const, slideIndex: 0 },
+      { path: path.join(OUT_DIR, `${lang}_gloss2.png`), type: 'image' as const, slideIndex: 1 },
+      { path: path.join(OUT_DIR, `${lang}_gloss3.png`), type: 'image' as const, slideIndex: 2 },
+    ],
+  });
   const enUp = await uploadSlides(0, mkFiles('en'), 'en');
   const skUp = await uploadSlides(0, mkFiles('sk'), 'sk');
 
