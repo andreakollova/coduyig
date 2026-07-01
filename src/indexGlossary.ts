@@ -37,7 +37,7 @@ async function main() {
     await renderMedia({ composition: c1, serveUrl, codec: 'h264', outputLocation: p1, inputProps: s1Props });
 
     // Slide 2: Simple explanation
-    const s2Props = { term: entry.term, simpleExplanation: simpleExp, lang };
+    const s2Props = { term: entry.term, simpleExplanation: simpleExp, lang, equipment: entry.equipment };
     console.log(`🖼️ [${lang}] Simple explanation`);
     const c2 = await comp('SlideGlossarySimple', s2Props);
     const p2 = path.join(OUT_DIR, `${lang}_gloss2.png`);

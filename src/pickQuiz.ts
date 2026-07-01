@@ -13,13 +13,31 @@ export interface QuizData {
   options: { option_label: string; option_text: string; option_text_sk: string; is_correct: boolean }[];
   explanation: { en: string; sk: string };
   postNumber: number;
+  equipment: Record<string, string>;
 }
+
+// Outfit based on module difficulty
+const beginnerOutfits: Record<string, string>[] = [
+  { hat: 'hat-beanie' }, { glasses: 'glasses-round' }, { hat: 'hat-headband' },
+  { accessory: 'acc-bowtie' }, { antenna: 'ant-heart' }, {},
+];
+const advancedOutfits: Record<string, string>[] = [
+  { hat: 'hat-graduation', glasses: 'glasses-cool' },
+  { hat: 'hat-cowboy', glasses: 'glasses-aviator' },
+  { hat: 'hat-samurai', glasses: 'glasses-frost' },
+  { hat: 'hat-fire-crown', glasses: 'glasses-flame' },
+];
+const professionalOutfits: Record<string, string>[] = [
+  { hat: 'hat-golden-crown', glasses: 'glasses-golden', accessory: 'acc-wings-gold' },
+  { hat: 'hat-galaxy', glasses: 'glasses-laser', accessory: 'acc-diamond' },
+  { hat: 'hat-void-crown', glasses: 'glasses-void', accessory: 'acc-cosmic-cape' },
+];
 
 export async function pickQuiz(): Promise<QuizData | null> {
   // Get a random MCQ question that hasn't been posted as quiz yet
   const { data: questions, error } = await sb
     .from('cb_quiz_questions')
-    .select('id, question_text, question_text_sk, question_type, correct_answer, code_snippet, quiz_posted_at, options:cb_quiz_options(option_label, option_text, option_text_sk, is_correct)')
+    .select('id, lesson_id, question_text, question_text_sk, question_type, correct_answer, code_snippet, quiz_posted_at, options:cb_quiz_options(option_label, option_text, option_text_sk, is_correct)')
     .eq('question_type', 'mcq')
     .is('quiz_posted_at', null)
     .order('id');
@@ -32,6 +50,24 @@ export async function pickQuiz(): Promise<QuizData | null> {
   // Random pick
   const q = questions[Math.floor(Math.random() * questions.length)];
 
+  // Get module number for outfit — question → lesson → module
+  const { data: lessonData } = await sb.from('cb_lessons').select('module_id').eq('id', q.lesson_id).maybeSingle();
+  let moduleNumber = 1;
+  if (lessonData) {
+    const { data: modData } = await sb.from('cb_modules').select('module_number').eq('id', lessonData.module_id).maybeSingle();
+    moduleNumber = modData?.module_number || 1;
+  }
+
+  // Pick outfit based on difficulty
+  let equipment: Record<string, string>;
+  if (moduleNumber >= 18) {
+    equipment = professionalOutfits[q.id % professionalOutfits.length];
+  } else if (moduleNumber >= 9) {
+    equipment = advancedOutfits[q.id % advancedOutfits.length];
+  } else {
+    equipment = beginnerOutfits[q.id % beginnerOutfits.length];
+  }
+
   // Count posted for numbering
   const { count } = await sb.from('cb_quiz_questions').select('id', { count: 'exact', head: true }).not('quiz_posted_at', 'is', null);
   const postNumber = (count || 0) + 1;
@@ -39,13 +75,14 @@ export async function pickQuiz(): Promise<QuizData | null> {
   // Generate explanation with GPT
   const explanation = await generateExplanation(q, postNumber);
 
-  console.log(`🧠 Picked quiz #${postNumber}: ${q.question_text.slice(0, 60)}...`);
+  console.log(`🧠 Picked quiz #${postNumber}: ${q.question_text.slice(0, 60)}... (module=${moduleNumber})`);
 
   return {
     ...q,
     options: q.options.sort((a: any, b: any) => a.option_label.localeCompare(b.option_label)),
     explanation,
     postNumber,
+    equipment,
   };
 }
 

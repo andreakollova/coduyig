@@ -89,7 +89,31 @@ export interface GlossaryData {
   simpleExplanation: { en: string; sk: string };
   postNumber: number;
   antenna: string;
+  equipment: Record<string, string>;
 }
+
+// Difficulty mapping for glossary terms
+const termDifficulty: Record<string, 'beginner' | 'advanced' | 'professional'> = {
+  html: 'beginner', css: 'beginner', ram: 'beginner', cpu: 'beginner', ssd: 'beginner',
+  http: 'beginner', git: 'beginner', npm: 'beginner',
+  api: 'advanced', json: 'advanced', sql: 'advanced', crud: 'advanced', dns: 'advanced',
+  ssh: 'advanced', dom: 'advanced',
+  jwt: 'professional', oauth: 'professional', tcp: 'professional',
+};
+
+const beginnerEquip: Record<string, string>[] = [
+  { hat: 'hat-beanie' }, { glasses: 'glasses-round' }, { hat: 'hat-headband' }, {},
+];
+const advancedEquip: Record<string, string>[] = [
+  { hat: 'hat-graduation', glasses: 'glasses-cool' },
+  { hat: 'hat-cowboy', glasses: 'glasses-aviator' },
+  { hat: 'hat-pilot', glasses: 'glasses-cool' },
+];
+const professionalEquip: Record<string, string>[] = [
+  { hat: 'hat-golden-crown', glasses: 'glasses-golden', accessory: 'acc-wings-gold' },
+  { hat: 'hat-void-crown', glasses: 'glasses-void', accessory: 'acc-cosmic-cape' },
+  { hat: 'hat-galaxy', glasses: 'glasses-laser' },
+];
 
 const antennas = ['ant-heart', 'ant-star', 'ant-lightning', 'ant-diamond', 'ant-flame-orb', 'ant-frost-crystal', 'ant-golden-star'];
 
@@ -98,10 +122,15 @@ export async function pickGlossary(): Promise<GlossaryData | null> {
   const antenna = antennas[Math.floor(Math.random() * antennas.length)];
   const postNumber = Math.floor(Math.random() * 900) + 1;
 
-  const simpleExplanation = await generateSimple(entry);
-  console.log(`📖 Picked glossary: ${entry.term}`);
+  // Pick outfit based on term difficulty
+  const diff = termDifficulty[entry.id] || 'beginner';
+  const pool = diff === 'professional' ? professionalEquip : diff === 'advanced' ? advancedEquip : beginnerEquip;
+  const equipment = pool[Math.floor(Math.random() * pool.length)];
 
-  return { ...entry, simpleExplanation, postNumber, antenna };
+  const simpleExplanation = await generateSimple(entry);
+  console.log(`📖 Picked glossary: ${entry.term} (${diff})`);
+
+  return { ...entry, simpleExplanation, postNumber, antenna, equipment };
 }
 
 async function generateSimple(entry: any): Promise<{ en: string; sk: string }> {

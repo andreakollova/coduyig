@@ -40,7 +40,7 @@ async function main() {
     }));
     const explanation = lang === 'sk' ? quiz.explanation.sk : quiz.explanation.en;
 
-    const baseProps = { question, options, codeSnippet: quiz.code_snippet || '', lang };
+    const baseProps = { question, options, codeSnippet: quiz.code_snippet || '', lang, equipment: quiz.equipment };
 
     // Log options for debugging
     console.log(`   Options: ${options.map(o => `${o.label}: ${o.text} ${o.isCorrect ? '✓' : ''}`).join(' | ')}`);

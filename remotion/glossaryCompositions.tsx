@@ -1,6 +1,7 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, useVideoConfig, staticFile, Img } from 'remotion';
 import { loadFont } from '@remotion/google-fonts/Inter';
+import { ByteMascot } from './Byte';
 
 const { fontFamily } = loadFont();
 const BG = '#0A0A0A';
@@ -125,7 +126,8 @@ export const SlideGlossarySimple: React.FC<{
   term: string;
   simpleExplanation: string;
   lang: string;
-}> = ({ term, simpleExplanation, lang }) => {
+  equipment?: Record<string, string>;
+}> = ({ term, simpleExplanation, lang, equipment = {} }) => {
   return (
     <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 52px', textAlign: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
@@ -139,9 +141,11 @@ export const SlideGlossarySimple: React.FC<{
         {term}
       </h2>
 
-      <p style={{ fontSize: 40, color: '#e0e0e0', lineHeight: 1.5, margin: 0, maxWidth: 900 }}>
+      <p style={{ fontSize: 40, color: '#e0e0e0', lineHeight: 1.5, margin: '0 0 36px', maxWidth: 900 }}>
         {simpleExplanation}
       </p>
+
+      <ByteMascot size={180} equipment={equipment} />
 
       <div style={{ position: 'absolute', bottom: 44 }}><CoduyLogo height={22} /></div>
     </AbsoluteFill>

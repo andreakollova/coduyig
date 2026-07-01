@@ -18,7 +18,8 @@ export const SlideQuestion: React.FC<{
   options: QuizOption[];
   codeSnippet?: string | null;
   lang: string;
-}> = ({ question, options = [], codeSnippet, lang }) => {
+  equipment?: Record<string, string>;
+}> = ({ question, options = [], codeSnippet, lang, equipment = {} }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const breathe = interpolate(Math.sin(frame / fps * Math.PI * 0.5), [-1, 1], [0.97, 1.03]);
@@ -33,7 +34,7 @@ export const SlideQuestion: React.FC<{
     <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '44px 48px', textAlign: 'center' }}>
       {/* Byte animated */}
       <div style={{ transform: `scale(${breathe})`, marginBottom: 12 }}>
-        <ByteMascot size={140} equipment={{}} />
+        <ByteMascot size={140} equipment={equipment} />
       </div>
 
       {/* Title — smaller, not bold */}
@@ -106,7 +107,8 @@ export const SlideAnswer: React.FC<{
   options: QuizOption[];
   codeSnippet?: string | null;
   lang: string;
-}> = ({ question, options = [], codeSnippet, lang }) => {
+  equipment?: Record<string, string>;
+}> = ({ question, options = [], codeSnippet, lang, equipment = {} }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -123,7 +125,7 @@ export const SlideAnswer: React.FC<{
       {/* Byte — celebrating with confetti! */}
       <div style={{ marginBottom: 12, position: 'relative' }}>
         <div style={{ transform: `rotate(${wiggle}deg) translateY(${bounce}px)` }}>
-          <ByteMascot size={140} equipment={{}} />
+          <ByteMascot size={140} equipment={equipment} />
         </div>
         {/* Green confetti particles */}
         {[
