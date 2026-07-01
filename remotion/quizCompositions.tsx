@@ -120,13 +120,55 @@ export const SlideAnswer: React.FC<{
 
   return (
     <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '44px 48px', textAlign: 'center' }}>
-      {/* Byte — celebrating! */}
-      <div style={{ marginBottom: 12, transform: `rotate(${wiggle}deg) translateY(${bounce}px)`, position: 'relative' }}>
-        <ByteMascot size={140} equipment={{}} />
-        {/* Sparkles around Byte */}
-        <div style={{ position: 'absolute', top: -5, left: -15, fontSize: 20, opacity: sparkle1 }}>✦</div>
-        <div style={{ position: 'absolute', top: 10, right: -15, fontSize: 16, opacity: sparkle2 }}>✦</div>
-        <div style={{ position: 'absolute', bottom: 20, left: -10, fontSize: 14, opacity: sparkle1 * 0.8 }}>✦</div>
+      {/* Byte — celebrating with confetti! */}
+      <div style={{ marginBottom: 12, position: 'relative' }}>
+        <div style={{ transform: `rotate(${wiggle}deg) translateY(${bounce}px)` }}>
+          <ByteMascot size={140} equipment={{}} />
+        </div>
+        {/* Green confetti particles */}
+        {[
+          { x: -40, y: -10, size: 10, delay: 0 },
+          { x: 50, y: -5, size: 8, delay: 0.5 },
+          { x: -30, y: 30, size: 6, delay: 1 },
+          { x: 60, y: 25, size: 9, delay: 0.3 },
+          { x: -55, y: 50, size: 7, delay: 0.8 },
+          { x: 45, y: 55, size: 10, delay: 1.2 },
+          { x: -15, y: -20, size: 5, delay: 0.6 },
+          { x: 30, y: -15, size: 7, delay: 0.9 },
+          { x: -50, y: 70, size: 8, delay: 0.2 },
+          { x: 55, y: 65, size: 6, delay: 1.1 },
+        ].map((p, i) => {
+          const confettiY = interpolate(
+            (frame + p.delay * fps) % (fps * 1.5),
+            [0, fps * 1.5],
+            [-20, 40]
+          );
+          const confettiOp = interpolate(
+            (frame + p.delay * fps) % (fps * 1.5),
+            [0, fps * 0.3, fps * 1, fps * 1.5],
+            [0, 1, 0.8, 0]
+          );
+          const confettiRot = interpolate(frame, [0, fps * 3], [0, 360 * (i % 2 === 0 ? 1 : -1)]);
+          const colors = ['#4ade80', '#22c55e', '#86efac', '#bbf7d0', '#ffffff'];
+          return (
+            <div key={i} style={{
+              position: 'absolute',
+              left: `calc(50% + ${p.x}px)`,
+              top: `calc(50% + ${p.y}px)`,
+              transform: `translateY(${confettiY}px) rotate(${confettiRot}deg)`,
+              opacity: confettiOp,
+              width: p.size,
+              height: p.size * 0.6,
+              borderRadius: 2,
+              background: colors[i % colors.length],
+            }} />
+          );
+        })}
+        {/* Sparkles */}
+        <div style={{ position: 'absolute', top: -10, left: -20, fontSize: 22, opacity: sparkle1, color: '#4ade80' }}>✦</div>
+        <div style={{ position: 'absolute', top: 5, right: -20, fontSize: 18, opacity: sparkle2, color: '#22c55e' }}>✦</div>
+        <div style={{ position: 'absolute', bottom: 15, left: -15, fontSize: 16, opacity: sparkle1 * 0.8, color: '#86efac' }}>✦</div>
+        <div style={{ position: 'absolute', bottom: 10, right: -15, fontSize: 20, opacity: sparkle2 * 0.9, color: '#4ade80' }}>✦</div>
       </div>
 
       {/* Title — smaller, green, not bold */}
