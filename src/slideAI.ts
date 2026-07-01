@@ -1,6 +1,6 @@
 const OPENAI_KEY = process.env.OPENAI_API_KEY || '';
 
-interface SlideData { heading: string; body: string; }
+interface SlideData { heading: string; body: string; example?: string; }
 
 export interface SlideSet {
   slides: SlideData[];  // 3 learning slides
@@ -15,6 +15,7 @@ Given a lesson's learning content, real-world examples, and interesting facts, c
 "slides" — EXACTLY 3 learning slides:
 - "heading": catchy topic title, max 28 characters
 - "body": 3-5 clear sentences (max 280 chars). Write conversationally, like explaining to a friend.
+- "example": ONE short real-life example (max 80 chars). Like "Netflix uses this to stream to 250M users" or "Your phone does this 1000x per second"
 - Cover the 3 most important concepts from the lesson
 - NO code, NO bullet points, NO markdown, NO special chars
 
@@ -25,9 +26,9 @@ Given a lesson's learning content, real-world examples, and interesting facts, c
 VALID JSON ONLY:
 {
   "slides": [
-    {"heading": "...", "body": "..."},
-    {"heading": "...", "body": "..."},
-    {"heading": "...", "body": "..."}
+    {"heading": "...", "body": "...", "example": "..."},
+    {"heading": "...", "body": "...", "example": "..."},
+    {"heading": "...", "body": "...", "example": "..."}
   ],
   "funFact": "...",
   "whyCare": "..."

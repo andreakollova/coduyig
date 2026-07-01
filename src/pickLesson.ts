@@ -466,8 +466,13 @@ export async function pickLesson(lessonId?: number): Promise<SlideModel | null> 
     ),
   ]);
 
+  // Format: "heading\nbody\n---example" (--- separates example)
   const formatSlides = (set: Awaited<ReturnType<typeof generateSlideContent>>) =>
-    set.slides.map(s => s.heading ? `${s.heading}\n${s.body}` : s.body);
+    set.slides.map(s => {
+      let text = s.heading ? `${s.heading}\n${s.body}` : s.body;
+      if (s.example) text += `\n---${s.example}`;
+      return text;
+    });
 
   return {
     lesson: safeLessonEn,
