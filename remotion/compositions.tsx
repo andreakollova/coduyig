@@ -149,7 +149,7 @@ export const SlideLearn: React.FC<{
       {/* Body */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 920 }}>
         {bodyLines.slice(0, 5).map((para, i) => (
-          <p key={i} style={{ fontSize: 38, color: '#e0e0e0', lineHeight: 1.42, margin: 0 }}>{para}</p>
+          <p key={i} style={{ fontSize: 42, color: '#e0e0e0', lineHeight: 1.4, margin: 0 }}>{para}</p>
         ))}
       </div>
 
