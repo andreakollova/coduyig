@@ -2,6 +2,7 @@ import { registerRoot, Composition } from 'remotion';
 import { Slide1Video, SlideIntro, SlideLearn, SlideFunFact, SlideWhyCare, SlideCTA } from './compositions';
 import { SlideQuestion, SlideAnswer, SlideExplanation } from './quizCompositions';
 import { SlideGlossaryTerm, SlideGlossarySimple } from './glossaryCompositions';
+import { SlideCodeQuestion, SlideCodeAnswer, SlideCodeExplanation } from './codeCompositions';
 
 const W = 1080;
 const H = 1440;
@@ -43,6 +44,12 @@ export const RemotionRoot: React.FC = () => (
       defaultProps={{ term: 'API', short: 'Application Programming Interface', category: 'skratka', explanation: 'Def', example: 'code', antenna: 'ant-star', lang: 'en' }} />
     <Composition id="SlideGlossarySimple" component={SlideGlossarySimple} durationInFrames={1} fps={FPS} width={W} height={H}
       defaultProps={{ term: 'API', simpleExplanation: 'Simple', lang: 'en' }} />
+    <Composition id="SlideCodeQuestion" component={SlideCodeQuestion} durationInFrames={5 * FPS} fps={FPS} width={W} height={H}
+      defaultProps={{ prompt: 'Fill in:', codeSnippet: 'x = ?', options: ['a', 'b'], equipment: {}, lang: 'en' }} />
+    <Composition id="SlideCodeAnswer" component={SlideCodeAnswer} durationInFrames={5 * FPS} fps={FPS} width={W} height={H}
+      defaultProps={{ prompt: 'Fill in:', codeAnswer: 'x = 5', correct: '5', options: ['a', 'b'], equipment: {}, lang: 'en' }} />
+    <Composition id="SlideCodeExplanation" component={SlideCodeExplanation} durationInFrames={1} fps={FPS} width={W} height={H}
+      defaultProps={{ prompt: 'Fill in:', correct: '5', explanation: 'Because...', lang: 'en' }} />
   </>
 );
 
