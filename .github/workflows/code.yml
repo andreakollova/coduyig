@@ -2,7 +2,7 @@ name: Daily Code Challenge
 
 on:
   schedule:
-    - cron: '0 9 * * *'  # 09:00 UTC = 11:00 CEST (same time as lesson, alternates days)
+    - cron: '0 9 * * *'  # 09:00 UTC = 11:00 CEST
   workflow_dispatch:
     inputs:
       dry_run:
@@ -19,8 +19,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: sudo apt-get update && sudo apt-get install -y chromium-browser ffmpeg
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - run: npm install
+      - run: npx remotion browser ensure
       - name: Run code challenge publisher
         env:
           IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
