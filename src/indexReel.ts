@@ -85,7 +85,7 @@ async function main() {
 
   // 1. Fetch lesson
   let query = sb.from('cb_lessons')
-    .select('id, title, learning_content, key_takeaways, module_id, lesson_number');
+    .select('id, title, introduction, learning_content, key_takeaways, module_id, lesson_number');
 
   if (lessonId) {
     query = query.eq('id', lessonId);
@@ -113,6 +113,7 @@ async function main() {
   console.log('\n=== Generating script ===');
   const script = await generateReelScript(
     lesson.title,
+    lesson.introduction || '',
     lesson.learning_content || '',
     lesson.key_takeaways || [],
   );
@@ -126,8 +127,8 @@ async function main() {
   const tts = await generateTTS(script.spokenText, OUT_DIR);
   console.log(`🎙️ Duration: ${tts.durationSeconds.toFixed(1)}s`);
 
-  if (tts.durationSeconds > 16) {
-    console.warn('⚠️ Audio longer than 15s — video may exceed limit');
+  if (tts.durationSeconds > 90) {
+    console.warn('⚠️ Audio longer than 90s — video may be too long for a Reel');
   }
 
   // 4. Map word timings to sections
@@ -149,11 +150,16 @@ async function main() {
 
   // 6. Render video
   console.log('\n=== Rendering video ===');
-  const durationInFrames = Math.ceil(tts.durationSeconds * 30) + 15; // + 0.5s padding
+  // 2s title card + audio + 3s CTA card
+  const durationInFrames = Math.ceil(tts.durationSeconds * 30) + (30 * 2) + (30 * 3) + 15;
 
   const serveUrl = await bundle({ entryPoint: path.join(process.cwd(), 'remotion', 'index.tsx') });
 
-  const reelProps = { sections, audioUrl, bgMusicUrl, equipment, durationInFrames };
+  const reelProps = {
+    sections, audioUrl, bgMusicUrl, equipment, durationInFrames,
+    lessonTitle: lesson.title,
+    lessonNumber: lesson.lesson_number,
+  };
   const comp = await selectComposition({ serveUrl, id: 'LessonReel', inputProps: reelProps });
 
   const videoPath = path.join(OUT_DIR, 'reel.mp4');

@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   AbsoluteFill, useCurrentFrame, interpolate, useVideoConfig,
-  Audio, staticFile, Img, spring,
+  Audio, staticFile, Img, spring, Sequence,
 } from 'remotion';
 import { loadFont } from '@remotion/google-fonts/Inter';
 import { ByteMascot } from './Byte';
@@ -33,6 +33,8 @@ export interface ReelProps {
   bgMusicUrl?: string;
   equipment: Record<string, string>;
   durationInFrames: number;
+  lessonTitle?: string;
+  lessonNumber?: number;
 }
 
 /* ========== CODE BLOCK — always visible at top ========== */
@@ -99,10 +101,10 @@ const SectionLabel: React.FC<{ label: string }> = ({ label }) => {
 
 /* ========== KARAOKE CAPTIONS — middle of screen ========== */
 
-const KaraokeCaptions: React.FC<{ allWords: WordTiming[] }> = ({ allWords }) => {
+const KaraokeCaptions: React.FC<{ allWords: WordTiming[]; offsetFrames?: number }> = ({ allWords, offsetFrames = 0 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const currentTime = frame / fps;
+  const currentTime = (frame - offsetFrames) / fps;
 
   let currentWordIdx = -1;
   for (let i = 0; i < allWords.length; i++) {
@@ -144,9 +146,9 @@ const KaraokeCaptions: React.FC<{ allWords: WordTiming[] }> = ({ allWords }) => 
   return (
     <div style={{
       position: 'absolute',
-      top: '50%', left: 50, right: 50,
-      transform: 'translateY(-50%)',
-      fontFamily, fontWeight: 800, fontSize: 54, lineHeight: 1.4,
+      bottom: 280, left: 80, right: 80,
+      maxWidth: 700, margin: '0 auto',
+      fontFamily, fontWeight: 800, fontSize: 44, lineHeight: 1.5,
       textAlign: 'center',
     }}>
       {parts}
@@ -188,10 +190,11 @@ const PointingByte: React.FC<{ equipment: Record<string, string> }> = ({ equipme
 
 const CurrentSectionLabel: React.FC<{
   sections: ReelSection[];
-}> = ({ sections }) => {
+  offsetFrames?: number;
+}> = ({ sections, offsetFrames = 0 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const currentTime = frame / fps;
+  const currentTime = (frame - offsetFrames) / fps;
 
   // Find which section we're in
   let currentLabel = '';
@@ -212,61 +215,137 @@ const CurrentSectionLabel: React.FC<{
 /* ========== MAIN REEL COMPOSITION ========== */
 
 export const LessonReel: React.FC<ReelProps> = ({
-  sections, audioUrl, bgMusicUrl, equipment,
+  sections, audioUrl, bgMusicUrl, equipment, durationInFrames, lessonTitle, lessonNumber,
 }) => {
-  const allWords: WordTiming[] = sections.flatMap(sec => sec.words);
+  const { fps } = useVideoConfig();
+  const frame = useCurrentFrame();
 
-  // Find the code snippet (first non-null code from any section)
+  const allWords: WordTiming[] = sections.flatMap(sec => sec.words);
   const codeSnippet = sections.find(s => s.code)?.code;
+
+  // Title card: first 2 seconds (60 frames)
+  const TITLE_DURATION = fps * 2;
+  // CTA card: last 3 seconds
+  const ctaStart = allWords.length > 0
+    ? Math.ceil(allWords[allWords.length - 1].end * fps) + fps * 0.5
+    : durationInFrames - fps * 3;
+
+  const showTitle = frame < TITLE_DURATION;
+  const showCTA = frame >= ctaStart;
+  const showMain = !showTitle && !showCTA;
+
+  // Title card animations
+  const titleOp = interpolate(frame, [0, 10, TITLE_DURATION - 10, TITLE_DURATION], [0, 1, 1, 0], { extrapolateRight: 'clamp' });
+  const titleScale = interpolate(frame, [0, 15], [0.9, 1], { extrapolateRight: 'clamp' });
+
+  // CTA animations
+  const ctaOp = interpolate(frame, [ctaStart, ctaStart + 15], [0, 1], { extrapolateRight: 'clamp' });
 
   return (
     <AbsoluteFill style={{ background: BG, fontFamily }}>
-      {/* Audio */}
-      <Audio src={audioUrl} volume={1} />
+      {/* Audio — starts after title card */}
+      <Sequence from={TITLE_DURATION}>
+        <Audio src={audioUrl} volume={1} />
+      </Sequence>
       {bgMusicUrl && <Audio src={bgMusicUrl} volume={0.08} loop />}
       {!bgMusicUrl && (() => {
         try { return <Audio src={staticFile('bgmusic.mp3')} volume={0.08} loop />; }
         catch { return null; }
       })()}
 
-      {/* Subtle background particles */}
       <BackgroundParticles />
 
-      {/* === LAYOUT === */}
-
-      {/* TOP: Section label */}
-      <div style={{ position: 'absolute', top: 70, left: 0, right: 0 }}>
-        <CurrentSectionLabel sections={sections} />
-      </div>
-
-      {/* TOP AREA: Code block — always visible */}
-      {codeSnippet && (
-        <div style={{
-          position: 'absolute', top: 120, left: 40, right: 40,
+      {/* ===== TITLE CARD ===== */}
+      {showTitle && (
+        <AbsoluteFill style={{
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          padding: 60, gap: 24,
+          opacity: titleOp, transform: `scale(${titleScale})`,
         }}>
-          <CodeBlock code={codeSnippet} />
-        </div>
+          <ByteMascot size={250} equipment={equipment} />
+          <div style={{
+            padding: '12px 28px', borderRadius: 30,
+            background: '#161616', border: '1px solid #2a2a2a',
+            fontSize: 22, color: '#4ade80', fontWeight: 700,
+            letterSpacing: '0.1em', textTransform: 'uppercase' as const,
+          }}>
+            Lesson {lessonNumber || ''}
+          </div>
+          <h1 style={{
+            fontSize: 56, fontWeight: 800, color: '#fff',
+            textAlign: 'center', lineHeight: 1.15, margin: 0,
+            maxWidth: 800,
+          }}>
+            {lessonTitle || ''}
+          </h1>
+          <CoduyLogo height={26} />
+        </AbsoluteFill>
       )}
 
-      {/* MIDDLE: Karaoke captions */}
-      <KaraokeCaptions allWords={allWords} />
+      {/* ===== MAIN CONTENT ===== */}
+      {showMain && (
+        <>
+          {/* Section label — top */}
+          <div style={{ position: 'absolute', top: 70, left: 0, right: 0 }}>
+            <CurrentSectionLabel sections={sections} offsetFrames={TITLE_DURATION} />
+          </div>
 
-      {/* BOTTOM: Byte — animated, pointing up at code */}
-      <div style={{
-        position: 'absolute', bottom: 140, left: 0, right: 0,
-        display: 'flex', justifyContent: 'center',
-      }}>
-        <PointingByte equipment={equipment} />
-      </div>
+          {/* Byte — upper area */}
+          <div style={{
+            position: 'absolute', top: 120, left: 0, right: 0,
+            display: 'flex', justifyContent: 'center',
+          }}>
+            <PointingByte equipment={equipment} />
+          </div>
 
-      {/* Logo — very bottom */}
-      <div style={{
-        position: 'absolute', bottom: 50,
-        left: 0, right: 0,
-        display: 'flex', justifyContent: 'center',
-      }}>
-        <CoduyLogo height={20} />
-      </div>
+          {/* Code — below Byte */}
+          {codeSnippet && (
+            <div style={{ position: 'absolute', top: 440, left: 40, right: 40 }}>
+              <CodeBlock code={codeSnippet} />
+            </div>
+          )}
+
+          {/* Karaoke captions — lower area */}
+          <KaraokeCaptions allWords={allWords} offsetFrames={TITLE_DURATION} />
+        </>
+      )}
+
+      {/* ===== CTA SCREEN ===== */}
+      {showCTA && (
+        <AbsoluteFill style={{
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          padding: 60, gap: 32, opacity: ctaOp,
+        }}>
+          <ByteMascot size={220} equipment={equipment} />
+          <h2 style={{
+            fontSize: 42, fontWeight: 800, color: '#fff',
+            textAlign: 'center', lineHeight: 1.3, margin: 0,
+            maxWidth: 750,
+          }}>
+            Full lesson available on
+          </h2>
+          <div style={{ marginTop: 8 }}>
+            <CoduyLogo height={48} />
+          </div>
+          <p style={{
+            fontSize: 24, color: '#888', fontWeight: 600,
+            textAlign: 'center', margin: 0,
+          }}>
+            Free on App Store & Google Play
+          </p>
+        </AbsoluteFill>
+      )}
+
+      {/* Logo — always at bottom (except during title/CTA which have their own) */}
+      {showMain && (
+        <div style={{
+          position: 'absolute', bottom: 50,
+          left: 0, right: 0,
+          display: 'flex', justifyContent: 'center',
+        }}>
+          <CoduyLogo height={20} />
+        </div>
+      )}
     </AbsoluteFill>
   );
 };
