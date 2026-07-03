@@ -180,30 +180,34 @@ const ConversationCaptionsInline: React.FC<{
   const chunkWords = allWords.slice(chunkStart, chunkEnd + 1);
 
   // Render ALL words in the chunk, highlight current one
-  const parts: React.ReactNode[] = [];
-  chunkWords.forEach((w, i) => {
-    const globalIdx = chunkStart + i;
-    const isActive = globalIdx === currentWordIdx;
-    const isPast = globalIdx < currentWordIdx;
-    const activeColor = w.speaker === 'student' ? '#FFFFFF' : '#fb923c';
-    const pastColor = w.speaker === 'student' ? 'rgba(255,255,255,0.55)' : 'rgba(251,146,60,0.55)';
-    const futureColor = w.speaker === 'student' ? 'rgba(255,255,255,0.3)' : 'rgba(251,146,60,0.3)';
+  // Use a single string approach with word wrapping
+  return (
+    <span style={{ wordSpacing: '8px' }}>
+      {chunkWords.map((w, i) => {
+        const globalIdx = chunkStart + i;
+        const isActive = globalIdx === currentWordIdx;
+        const isPast = globalIdx < currentWordIdx;
+        const activeColor = w.speaker === 'student' ? '#FFFFFF' : '#fb923c';
+        const pastColor = w.speaker === 'student' ? 'rgba(255,255,255,0.55)' : 'rgba(251,146,60,0.55)';
+        const futureColor = w.speaker === 'student' ? 'rgba(255,255,255,0.3)' : 'rgba(251,146,60,0.3)';
 
-    if (i > 0) parts.push(' ');
-    parts.push(
-      <span key={`${globalIdx}-${w.word}`} style={{
-        color: isActive ? activeColor : isPast ? pastColor : futureColor,
-        fontWeight: isActive ? 900 : 800,
-        textShadow: isActive
-          ? `0 0 16px ${w.speaker === 'student' ? 'rgba(255,255,255,0.35)' : 'rgba(251,146,60,0.35)'}`
-          : 'none',
-      }}>
-        {w.word}
-      </span>
-    );
-  });
-
-  return <>{parts}</>;
+        return (
+          <React.Fragment key={`${globalIdx}-${w.word}`}>
+            {i > 0 && <span>{' '}</span>}
+            <span style={{
+              color: isActive ? activeColor : isPast ? pastColor : futureColor,
+              fontWeight: isActive ? 900 : 800,
+              textShadow: isActive
+                ? `0 0 16px ${w.speaker === 'student' ? 'rgba(255,255,255,0.35)' : 'rgba(251,146,60,0.35)'}`
+                : 'none',
+            }}>
+              {w.word}
+            </span>
+          </React.Fragment>
+        );
+      })}
+    </span>
+  );
 };
 
 /* ========== TWO BYTES — bottom, side by side ========== */
@@ -289,11 +293,12 @@ export const LessonReel: React.FC<ReelProps> = ({
 
   const activeSpeaker = useActiveSpeaker(allWords, TITLE_FRAMES);
 
-  // Title animations
-  const titleOp = interpolate(frame, [0, 10, TITLE_FRAMES - 10, TITLE_FRAMES], [0, 1, 1, 0], { extrapolateRight: 'clamp' });
+  // No fade-in on title — frame 0 must show content for IG preview
+  // Only fade OUT at the end of title card
+  const titleOp = interpolate(frame, [TITLE_FRAMES - 8, TITLE_FRAMES], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
-  // CTA animations
-  const ctaOp = interpolate(frame, [ctaStartFrame, ctaStartFrame + 15], [0, 1], { extrapolateRight: 'clamp' });
+  // CTA — no fade in either
+  const ctaOp = 1;
 
   return (
     <AbsoluteFill style={{ background: BG, fontFamily }}>
@@ -320,7 +325,7 @@ export const LessonReel: React.FC<ReelProps> = ({
       {showTitle && (
         <AbsoluteFill style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          padding: 60, gap: 24, opacity: titleOp,
+          padding: 60, gap: 24,
         }}>
           <div style={{
             padding: '10px 24px', borderRadius: 30,
@@ -331,15 +336,37 @@ export const LessonReel: React.FC<ReelProps> = ({
             Lesson {lessonNumber || ''}
           </div>
           <h1 style={{
-            fontSize: 52, fontWeight: 800, color: '#fff',
-            textAlign: 'center', lineHeight: 1.15, margin: 0, maxWidth: 800,
+            fontSize: 62, fontWeight: 800, color: '#fff',
+            textAlign: 'center', lineHeight: 1.12, margin: 0, maxWidth: 850,
           }}>
             {lessonTitle || ''}
           </h1>
-          <CoduyLogo height={28} />
-          <div style={{ display: 'flex', gap: 16, marginTop: 12 }}>
-            <ByteMascot size={160} equipment={equipmentStudent} />
-            <ByteMascot size={160} equipment={equipmentTeacher} />
+          <div style={{ position: 'relative', marginTop: 20 }}>
+            {/* Speech bubble from student */}
+            <div style={{
+              position: 'absolute', top: -44, left: 20,
+              padding: '8px 18px', borderRadius: 16,
+              background: '#222', border: '1px solid #333',
+              fontSize: 16, color: '#fff', fontWeight: 600,
+              whiteSpace: 'nowrap',
+            }}>
+              Let's chat!
+              <div style={{
+                position: 'absolute', bottom: -6, left: 30,
+                width: 12, height: 12, background: '#222',
+                border: '1px solid #333', borderTop: 'none', borderLeft: 'none',
+                transform: 'rotate(45deg)',
+              }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 16 }}>
+              <ByteMascot size={160} equipment={equipmentStudent} />
+              <ByteMascot size={160} equipment={equipmentTeacher} />
+            </div>
+            {/* Ground line */}
+            <div style={{
+              width: 420, height: 2, background: 'rgba(255,255,255,0.08)',
+              borderRadius: 1, marginTop: 4, alignSelf: 'center',
+            }} />
           </div>
         </AbsoluteFill>
       )}
@@ -353,6 +380,17 @@ export const LessonReel: React.FC<ReelProps> = ({
             padding: '60px 36px',
             gap: 28,
           }}>
+            {/* LESSON TITLE above code */}
+            {lessonTitle && (
+              <div style={{
+                fontSize: 22, fontWeight: 700, color: '#888',
+                letterSpacing: '0.06em', textTransform: 'uppercase' as const,
+                textAlign: 'center',
+              }}>
+                {lessonTitle}
+              </div>
+            )}
+
             {/* CODE */}
             {codeSnippet && (
               <div style={{ width: '85%' }}>

@@ -139,7 +139,7 @@ async function main() {
   console.log('\n=== Rendering video ===');
   const FPS = 30;
   const TITLE_S = 2;
-  const CTA_S = 3;
+  const CTA_S = 1.5;
   const durationInFrames = Math.ceil((tts.totalDuration + TITLE_S + CTA_S) * FPS) + 15;
 
   const serveUrl = await bundle({ entryPoint: path.join(process.cwd(), 'remotion', 'index.tsx') });
