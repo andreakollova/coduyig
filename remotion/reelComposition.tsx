@@ -128,10 +128,9 @@ const ConversationCaptions: React.FC<{
   return (
     <div style={{
       position: 'absolute',
-      top: '45%', left: 60, right: 60,
-      transform: 'translateY(-50%)',
+      bottom: 580, left: 50, right: 50,
       maxWidth: 700, margin: '0 auto',
-      fontFamily, fontWeight: 800, fontSize: 46, lineHeight: 1.45,
+      fontFamily, fontWeight: 800, fontSize: 44, lineHeight: 1.4,
       textAlign: 'center',
     }}>
       {parts}
@@ -168,7 +167,7 @@ const TwoBytes: React.FC<{
         filter: activeSpeaker === 'student' ? 'drop-shadow(0 0 12px rgba(255,255,255,0.3))' : 'none',
         opacity: activeSpeaker === 'teacher' ? 0.6 : 1,
       }}>
-        <ByteMascot size={200} equipment={equipmentStudent} />
+        <ByteMascot size={240} equipment={equipmentStudent} />
       </div>
 
       {/* Teacher — right, orange outline glow when speaking */}
@@ -177,7 +176,7 @@ const TwoBytes: React.FC<{
         filter: activeSpeaker === 'teacher' ? 'drop-shadow(0 0 12px rgba(251,146,60,0.3))' : 'none',
         opacity: activeSpeaker === 'student' ? 0.6 : 1,
       }}>
-        <ByteMascot size={200} equipment={equipmentTeacher} />
+        <ByteMascot size={240} equipment={equipmentTeacher} />
       </div>
     </div>
   );
@@ -282,16 +281,16 @@ export const LessonReel: React.FC<ReelProps> = ({
         <>
           {/* CODE — top */}
           {codeSnippet && (
-            <div style={{ position: 'absolute', top: 80, left: 36, right: 36 }}>
+            <div style={{ position: 'absolute', top: 70, left: 36, right: 36 }}>
               <CodeBlock code={codeSnippet} />
             </div>
           )}
 
-          {/* CAPTIONS — middle */}
+          {/* CAPTIONS — between code and Bytes */}
           <ConversationCaptions allWords={allWords} titleCardFrames={TITLE_FRAMES} />
 
-          {/* TWO BYTES — bottom */}
-          <div style={{ position: 'absolute', bottom: 120, left: 0, right: 0 }}>
+          {/* TWO BYTES — bottom, tight to captions */}
+          <div style={{ position: 'absolute', bottom: 160, left: 0, right: 0 }}>
             <TwoBytes
               equipmentStudent={equipmentStudent}
               equipmentTeacher={equipmentTeacher}
@@ -299,16 +298,16 @@ export const LessonReel: React.FC<ReelProps> = ({
             />
           </div>
 
-          {/* Speaker labels under Bytes */}
+          {/* Speaker labels */}
           <div style={{
-            position: 'absolute', bottom: 85, left: 0, right: 0,
-            display: 'flex', justifyContent: 'center', gap: 120,
+            position: 'absolute', bottom: 125, left: 0, right: 0,
+            display: 'flex', justifyContent: 'center', gap: 100,
           }}>
-            <span style={{ fontSize: 16, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#444', letterSpacing: '0.08em' }}>STUDENT</span>
-            <span style={{ fontSize: 16, fontWeight: 700, color: activeSpeaker === 'teacher' ? '#fb923c' : '#444', letterSpacing: '0.08em' }}>TEACHER</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#444', letterSpacing: '0.08em' }}>STUDENT</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'teacher' ? '#fb923c' : '#444', letterSpacing: '0.08em' }}>TEACHER</span>
           </div>
 
-          <div style={{ position: 'absolute', bottom: 40, left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
+          <div style={{ position: 'absolute', bottom: 50, left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
             <CoduyLogo height={18} />
           </div>
         </>
