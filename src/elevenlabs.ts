@@ -9,8 +9,8 @@ import path from 'path';
 const API_KEY = process.env.ELEVENLABS_API_KEY || '';
 const API = 'https://api.elevenlabs.io/v1';
 
-// Default male EN voice — "Adam" (deep, clear, professional)
-const DEFAULT_VOICE_ID = 'pNInz6obpgDQGcFmaJgB'; // Adam
+// Antoni — young, clear male voice (works on free tier)
+const DEFAULT_VOICE_ID = 'ErXwobaYiN019PkySvjV';
 
 export interface WordTiming {
   word: string;

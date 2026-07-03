@@ -20,7 +20,7 @@ const SYSTEM = `You create ultra-short voiceover scripts for 15-second Instagram
 
 Given a lesson title and learning content, create a script with EXACTLY 4 sections:
 
-1. "INTRODUCTION" — 1 punchy hook sentence (max 8 words)
+1. "INTRODUCTION" — MUST start with "Hey guys," followed by a punchy hook (max 10 words total)
 2. "LEARNING" — the core concept (max 10 words)
 3. "KEY POINTS" — two concrete takeaways combined (max 10 words)
 4. "WHY CARE?" — 1 motivating closer (max 7 words)
@@ -28,6 +28,7 @@ Given a lesson title and learning content, create a script with EXACTLY 4 sectio
 TOTAL across all sections: MAX 35 words. Count carefully.
 
 RULES:
+- The INTRODUCTION MUST begin with "Hey guys," — this is non-negotiable.
 - NEVER read code aloud. Code is shown on screen, not spoken.
 - Don't say "for i in range" or any syntax — describe what the code DOES naturally.
 - Be conversational, energetic, like a friend explaining.
@@ -105,7 +106,7 @@ ${keyTakeaways.join('\n')}`;
 
 function fallbackScript(title: string): ReelScript {
   const sections = [
-    { label: 'INTRODUCTION', spoken: `Let's learn about ${title}.` },
+    { label: 'INTRODUCTION', spoken: `Hey guys, let's learn about ${title}.` },
     { label: 'LEARNING', spoken: 'This is one of the most important concepts.' },
     { label: 'KEY POINTS', spoken: 'Understanding this will make you a better developer.' },
     { label: 'WHY CARE?', spoken: 'Every professional developer uses this daily.' },
