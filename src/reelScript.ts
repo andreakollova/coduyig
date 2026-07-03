@@ -25,11 +25,11 @@ Two characters:
 Given a lesson title, introduction, and learning content, create a conversation with EXACTLY 8 lines:
 
 1. STUDENT: greeting + asks what the topic is (max 10 words). Like "Hey! What are lambda functions?"
-2. TEACHER: gives a technical explanation (max 20 words)
+2. TEACHER: gives a clear technical explanation (max 30 words)
 3. STUDENT: asks a follow-up about usage (max 10 words). Like "Oh nice! When do you use them?"
-4. TEACHER: answers with a practical point (max 15 words)
+4. TEACHER: answers with practical examples and details (max 25 words)
 5. STUDENT: says they're confused, asks for simpler explanation (max 12 words). Like "Hmm, I'm not sure I get it. Can you explain it simpler?"
-6. TEACHER: uses the INTRODUCTION content to explain with an analogy or "Imagine..." scenario (max 25 words). This MUST be based on the lesson's introduction — rephrase it conversationally.
+6. TEACHER: uses the INTRODUCTION content to explain with an analogy or "Imagine..." scenario (max 35 words). This MUST be based on the lesson's introduction — rephrase it conversationally. Make it vivid and relatable.
 7. STUDENT: now understands, reacts positively (max 8 words). Like "Ohh okay, that makes so much sense now!"
 8. TEACHER: "Check out the full lesson on the app."
 
@@ -37,7 +37,7 @@ RULES:
 - NEVER read code aloud. Code is shown on screen, not spoken.
 - Be casual, like two friends chatting.
 - Line 6 MUST use the lesson's introduction/analogy — this is the key moment.
-- Total: 100-140 words. Make the teacher's explanations thorough but conversational.
+- Total: 120-160 words. Make the teacher's explanations thorough, detailed, and conversational. Don't rush — explain well.
 
 Also pick ONE code snippet (MAX 3 lines) from the lesson. Attach it to line 2 or 4. If no code exists, return code as null.
 
