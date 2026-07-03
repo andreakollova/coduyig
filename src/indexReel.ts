@@ -41,6 +41,27 @@ const teacherEquipByLevel: Record<DiffLevel, Record<string, string>> = {
   professional: { hat: 'hat-golden-crown', glasses: 'glasses-golden', aura: 'aura-golden', antenna: 'ant-golden-star' },
 };
 
+/* ========== INTRO GREETINGS ========== */
+
+const INTRO_GREETINGS = [
+  { introStudent: 'Got a minute?', introTeacher: 'Always.' },
+  { introStudent: 'Can you help me?', introTeacher: 'Of course.' },
+  { introStudent: 'Quick question.', introTeacher: 'Go ahead.' },
+  { introStudent: 'Where do I start?', introTeacher: 'Right here.' },
+  { introStudent: 'Lots of questions.', introTeacher: "Let's start simple." },
+  { introStudent: 'Sounds perfect.', introTeacher: 'Got questions?' },
+  { introStudent: 'Teach me something!', introTeacher: "You'll love this." },
+  { introStudent: 'Ready to learn!', introTeacher: "Let's go." },
+  { introStudent: 'I need help.', introTeacher: "I got you." },
+  { introStudent: "What's today's topic?", introTeacher: 'A good one.' },
+];
+
+function pickIntroGreeting() {
+  const pick = INTRO_GREETINGS[Math.floor(Math.random() * INTRO_GREETINGS.length)];
+  console.log(`💬 Intro: Student: "${pick.introStudent}" | Teacher: "${pick.introTeacher}"`);
+  return pick;
+}
+
 /* ========== IG API ========== */
 
 async function igPost(url: string, params: Record<string, string>) {
@@ -152,6 +173,7 @@ async function main() {
     lessonTitle: lesson.title,
     lessonNumber: lesson.lesson_number,
     moduleTitle: mod?.title,
+    ...pickIntroGreeting(),
   };
 
   const comp = await selectComposition({ serveUrl, id: 'LessonReel', inputProps: reelProps });

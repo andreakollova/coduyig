@@ -40,6 +40,8 @@ export interface ReelProps {
   lessonTitle?: string;
   lessonNumber?: number;
   moduleTitle?: string;
+  introStudent?: string;
+  introTeacher?: string;
 }
 
 /* ========== CODE BLOCK — top of screen ========== */
@@ -275,6 +277,7 @@ function useActiveSpeaker(allWords: WordTiming[], titleCardFrames: number): 'stu
 export const LessonReel: React.FC<ReelProps> = ({
   lines, bgMusicUrl, equipmentStudent, equipmentTeacher,
   durationInFrames, lessonTitle, lessonNumber, moduleTitle,
+  introStudent, introTeacher,
 }) => {
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -351,7 +354,7 @@ export const LessonReel: React.FC<ReelProps> = ({
               fontSize: 16, color: '#fff', fontWeight: 600,
               whiteSpace: 'nowrap',
             }}>
-              Where do I start?
+              {introStudent || 'Where do I start?'}
               <div style={{
                 position: 'absolute', bottom: -6, left: 30,
                 width: 12, height: 12, background: '#222',
@@ -367,7 +370,7 @@ export const LessonReel: React.FC<ReelProps> = ({
               fontSize: 16, color: '#fb923c', fontWeight: 600,
               whiteSpace: 'nowrap',
             }}>
-              Right here.
+              {introTeacher || 'Right here.'}
               <div style={{
                 position: 'absolute', bottom: -6, right: 30,
                 width: 12, height: 12, background: '#222',

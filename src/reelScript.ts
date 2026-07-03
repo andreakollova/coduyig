@@ -37,7 +37,7 @@ RULES:
 - NEVER read code aloud. Code is shown on screen, not spoken.
 - Be casual, like two friends chatting.
 - Line 6 MUST use the lesson's introduction/analogy — this is the key moment.
-- Total: 80-110 words.
+- Total: 100-140 words. Make the teacher's explanations thorough but conversational.
 
 Also pick ONE code snippet (MAX 3 lines) from the lesson. Attach it to line 2 or 4. If no code exists, return code as null.
 
