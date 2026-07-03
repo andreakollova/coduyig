@@ -341,18 +341,34 @@ export const LessonReel: React.FC<ReelProps> = ({
           }}>
             {lessonTitle || ''}
           </h1>
-          <div style={{ position: 'relative', marginTop: 40 }}>
-            {/* Speech bubble from student */}
+          <div style={{ position: 'relative', marginTop: 60 }}>
+            {/* Speech bubble from teacher (left) */}
             <div style={{
-              position: 'absolute', top: -44, left: 20,
+              position: 'absolute', top: -44, left: 10,
+              padding: '8px 18px', borderRadius: 16,
+              background: '#222', border: '1px solid #444',
+              fontSize: 16, color: '#fb923c', fontWeight: 600,
+              whiteSpace: 'nowrap',
+            }}>
+              Got a minute?
+              <div style={{
+                position: 'absolute', bottom: -6, left: 30,
+                width: 12, height: 12, background: '#222',
+                border: '1px solid #444', borderTop: 'none', borderLeft: 'none',
+                transform: 'rotate(45deg)',
+              }} />
+            </div>
+            {/* Speech bubble from student (right) */}
+            <div style={{
+              position: 'absolute', top: -44, right: 10,
               padding: '8px 18px', borderRadius: 16,
               background: '#222', border: '1px solid #333',
               fontSize: 16, color: '#fff', fontWeight: 600,
               whiteSpace: 'nowrap',
             }}>
-              Let's chat!
+              Bet.
               <div style={{
-                position: 'absolute', bottom: -6, left: 30,
+                position: 'absolute', bottom: -6, right: 30,
                 width: 12, height: 12, background: '#222',
                 border: '1px solid #333', borderTop: 'none', borderLeft: 'none',
                 transform: 'rotate(45deg)',
