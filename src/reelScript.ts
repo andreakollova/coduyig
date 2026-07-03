@@ -37,7 +37,7 @@ RULES:
 - Student sounds curious and excited.
 - Teacher sounds confident and friendly.
 
-Also pick ONE code snippet (3-5 lines) from the lesson. Show it during teacher's explanation (line 2 or 4). If no code exists, return code as null.
+Also pick ONE code snippet (MAX 3 lines, never more) from the lesson. Show it during teacher's explanation (line 2 or 4). If no code exists, return code as null.
 
 Return VALID JSON:
 {

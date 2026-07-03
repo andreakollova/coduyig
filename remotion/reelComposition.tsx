@@ -68,7 +68,7 @@ const CodeBlock: React.FC<{ code: string }> = ({ code }) => {
         color: '#e0e0e0', margin: 0, textAlign: 'left', lineHeight: 1.7,
         fontFamily: "'JetBrains Mono', monospace", whiteSpace: 'pre-wrap',
       }}>
-        {code.replace(/\\n/g, '\n')}
+        {code.replace(/\\n/g, '\n').split('\n').slice(0, 3).join('\n')}
       </pre>
     </div>
   );
@@ -406,7 +406,7 @@ export const LessonReel: React.FC<ReelProps> = ({
           {/* CODE — fixed position below title */}
           {codeSnippet && (
             <div style={{
-              position: 'absolute', top: 240, left: 60, right: 60,
+              position: 'absolute', top: 280, left: 60, right: 60,
             }}>
               <CodeBlock code={codeSnippet} />
             </div>
@@ -425,7 +425,7 @@ export const LessonReel: React.FC<ReelProps> = ({
           </div>
 
           {/* TWO BYTES — fixed bottom */}
-          <div style={{ position: 'absolute', bottom: 310, left: 0, right: 0 }}>
+          <div style={{ position: 'absolute', bottom: 380, left: 0, right: 0 }}>
             <TwoBytes
               equipmentStudent={equipmentStudent}
               equipmentTeacher={equipmentTeacher}
@@ -435,7 +435,7 @@ export const LessonReel: React.FC<ReelProps> = ({
 
           {/* Speaker labels — fixed under Bytes */}
           <div style={{
-            position: 'absolute', bottom: 275, left: 0, right: 0,
+            position: 'absolute', bottom: 345, left: 0, right: 0,
             display: 'flex', justifyContent: 'center', gap: 160,
           }}>
             <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#555', letterSpacing: '0.08em' }}>STUDENT</span>
