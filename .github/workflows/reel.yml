@@ -1,0 +1,53 @@
+name: Instagram Reel
+
+on:
+  schedule:
+    - cron: '30 11 * * *'  # 11:30 UTC = 13:30 CEST
+  workflow_dispatch:
+    inputs:
+      lesson_id:
+        description: 'Lesson ID for the reel'
+        required: false
+      dry_run:
+        description: 'Dry run (render only, no publish)'
+        type: boolean
+        default: false
+
+jobs:
+  reel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Ensure Remotion browser
+        run: npx remotion browser ensure
+
+      - name: Run reel publisher
+        env:
+          IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
+          IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: |
+          ARGS=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          if [ -n "${{ inputs.lesson_id }}" ]; then
+            ARGS="$ARGS --lesson-id ${{ inputs.lesson_id }}"
+          fi
+          npx tsx src/indexReel.ts $ARGS

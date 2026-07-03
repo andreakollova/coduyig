@@ -3,9 +3,12 @@ import { Slide1Video, SlideIntro, SlideLearn, SlideFunFact, SlideWhyCare, SlideC
 import { SlideQuestion, SlideAnswer, SlideExplanation } from './quizCompositions';
 import { SlideGlossaryTerm, SlideGlossarySimple } from './glossaryCompositions';
 import { SlideCodeQuestion, SlideCodeAnswer, SlideCodeExplanation } from './codeCompositions';
+import { LessonReel } from './reelComposition';
 
 const W = 1080;
 const H = 1440;
+const REEL_W = 1080;
+const REEL_H = 1920;
 const FPS = 30;
 
 const defaultQuizProps = {
@@ -50,6 +53,18 @@ export const RemotionRoot: React.FC = () => (
       defaultProps={{ prompt: 'Fill in:', codeAnswer: 'x = 5', correct: '5', options: ['a', 'b'], equipment: {}, lang: 'en' }} />
     <Composition id="SlideCodeExplanation" component={SlideCodeExplanation} durationInFrames={1} fps={FPS} width={W} height={H}
       defaultProps={{ prompt: 'Fill in:', correct: '5', explanation: 'Because...', lang: 'en' }} />
+    <Composition id="LessonReel" component={LessonReel} durationInFrames={15 * FPS} fps={FPS} width={REEL_W} height={REEL_H}
+      defaultProps={{
+        sections: [
+          { label: 'INTRODUCTION', words: [{ word: 'Hello', start: 0, end: 0.5 }] },
+          { label: 'LEARNING', words: [{ word: 'World', start: 0.6, end: 1.0 }], code: 'print("Hello")' },
+          { label: 'KEY POINTS', words: [{ word: 'Key', start: 1.1, end: 1.5 }] },
+          { label: 'WHY CARE?', words: [{ word: 'Care', start: 1.6, end: 2.0 }] },
+        ],
+        audioUrl: '',
+        equipment: {},
+        durationInFrames: 15 * FPS,
+      }} />
   </>
 );
 
