@@ -341,7 +341,7 @@ export const LessonReel: React.FC<ReelProps> = ({
           }}>
             {lessonTitle || ''}
           </h1>
-          <div style={{ position: 'relative', marginTop: 20 }}>
+          <div style={{ position: 'relative', marginTop: 40 }}>
             {/* Speech bubble from student */}
             <div style={{
               position: 'absolute', top: -44, left: 20,
