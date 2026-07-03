@@ -341,26 +341,10 @@ export const LessonReel: React.FC<ReelProps> = ({
           }}>
             {lessonTitle || ''}
           </h1>
-          <div style={{ position: 'relative', marginTop: 60 }}>
-            {/* Speech bubble from teacher (left) */}
+          <div style={{ position: 'relative', marginTop: 80 }}>
+            {/* Speech bubble from student (left) — "Bet." */}
             <div style={{
               position: 'absolute', top: -44, left: 10,
-              padding: '8px 18px', borderRadius: 16,
-              background: '#222', border: '1px solid #444',
-              fontSize: 16, color: '#fb923c', fontWeight: 600,
-              whiteSpace: 'nowrap',
-            }}>
-              Got a minute?
-              <div style={{
-                position: 'absolute', bottom: -6, left: 30,
-                width: 12, height: 12, background: '#222',
-                border: '1px solid #444', borderTop: 'none', borderLeft: 'none',
-                transform: 'rotate(45deg)',
-              }} />
-            </div>
-            {/* Speech bubble from student (right) */}
-            <div style={{
-              position: 'absolute', top: -44, right: 10,
               padding: '8px 18px', borderRadius: 16,
               background: '#222', border: '1px solid #333',
               fontSize: 16, color: '#fff', fontWeight: 600,
@@ -368,9 +352,25 @@ export const LessonReel: React.FC<ReelProps> = ({
             }}>
               Bet.
               <div style={{
-                position: 'absolute', bottom: -6, right: 30,
+                position: 'absolute', bottom: -6, left: 30,
                 width: 12, height: 12, background: '#222',
                 border: '1px solid #333', borderTop: 'none', borderLeft: 'none',
+                transform: 'rotate(45deg)',
+              }} />
+            </div>
+            {/* Speech bubble from teacher (right) — "Got a minute?" */}
+            <div style={{
+              position: 'absolute', top: -44, right: 10,
+              padding: '8px 18px', borderRadius: 16,
+              background: '#222', border: '1px solid #444',
+              fontSize: 16, color: '#fb923c', fontWeight: 600,
+              whiteSpace: 'nowrap',
+            }}>
+              Got a minute?
+              <div style={{
+                position: 'absolute', bottom: -6, right: 30,
+                width: 12, height: 12, background: '#222',
+                border: '1px solid #444', borderTop: 'none', borderLeft: 'none',
                 transform: 'rotate(45deg)',
               }} />
             </div>
@@ -387,58 +387,59 @@ export const LessonReel: React.FC<ReelProps> = ({
         </AbsoluteFill>
       )}
 
-      {/* ===== MAIN CONTENT ===== */}
+      {/* ===== MAIN CONTENT — fixed positions ===== */}
       {showMain && (
         <>
-          {/* Everything centered vertically */}
-          <AbsoluteFill style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            padding: '60px 36px',
-            gap: 28,
-          }}>
-            {/* LESSON TITLE above code */}
-            {lessonTitle && (
-              <div style={{
-                fontSize: 22, fontWeight: 700, color: '#888',
-                letterSpacing: '0.06em', textTransform: 'uppercase' as const,
-                textAlign: 'center',
-              }}>
-                {lessonTitle}
-              </div>
-            )}
-
-            {/* CODE */}
-            {codeSnippet && (
-              <div style={{ width: '85%' }}>
-                <CodeBlock code={codeSnippet} />
-              </div>
-            )}
-
-            {/* CAPTIONS */}
+          {/* LESSON TITLE — fixed top */}
+          {lessonTitle && (
             <div style={{
-              maxWidth: 700, width: '100%',
-              fontFamily, fontWeight: 800, fontSize: 44, lineHeight: 1.4,
-              textAlign: 'center', minHeight: 130,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              position: 'absolute', top: 60, left: 0, right: 0,
+              fontSize: 22, fontWeight: 700, color: '#888',
+              letterSpacing: '0.06em', textTransform: 'uppercase' as const,
+              textAlign: 'center',
             }}>
-              <ConversationCaptionsInline allWords={allWords} titleCardFrames={TITLE_FRAMES} />
+              {lessonTitle}
             </div>
+          )}
 
-            {/* TWO BYTES */}
+          {/* CODE — fixed position below title */}
+          {codeSnippet && (
+            <div style={{
+              position: 'absolute', top: 110, left: 60, right: 60,
+            }}>
+              <CodeBlock code={codeSnippet} />
+            </div>
+          )}
+
+          {/* CAPTIONS — fixed middle area */}
+          <div style={{
+            position: 'absolute', top: 520, left: 50, right: 50,
+            bottom: 560,
+            maxWidth: 700, margin: '0 auto',
+            fontFamily, fontWeight: 800, fontSize: 44, lineHeight: 1.4,
+            textAlign: 'center',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <ConversationCaptionsInline allWords={allWords} titleCardFrames={TITLE_FRAMES} />
+          </div>
+
+          {/* TWO BYTES — fixed bottom */}
+          <div style={{ position: 'absolute', bottom: 180, left: 0, right: 0 }}>
             <TwoBytes
               equipmentStudent={equipmentStudent}
               equipmentTeacher={equipmentTeacher}
               activeSpeaker={activeSpeaker}
             />
+          </div>
 
-            {/* Speaker labels — aligned under each Byte */}
-            <div style={{
-              display: 'flex', justifyContent: 'center', gap: 160, marginTop: -12,
-            }}>
-              <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#555', letterSpacing: '0.08em' }}>STUDENT</span>
-              <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'teacher' ? '#fb923c' : '#555', letterSpacing: '0.08em' }}>TEACHER</span>
-            </div>
-          </AbsoluteFill>
+          {/* Speaker labels — fixed under Bytes */}
+          <div style={{
+            position: 'absolute', bottom: 145, left: 0, right: 0,
+            display: 'flex', justifyContent: 'center', gap: 160,
+          }}>
+            <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#555', letterSpacing: '0.08em' }}>STUDENT</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'teacher' ? '#fb923c' : '#555', letterSpacing: '0.08em' }}>TEACHER</span>
+          </div>
         </>
       )}
 
