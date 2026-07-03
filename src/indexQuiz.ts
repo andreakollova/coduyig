@@ -5,7 +5,7 @@ import { bundle } from '@remotion/bundler';
 import { renderMedia, renderStill, selectComposition } from '@remotion/renderer';
 import { pickQuiz, markQuizPosted } from './pickQuiz';
 import { uploadSlides } from './upload';
-import { publishCarousel } from './instagram';
+import { publishCarousel, publishStory } from './instagram';
 
 const OUT_DIR = path.join(process.cwd(), 'out');
 const W = 1080;
@@ -97,6 +97,20 @@ async function main() {
   const enId = await publishCarousel(enUploaded, captionEn, process.env.IG_USER_ID_EN!, process.env.IG_PAGE_TOKEN_EN!, dryRun);
   console.log('\n=== Publishing to SK ===');
   const skId = await publishCarousel(skUploaded, captionSk, process.env.IG_USER_ID_SK!, process.env.IG_PAGE_TOKEN_SK!, dryRun);
+
+  // Publish first slide as Story
+  console.log('\n=== Publishing EN Story ===');
+  try {
+    await publishStory(enUploaded[0], process.env.IG_USER_ID_EN!, process.env.IG_PAGE_TOKEN_EN!, dryRun);
+  } catch (err) {
+    console.error('⚠️ EN Story failed (non-fatal):', err);
+  }
+  console.log('\n=== Publishing SK Story ===');
+  try {
+    await publishStory(skUploaded[0], process.env.IG_USER_ID_SK!, process.env.IG_PAGE_TOKEN_SK!, dryRun);
+  } catch (err) {
+    console.error('⚠️ SK Story failed (non-fatal):', err);
+  }
 
   if (!dryRun) {
     await markQuizPosted(quiz.id);

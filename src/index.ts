@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { pickLesson, markPosted } from './pickLesson.js';
 import { renderSlides } from './render.js';
 import { uploadSlides } from './upload.js';
-import { publishCarousel } from './instagram.js';
+import { publishCarousel, publishStory } from './instagram.js';
 
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
@@ -45,6 +45,21 @@ async function main() {
 
   console.log('\n=== Publishing to SK Instagram ===');
   const skMediaId = await publishCarousel(skUploaded, model.captionSk, skUserId, skToken, dryRun);
+
+  // 4b. Publish first slide as Story (both accounts)
+  console.log('\n=== Publishing EN Story ===');
+  try {
+    await publishStory(enUploaded[0], enUserId, enToken, dryRun);
+  } catch (err) {
+    console.error('⚠️ EN Story failed (non-fatal):', err);
+  }
+
+  console.log('\n=== Publishing SK Story ===');
+  try {
+    await publishStory(skUploaded[0], skUserId, skToken, dryRun);
+  } catch (err) {
+    console.error('⚠️ SK Story failed (non-fatal):', err);
+  }
 
   // 5. Mark as posted
   if (!dryRun) {

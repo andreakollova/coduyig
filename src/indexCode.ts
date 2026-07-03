@@ -5,7 +5,7 @@ import { bundle } from '@remotion/bundler';
 import { renderMedia, renderStill, selectComposition } from '@remotion/renderer';
 import { pickCodeChallenge } from './pickCodeChallenge';
 import { uploadSlides } from './upload';
-import { publishCarousel } from './instagram';
+import { publishCarousel, publishStory } from './instagram';
 
 const OUT_DIR = path.join(process.cwd(), 'out');
 const dryRun = process.argv.includes('--dry-run');
@@ -82,6 +82,20 @@ async function main() {
   await publishCarousel(enUp, captionEn, process.env.IG_USER_ID_EN!, process.env.IG_PAGE_TOKEN_EN!, dryRun);
   console.log('\n=== Publishing to SK ===');
   await publishCarousel(skUp, captionSk, process.env.IG_USER_ID_SK!, process.env.IG_PAGE_TOKEN_SK!, dryRun);
+
+  // Publish first slide as Story
+  console.log('\n=== Publishing EN Story ===');
+  try {
+    await publishStory(enUp[0], process.env.IG_USER_ID_EN!, process.env.IG_PAGE_TOKEN_EN!, dryRun);
+  } catch (err) {
+    console.error('⚠️ EN Story failed (non-fatal):', err);
+  }
+  console.log('\n=== Publishing SK Story ===');
+  try {
+    await publishStory(skUp[0], process.env.IG_USER_ID_SK!, process.env.IG_PAGE_TOKEN_SK!, dryRun);
+  } catch (err) {
+    console.error('⚠️ SK Story failed (non-fatal):', err);
+  }
 
   console.log('\n✅ DONE');
 }

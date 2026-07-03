@@ -39,6 +39,46 @@ async function waitForContainer(containerId: string, token: string, maxAttempts 
   throw new Error(`Container ${containerId} timed out after ${maxAttempts} attempts`);
 }
 
+export async function publishStory(
+  slide: UploadedSlide,
+  igUserId: string,
+  token: string,
+  dryRun = false
+): Promise<string> {
+  console.log(`\n📖 Publishing story to IG user ${igUserId}...`);
+
+  const params: Record<string, string> = {
+    media_type: 'STORIES',
+    access_token: token,
+  };
+
+  if (slide.type === 'video') {
+    params.video_url = slide.url;
+  } else {
+    params.image_url = slide.url;
+  }
+
+  const container = await igPost(`${API}/${igUserId}/media`, params);
+  if (!container.id) throw new Error('No story container ID returned');
+  console.log(`  📎 Story container: ${container.id}`);
+
+  // Wait for processing
+  await waitForContainer(container.id, token);
+
+  if (dryRun) {
+    console.log(`  🏁 DRY RUN — skipping story publish. Container ID: ${container.id}`);
+    return `dry-run-story-${container.id}`;
+  }
+
+  const publishRes = await igPost(`${API}/${igUserId}/media_publish`, {
+    creation_id: container.id,
+    access_token: token,
+  });
+  if (!publishRes.id) throw new Error('No story media ID returned');
+  console.log(`  📖 Story published! Media ID: ${publishRes.id}`);
+  return publishRes.id;
+}
+
 export async function publishCarousel(
   slides: UploadedSlide[],
   caption: string,

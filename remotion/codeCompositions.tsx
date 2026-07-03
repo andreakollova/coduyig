@@ -198,15 +198,12 @@ export const SlideCodeExplanation: React.FC<{
 }> = ({ prompt, correct, explanation, lang }) => {
   return (
     <AbsoluteFill style={{ background: BG, fontFamily, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 52px', textAlign: 'center' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
         <div style={{ width: 12, height: 12, borderRadius: 6, background: '#4ade80' }} />
         <span style={{ fontSize: 28, color: '#4ade80', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
           {lang === 'sk' ? 'Doplň chýbajúci kód' : 'Fill in the code'}
         </span>
       </div>
-      <p style={{ fontSize: 30, color: '#999', margin: '0 0 28px', fontWeight: 600, maxWidth: 860 }}>
-        {prompt}
-      </p>
 
       <h2 style={{ fontSize: 50, fontWeight: 800, color: '#fff', margin: '0 0 24px', lineHeight: 1.1, maxWidth: 920 }}>
         {lang === 'sk' ? 'Vysvetlenie' : 'Explanation'}
@@ -220,7 +217,7 @@ export const SlideCodeExplanation: React.FC<{
         {correct}
       </div>
 
-      <p style={{ fontSize: 42, color: '#e0e0e0', lineHeight: 1.45, margin: 0, maxWidth: 900 }}>
+      <p style={{ fontSize: 46, color: '#e0e0e0', lineHeight: 1.45, margin: 0, maxWidth: 900 }}>
         {explanation}
       </p>
 

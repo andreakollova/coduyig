@@ -139,10 +139,10 @@ Code: ${ex.code}
 Options: ${ex.options.join(', ')}
 Correct: ${ex.correct}
 
-Write a SHORT explanation (2-3 sentences, max 180 chars) of WHY "${ex.correct}" is correct. Educational, clear.
+Write a SHORT explanation (2-3 sentences, max 180 chars) of WHY "${ex.correct}" is correct. Educational, clear, conversational tone.
 
 Return JSON: {"en": "...", "sk": "..."}
-Slovak must be proper Slovak, never Czech.`;
+IMPORTANT: "sk" MUST be written entirely in Slovak (slovenčina). Never Czech. Never English. The Slovak text must be a natural Slovak explanation, not a translation of the English one.`;
 
   try {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
