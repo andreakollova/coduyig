@@ -327,6 +327,7 @@ export const LessonReel: React.FC<ReelProps> = ({
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
           padding: 60, gap: 24,
         }}>
+          <CoduyLogo height={32} />
           <div style={{
             padding: '10px 24px', borderRadius: 30,
             background: '#161616', border: '1px solid #2a2a2a',
@@ -350,7 +351,7 @@ export const LessonReel: React.FC<ReelProps> = ({
               fontSize: 16, color: '#fff', fontWeight: 600,
               whiteSpace: 'nowrap',
             }}>
-              Bet.
+              Where do I start?
               <div style={{
                 position: 'absolute', bottom: -6, left: 30,
                 width: 12, height: 12, background: '#222',
@@ -366,7 +367,7 @@ export const LessonReel: React.FC<ReelProps> = ({
               fontSize: 16, color: '#fb923c', fontWeight: 600,
               whiteSpace: 'nowrap',
             }}>
-              Got a minute?
+              Right here.
               <div style={{
                 position: 'absolute', bottom: -6, right: 30,
                 width: 12, height: 12, background: '#222',
@@ -374,14 +375,14 @@ export const LessonReel: React.FC<ReelProps> = ({
                 transform: 'rotate(45deg)',
               }} />
             </div>
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 16 }}>
               <ByteMascot size={160} equipment={equipmentStudent} />
               <ByteMascot size={160} equipment={equipmentTeacher} />
             </div>
             {/* Ground line */}
             <div style={{
               width: 420, height: 2, background: 'rgba(255,255,255,0.08)',
-              borderRadius: 1, marginTop: 4, alignSelf: 'center',
+              borderRadius: 1, marginTop: 4, margin: '4px auto 0',
             }} />
           </div>
         </AbsoluteFill>
