@@ -53,17 +53,17 @@ export const RemotionRoot: React.FC = () => (
       defaultProps={{ prompt: 'Fill in:', codeAnswer: 'x = 5', correct: '5', options: ['a', 'b'], equipment: {}, lang: 'en' }} />
     <Composition id="SlideCodeExplanation" component={SlideCodeExplanation} durationInFrames={1} fps={FPS} width={W} height={H}
       defaultProps={{ prompt: 'Fill in:', correct: '5', explanation: 'Because...', lang: 'en' }} />
-    <Composition id="LessonReel" component={LessonReel} durationInFrames={15 * FPS} fps={FPS} width={REEL_W} height={REEL_H}
+    <Composition id="LessonReel" component={LessonReel} durationInFrames={30 * FPS} fps={FPS} width={REEL_W} height={REEL_H}
       defaultProps={{
-        sections: [
-          { label: 'INTRODUCTION', words: [{ word: 'Hello', start: 0, end: 0.5 }] },
-          { label: 'LEARNING', words: [{ word: 'World', start: 0.6, end: 1.0 }], code: 'print("Hello")' },
-          { label: 'KEY POINTS', words: [{ word: 'Key', start: 1.1, end: 1.5 }] },
-          { label: 'WHY CARE?', words: [{ word: 'Care', start: 1.6, end: 2.0 }] },
+        lines: [
+          { speaker: 'student' as const, audioUrl: '', words: [{ word: 'Hey', start: 0, end: 0.3, speaker: 'student' as const }], startTime: 0, duration: 1 },
+          { speaker: 'teacher' as const, audioUrl: '', words: [{ word: 'Hi', start: 1.3, end: 1.6, speaker: 'teacher' as const }], startTime: 1.3, duration: 1, code: 'print("Hello")' },
         ],
-        audioUrl: '',
-        equipment: {},
-        durationInFrames: 15 * FPS,
+        equipmentStudent: {},
+        equipmentTeacher: { hat: 'hat-graduation', glasses: 'glasses-cool' },
+        durationInFrames: 30 * FPS,
+        lessonTitle: 'Example Lesson',
+        lessonNumber: 1,
       }} />
   </>
 );

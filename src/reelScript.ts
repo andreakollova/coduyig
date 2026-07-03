@@ -1,48 +1,54 @@
 /**
- * Generate a spoken script + code snippet from a lesson for an IG Reel.
- * Uses GPT-4o to create a conversational voiceover from the lesson content.
+ * Generate a conversational script for IG Reel — two Bytes talking.
+ * Student (white) asks, Teacher (orange) explains.
  */
 
 const OPENAI_KEY = process.env.OPENAI_API_KEY || '';
 
-export interface ReelScript {
-  spokenText: string;
-  sections: {
-    label: string;
-    spoken: string;
-    code?: string;
-  }[];
+export interface ReelLine {
+  speaker: 'student' | 'teacher';
+  spoken: string;
+  code?: string;
 }
 
-const SYSTEM = `You create voiceover scripts for Instagram Reels about programming lessons.
+export interface ReelScript {
+  lines: ReelLine[];
+}
 
-Given a lesson title, introduction, learning content, and key takeaways, create a script with EXACTLY 4 sections:
+const SYSTEM = `You write short conversational scripts for Instagram Reels about programming.
 
-1. "INTRODUCTION" — Start with "Hey guys," then rephrase the lesson introduction conversationally. Keep the full meaning. 3-5 sentences.
-2. "LEARNING" — Explain the core concept from the learning content. 2-3 clear sentences.
-3. "KEY POINTS" — Two concrete takeaways from the lesson. 1-2 sentences.
-4. "CTA" — EXACTLY this text: "Check out the full lesson on the app."
+Two characters talk:
+- STUDENT: curious beginner, asks short questions
+- TEACHER: friendly expert, gives clear short answers
+
+Given a lesson title, introduction and content, create a conversation with EXACTLY 5 lines:
+
+1. STUDENT: greeting + question about the topic (max 10 words). Example: "Yo, what are lambda functions?"
+2. TEACHER: short explanation of the concept (max 20 words)
+3. STUDENT: follow-up "Oh cool!" + asks about a specific detail (max 10 words)
+4. TEACHER: answers with a concrete example or key point (max 15 words)
+5. TEACHER: "Check out the full lesson on the app."
+
+TOTAL: max 50 words across all lines. Keep it PUNCHY and SHORT.
 
 RULES:
-- The INTRODUCTION MUST begin with "Hey guys," — non-negotiable.
-- NEVER read code aloud. Code is shown on screen, not spoken.
-- Don't say "for i in range" or any syntax — describe what code DOES naturally.
-- Be conversational, energetic, like a friend explaining.
-- Total script should be 60-90 words (video will be 30-60 seconds).
+- NEVER read code aloud. Describe what code does naturally.
+- Be casual, like two friends chatting.
+- Student sounds curious and excited.
+- Teacher sounds confident and friendly.
 
-Also pick ONE short code snippet (3-5 lines) from the lesson content that best illustrates the concept. If no code exists, return code as null.
+Also pick ONE code snippet (3-5 lines) from the lesson. Show it during teacher's explanation (line 2 or 4). If no code exists, return code as null.
 
 Return VALID JSON:
 {
-  "sections": [
-    {"label": "INTRODUCTION", "spoken": "...", "code": null},
-    {"label": "LEARNING", "spoken": "...", "code": "def example():\\n    return 42"},
-    {"label": "KEY POINTS", "spoken": "...", "code": null},
-    {"label": "CTA", "spoken": "Check out the full lesson on the app.", "code": null}
+  "lines": [
+    {"speaker": "student", "spoken": "Yo, what are lambda functions?", "code": null},
+    {"speaker": "teacher", "spoken": "They're tiny anonymous functions you write in one line.", "code": "square = lambda x: x ** 2"},
+    {"speaker": "student", "spoken": "Oh nice! When do you use them?", "code": null},
+    {"speaker": "teacher", "spoken": "With map, filter, and sorted — super handy for quick operations.", "code": null},
+    {"speaker": "teacher", "spoken": "Check out the full lesson on the app.", "code": null}
   ]
-}
-
-Code appears in at most 2 sections (LEARNING and/or KEY POINTS). Use \\n for newlines in code.`;
+}`;
 
 export async function generateReelScript(
   title: string,
@@ -51,20 +57,10 @@ export async function generateReelScript(
   keyTakeaways: string[],
 ): Promise<ReelScript> {
   if (!OPENAI_KEY) {
-    console.log('⚠️  No OPENAI_API_KEY — using fallback script');
-    return fallbackScript(title, introduction);
+    return fallbackScript(title);
   }
 
-  const prompt = `LESSON TITLE: ${title}
-
-INTRODUCTION:
-${introduction.slice(0, 2000)}
-
-LEARNING CONTENT:
-${learningContent.slice(0, 3000)}
-
-KEY TAKEAWAYS:
-${keyTakeaways.join('\n')}`;
+  const prompt = `LESSON: ${title}\n\nINTRO:\n${introduction.slice(0, 1500)}\n\nCONTENT:\n${learningContent.slice(0, 2000)}\n\nTAKEAWAYS:\n${keyTakeaways.join('\n')}`;
 
   try {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -73,47 +69,31 @@ ${keyTakeaways.join('\n')}`;
       body: JSON.stringify({
         model: 'gpt-4o',
         messages: [{ role: 'system', content: SYSTEM }, { role: 'user', content: prompt }],
-        temperature: 0.4,
-        max_tokens: 1500,
+        temperature: 0.5,
+        max_tokens: 800,
         response_format: { type: 'json_object' },
       }),
     });
     const data = await res.json();
     const parsed = JSON.parse(data.choices?.[0]?.message?.content || '{}');
+    if (!parsed.lines || parsed.lines.length < 4) throw new Error('Invalid');
 
-    if (!parsed.sections || parsed.sections.length !== 4) throw new Error('Invalid sections');
+    const totalWords = parsed.lines.reduce((s: number, l: any) => s + l.spoken.split(/\s+/).length, 0);
+    console.log(`📝 Script: ${totalWords} words, ${parsed.lines.length} lines`);
 
-    const totalWords = parsed.sections.reduce((sum: number, s: any) => sum + s.spoken.split(/\s+/).length, 0);
-    console.log(`📝 Script: ${totalWords} words (target: 60-90)`);
-
-    const spokenText = parsed.sections.map((s: any) => s.spoken).join(' ');
-
-    return {
-      spokenText,
-      sections: parsed.sections.map((s: any) => ({
-        label: s.label,
-        spoken: s.spoken,
-        code: s.code || undefined,
-      })),
-    };
+    return { lines: parsed.lines.map((l: any) => ({ speaker: l.speaker, spoken: l.spoken, code: l.code || undefined })) };
   } catch (err) {
-    console.error('⚠️ GPT script generation failed:', err);
-    return fallbackScript(title, introduction);
+    console.error('⚠️ GPT failed:', err);
+    return fallbackScript(title);
   }
 }
 
-function fallbackScript(title: string, introduction?: string): ReelScript {
-  const introText = introduction
-    ? `Hey guys, ${introduction.split('.').slice(0, 3).join('. ')}.`
-    : `Hey guys, let's learn about ${title}.`;
-  const sections = [
-    { label: 'INTRODUCTION', spoken: introText },
-    { label: 'LEARNING', spoken: 'This is one of the most important concepts in programming.' },
-    { label: 'KEY POINTS', spoken: 'Understanding this will make you a better developer.' },
-    { label: 'CTA', spoken: 'Check out the full lesson on the app.' },
-  ];
-  return {
-    spokenText: sections.map(s => s.spoken).join(' '),
-    sections,
-  };
+function fallbackScript(title: string): ReelScript {
+  return { lines: [
+    { speaker: 'student', spoken: `Yo, what's ${title}?` },
+    { speaker: 'teacher', spoken: `It's one of the key concepts every developer should know.` },
+    { speaker: 'student', spoken: `Oh cool! Why does it matter?` },
+    { speaker: 'teacher', spoken: `It makes your code cleaner and more efficient.` },
+    { speaker: 'teacher', spoken: `Check out the full lesson on the app.` },
+  ]};
 }

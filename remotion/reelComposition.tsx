@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   AbsoluteFill, useCurrentFrame, interpolate, useVideoConfig,
-  Audio, staticFile, Img, spring, Sequence,
+  Audio, staticFile, Img, Sequence, spring,
 } from 'remotion';
 import { loadFont } from '@remotion/google-fonts/Inter';
 import { ByteMascot } from './Byte';
@@ -19,51 +19,53 @@ export interface WordTiming {
   word: string;
   start: number;
   end: number;
+  speaker: 'student' | 'teacher';
 }
 
-export interface ReelSection {
-  label: string;
+export interface ReelLineData {
+  speaker: 'student' | 'teacher';
+  audioUrl: string;
   words: WordTiming[];
+  startTime: number; // absolute start in seconds
+  duration: number;
   code?: string;
 }
 
 export interface ReelProps {
-  sections: ReelSection[];
-  audioUrl: string;
+  lines: ReelLineData[];
   bgMusicUrl?: string;
-  equipment: Record<string, string>;
+  equipmentStudent: Record<string, string>;
+  equipmentTeacher: Record<string, string>;
   durationInFrames: number;
   lessonTitle?: string;
   lessonNumber?: number;
 }
 
-/* ========== CODE BLOCK — always visible at top ========== */
+/* ========== CODE BLOCK — top of screen ========== */
 
 const CodeBlock: React.FC<{ code: string }> = ({ code }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const fadeIn = interpolate(frame, [0, fps * 0.5], [0, 1], { extrapolateRight: 'clamp' });
-  const slideDown = interpolate(frame, [0, fps * 0.5], [-40, 0], { extrapolateRight: 'clamp' });
+  const slideDown = interpolate(frame, [0, fps * 0.5], [-30, 0], { extrapolateRight: 'clamp' });
 
   return (
     <div style={{
-      opacity: fadeIn,
-      transform: `translateY(${slideDown}px)`,
-      width: '100%', borderRadius: 24,
-      overflow: 'hidden', border: '1px solid #2a2a2a',
-      boxShadow: '0 8px 40px rgba(0,0,0,0.7), 0 0 60px rgba(74,222,128,0.05)',
+      opacity: fadeIn, transform: `translateY(${slideDown}px)`,
+      width: '100%', borderRadius: 24, overflow: 'hidden',
+      border: '1px solid #2a2a2a',
+      boxShadow: '0 8px 40px rgba(0,0,0,0.7)',
     }}>
-      <div style={{ background: '#1a1a1a', padding: '12px 20px', display: 'flex', gap: 8, alignItems: 'center' }}>
-        <div style={{ width: 12, height: 12, borderRadius: 6, background: '#ff5f57' }} />
-        <div style={{ width: 12, height: 12, borderRadius: 6, background: '#febc2e' }} />
-        <div style={{ width: 12, height: 12, borderRadius: 6, background: '#28c840' }} />
-        <span style={{ marginLeft: 12, fontSize: 14, color: '#555', fontWeight: 600 }}>main.py</span>
+      <div style={{ background: '#1a1a1a', padding: '10px 18px', display: 'flex', gap: 8 }}>
+        <div style={{ width: 11, height: 11, borderRadius: 6, background: '#ff5f57' }} />
+        <div style={{ width: 11, height: 11, borderRadius: 6, background: '#febc2e' }} />
+        <div style={{ width: 11, height: 11, borderRadius: 6, background: '#28c840' }} />
+        <span style={{ marginLeft: 10, fontSize: 13, color: '#555', fontWeight: 600 }}>main.py</span>
       </div>
       <pre style={{
-        background: '#111', padding: '26px 28px', fontSize: 32,
-        color: '#e0e0e0', margin: 0, textAlign: 'left', lineHeight: 1.8,
-        fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-        whiteSpace: 'pre-wrap',
+        background: '#111', padding: '20px 24px', fontSize: 28,
+        color: '#e0e0e0', margin: 0, textAlign: 'left', lineHeight: 1.7,
+        fontFamily: "'JetBrains Mono', monospace", whiteSpace: 'pre-wrap',
       }}>
         {code}
       </pre>
@@ -71,52 +73,32 @@ const CodeBlock: React.FC<{ code: string }> = ({ code }) => {
   );
 };
 
-/* ========== SECTION LABEL — subtle top indicator ========== */
+/* ========== CONVERSATION CAPTIONS ========== */
 
-const SectionLabel: React.FC<{ label: string }> = ({ label }) => {
+const ConversationCaptions: React.FC<{
+  allWords: WordTiming[];
+  titleCardFrames: number;
+}> = ({ allWords, titleCardFrames }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const fadeIn = interpolate(frame, [0, 8], [0, 1], { extrapolateRight: 'clamp' });
-  const glow = interpolate(Math.sin(frame / fps * Math.PI * 2), [-1, 1], [0.6, 1]);
-
-  return (
-    <div style={{
-      opacity: fadeIn,
-      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-    }}>
-      <div style={{
-        width: 10, height: 10, borderRadius: 5, background: '#4ade80',
-        boxShadow: `0 0 ${8 * glow}px rgba(74,222,128,0.5)`,
-      }} />
-      <span style={{
-        fontSize: 20, color: '#4ade80', fontWeight: 700,
-        letterSpacing: '0.12em', textTransform: 'uppercase' as const,
-        opacity: glow,
-      }}>
-        {label}
-      </span>
-    </div>
-  );
-};
-
-/* ========== KARAOKE CAPTIONS — middle of screen ========== */
-
-const KaraokeCaptions: React.FC<{ allWords: WordTiming[]; offsetFrames?: number }> = ({ allWords, offsetFrames = 0 }) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const currentTime = (frame - offsetFrames) / fps;
+  const currentTime = (frame - titleCardFrames) / fps;
 
   let currentWordIdx = -1;
   for (let i = 0; i < allWords.length; i++) {
-    if (currentTime >= allWords[i].start - 0.05 && currentTime < allWords[i].end + 0.1) {
+    if (currentTime >= allWords[i].start - 0.05 && currentTime < allWords[i].end + 0.12) {
       currentWordIdx = i;
     }
   }
 
   if (currentWordIdx < 0) return null;
 
-  const windowSize = 5;
-  const windowStart = Math.max(0, currentWordIdx - Math.floor(windowSize / 2));
+  // Current speaker determines color
+  const currentSpeaker = allWords[currentWordIdx]?.speaker || 'teacher';
+  const activeColor = currentSpeaker === 'student' ? '#FFFFFF' : '#fb923c'; // white vs orange
+
+  // Window of words (same speaker chunk)
+  const windowSize = 6;
+  const windowStart = Math.max(0, currentWordIdx - 2);
   const windowEnd = Math.min(allWords.length, windowStart + windowSize);
   const visibleWords = allWords.slice(windowStart, windowEnd);
 
@@ -125,19 +107,19 @@ const KaraokeCaptions: React.FC<{ allWords: WordTiming[]; offsetFrames?: number 
     const globalIdx = windowStart + i;
     const isActive = globalIdx === currentWordIdx;
     const isPast = globalIdx < currentWordIdx;
+    const wordColor = w.speaker === 'student' ? '#FFFFFF' : '#fb923c';
+    const dimColor = w.speaker === 'student' ? 'rgba(255,255,255,0.25)' : 'rgba(251,146,60,0.25)';
+
     if (i > 0) parts.push(' ');
     parts.push(
-      <span
-        key={`${globalIdx}-${w.word}`}
-        style={{
-          color: isActive ? '#FFFFFF' : isPast ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.15)',
-          transform: isActive ? 'scale(1.12)' : 'scale(1)',
-          display: 'inline',
-          textShadow: isActive
-            ? '0 0 24px rgba(255,255,255,0.5), 0 0 50px rgba(74,222,128,0.15), 0 3px 8px rgba(0,0,0,0.9)'
-            : '0 2px 4px rgba(0,0,0,0.5)',
-        }}
-      >
+      <span key={`${globalIdx}-${w.word}`} style={{
+        color: isActive ? wordColor : isPast ? dimColor : dimColor,
+        transform: isActive ? 'scale(1.1)' : 'scale(1)',
+        display: 'inline',
+        textShadow: isActive
+          ? `0 0 20px ${w.speaker === 'student' ? 'rgba(255,255,255,0.4)' : 'rgba(251,146,60,0.4)'}, 0 2px 8px rgba(0,0,0,0.8)`
+          : '0 2px 4px rgba(0,0,0,0.5)',
+      }}>
         {w.word}
       </span>
     );
@@ -146,9 +128,10 @@ const KaraokeCaptions: React.FC<{ allWords: WordTiming[]; offsetFrames?: number 
   return (
     <div style={{
       position: 'absolute',
-      bottom: 280, left: 80, right: 80,
+      top: '45%', left: 60, right: 60,
+      transform: 'translateY(-50%)',
       maxWidth: 700, margin: '0 auto',
-      fontFamily, fontWeight: 800, fontSize: 44, lineHeight: 1.5,
+      fontFamily, fontWeight: 800, fontSize: 46, lineHeight: 1.45,
       textAlign: 'center',
     }}>
       {parts}
@@ -156,102 +139,113 @@ const KaraokeCaptions: React.FC<{ allWords: WordTiming[]; offsetFrames?: number 
   );
 };
 
-/* ========== ANIMATED BYTE — bottom, pointing up ========== */
+/* ========== TWO BYTES — bottom, side by side ========== */
 
-const PointingByte: React.FC<{ equipment: Record<string, string> }> = ({ equipment }) => {
+const TwoBytes: React.FC<{
+  equipmentStudent: Record<string, string>;
+  equipmentTeacher: Record<string, string>;
+  activeSpeaker: 'student' | 'teacher' | null;
+}> = ({ equipmentStudent, equipmentTeacher, activeSpeaker }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Entry from bottom
-  const entryY = interpolate(frame, [0, fps * 0.6], [80, 0], { extrapolateRight: 'clamp' });
-  const entryOp = interpolate(frame, [0, fps * 0.3], [0, 1], { extrapolateRight: 'clamp' });
+  // Talking animation — active speaker bounces
+  const bounce = interpolate(Math.sin(frame / fps * Math.PI * 4), [-1, 1], [-4, 4]);
+  const idleBob = interpolate(Math.sin(frame / fps * Math.PI * 0.6), [-1, 1], [-3, 3]);
 
-  // Subtle pointing motion — rocking left-right
-  const rock = interpolate(Math.sin(frame / fps * Math.PI * 1.2), [-1, 1], [-4, 4]);
-
-  // Bounce on section changes (every ~3s)
-  const bouncePhase = (frame % (fps * 3)) / fps;
-  const bounce = bouncePhase < 0.3
-    ? interpolate(bouncePhase, [0, 0.15, 0.3], [0, -12, 0])
-    : 0;
+  // Student leans slightly right (toward teacher), teacher leans slightly left
+  const studentLean = interpolate(Math.sin(frame / fps * Math.PI * 0.8), [-1, 1], [-2, 2]);
+  const teacherLean = interpolate(Math.sin(frame / fps * Math.PI * 0.8 + 1), [-1, 1], [-2, 2]);
 
   return (
     <div style={{
-      opacity: entryOp,
-      transform: `translateY(${entryY + bounce}px) rotate(${rock}deg)`,
-      display: 'flex', justifyContent: 'center',
+      display: 'flex', justifyContent: 'center', alignItems: 'flex-end',
+      gap: 20, paddingBottom: 10,
     }}>
-      <ByteMascot size={280} equipment={equipment} />
+      {/* Student — left, white outline glow when speaking */}
+      <div style={{
+        transform: `translateY(${activeSpeaker === 'student' ? bounce : idleBob}px) rotate(${studentLean}deg)`,
+        filter: activeSpeaker === 'student' ? 'drop-shadow(0 0 12px rgba(255,255,255,0.3))' : 'none',
+        opacity: activeSpeaker === 'teacher' ? 0.6 : 1,
+      }}>
+        <ByteMascot size={200} equipment={equipmentStudent} />
+      </div>
+
+      {/* Teacher — right, orange outline glow when speaking */}
+      <div style={{
+        transform: `translateY(${activeSpeaker === 'teacher' ? bounce : idleBob}px) rotate(${teacherLean}deg)`,
+        filter: activeSpeaker === 'teacher' ? 'drop-shadow(0 0 12px rgba(251,146,60,0.3))' : 'none',
+        opacity: activeSpeaker === 'student' ? 0.6 : 1,
+      }}>
+        <ByteMascot size={200} equipment={equipmentTeacher} />
+      </div>
     </div>
   );
 };
 
-/* ========== CURRENT SECTION TRACKER ========== */
+/* ========== ACTIVE SPEAKER TRACKER ========== */
 
-const CurrentSectionLabel: React.FC<{
-  sections: ReelSection[];
-  offsetFrames?: number;
-}> = ({ sections, offsetFrames = 0 }) => {
+function useActiveSpeaker(allWords: WordTiming[], titleCardFrames: number): 'student' | 'teacher' | null {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const currentTime = (frame - offsetFrames) / fps;
+  const t = (frame - titleCardFrames) / fps;
 
-  // Find which section we're in
-  let currentLabel = '';
-  for (const sec of sections) {
-    if (sec.words.length === 0) continue;
-    const start = sec.words[0].start;
-    const end = sec.words[sec.words.length - 1].end;
-    if (currentTime >= start - 0.1 && currentTime <= end + 0.3) {
-      currentLabel = sec.label;
+  for (let i = allWords.length - 1; i >= 0; i--) {
+    if (t >= allWords[i].start - 0.1 && t <= allWords[i].end + 0.3) {
+      return allWords[i].speaker;
     }
   }
+  return null;
+}
 
-  if (!currentLabel) return null;
-
-  return <SectionLabel label={currentLabel} />;
-};
-
-/* ========== MAIN REEL COMPOSITION ========== */
+/* ========== MAIN COMPOSITION ========== */
 
 export const LessonReel: React.FC<ReelProps> = ({
-  sections, audioUrl, bgMusicUrl, equipment, durationInFrames, lessonTitle, lessonNumber,
+  lines, bgMusicUrl, equipmentStudent, equipmentTeacher,
+  durationInFrames, lessonTitle, lessonNumber,
 }) => {
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
 
-  const allWords: WordTiming[] = sections.flatMap(sec => sec.words);
-  const codeSnippet = sections.find(s => s.code)?.code;
+  const allWords: WordTiming[] = lines.flatMap(l => l.words);
+  const codeSnippet = lines.find(l => l.code)?.code;
 
-  // Title card: first 2 seconds (60 frames)
-  const TITLE_DURATION = fps * 2;
-  // CTA card: last 3 seconds
-  const ctaStart = allWords.length > 0
-    ? Math.ceil(allWords[allWords.length - 1].end * fps) + fps * 0.5
-    : durationInFrames - fps * 3;
+  const TITLE_FRAMES = fps * 2;
 
-  const showTitle = frame < TITLE_DURATION;
-  const showCTA = frame >= ctaStart;
+  // CTA starts after last word + 0.5s
+  const lastWordEnd = allWords.length > 0 ? allWords[allWords.length - 1].end : 0;
+  const ctaStartFrame = TITLE_FRAMES + Math.ceil(lastWordEnd * fps) + Math.ceil(fps * 0.8);
+
+  const showTitle = frame < TITLE_FRAMES;
+  const showCTA = frame >= ctaStartFrame;
   const showMain = !showTitle && !showCTA;
 
-  // Title card animations
-  const titleOp = interpolate(frame, [0, 10, TITLE_DURATION - 10, TITLE_DURATION], [0, 1, 1, 0], { extrapolateRight: 'clamp' });
-  const titleScale = interpolate(frame, [0, 15], [0.9, 1], { extrapolateRight: 'clamp' });
+  const activeSpeaker = useActiveSpeaker(allWords, TITLE_FRAMES);
+
+  // Title animations
+  const titleOp = interpolate(frame, [0, 10, TITLE_FRAMES - 10, TITLE_FRAMES], [0, 1, 1, 0], { extrapolateRight: 'clamp' });
 
   // CTA animations
-  const ctaOp = interpolate(frame, [ctaStart, ctaStart + 15], [0, 1], { extrapolateRight: 'clamp' });
+  const ctaOp = interpolate(frame, [ctaStartFrame, ctaStartFrame + 15], [0, 1], { extrapolateRight: 'clamp' });
 
   return (
     <AbsoluteFill style={{ background: BG, fontFamily }}>
-      {/* Audio — starts after title card */}
-      <Sequence from={TITLE_DURATION}>
-        <Audio src={audioUrl} volume={1} />
-      </Sequence>
-      {bgMusicUrl && <Audio src={bgMusicUrl} volume={0.08} loop />}
+      {/* BG music */}
+      {bgMusicUrl && <Audio src={bgMusicUrl} volume={0.06} loop />}
       {!bgMusicUrl && (() => {
-        try { return <Audio src={staticFile('bgmusic.mp3')} volume={0.08} loop />; }
+        try { return <Audio src={staticFile('bgmusic.mp3')} volume={0.06} loop />; }
         catch { return null; }
       })()}
+
+      {/* Audio lines — each plays at its offset */}
+      {lines.map((line, i) => {
+        const startFrame = TITLE_FRAMES + Math.round(line.startTime * fps);
+        return (
+          <Sequence key={i} from={startFrame} durationInFrames={Math.ceil(line.duration * fps) + 10}>
+            <Audio src={line.audioUrl} volume={1} />
+          </Sequence>
+        );
+      })}
 
       <BackgroundParticles />
 
@@ -259,92 +253,85 @@ export const LessonReel: React.FC<ReelProps> = ({
       {showTitle && (
         <AbsoluteFill style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          padding: 60, gap: 24,
-          opacity: titleOp, transform: `scale(${titleScale})`,
+          padding: 60, gap: 20, opacity: titleOp,
         }}>
-          <ByteMascot size={250} equipment={equipment} />
+          <div style={{ display: 'flex', gap: 16 }}>
+            <ByteMascot size={160} equipment={equipmentStudent} />
+            <ByteMascot size={160} equipment={equipmentTeacher} />
+          </div>
           <div style={{
-            padding: '12px 28px', borderRadius: 30,
+            padding: '10px 24px', borderRadius: 30,
             background: '#161616', border: '1px solid #2a2a2a',
-            fontSize: 22, color: '#4ade80', fontWeight: 700,
+            fontSize: 20, color: '#4ade80', fontWeight: 700,
             letterSpacing: '0.1em', textTransform: 'uppercase' as const,
           }}>
             Lesson {lessonNumber || ''}
           </div>
           <h1 style={{
-            fontSize: 56, fontWeight: 800, color: '#fff',
-            textAlign: 'center', lineHeight: 1.15, margin: 0,
-            maxWidth: 800,
+            fontSize: 52, fontWeight: 800, color: '#fff',
+            textAlign: 'center', lineHeight: 1.15, margin: 0, maxWidth: 800,
           }}>
             {lessonTitle || ''}
           </h1>
-          <CoduyLogo height={26} />
+          <CoduyLogo height={24} />
         </AbsoluteFill>
       )}
 
       {/* ===== MAIN CONTENT ===== */}
       {showMain && (
         <>
-          {/* Section label — top */}
-          <div style={{ position: 'absolute', top: 70, left: 0, right: 0 }}>
-            <CurrentSectionLabel sections={sections} offsetFrames={TITLE_DURATION} />
-          </div>
-
-          {/* Byte — upper area */}
-          <div style={{
-            position: 'absolute', top: 120, left: 0, right: 0,
-            display: 'flex', justifyContent: 'center',
-          }}>
-            <PointingByte equipment={equipment} />
-          </div>
-
-          {/* Code — below Byte */}
+          {/* CODE — top */}
           {codeSnippet && (
-            <div style={{ position: 'absolute', top: 440, left: 40, right: 40 }}>
+            <div style={{ position: 'absolute', top: 80, left: 36, right: 36 }}>
               <CodeBlock code={codeSnippet} />
             </div>
           )}
 
-          {/* Karaoke captions — lower area */}
-          <KaraokeCaptions allWords={allWords} offsetFrames={TITLE_DURATION} />
+          {/* CAPTIONS — middle */}
+          <ConversationCaptions allWords={allWords} titleCardFrames={TITLE_FRAMES} />
+
+          {/* TWO BYTES — bottom */}
+          <div style={{ position: 'absolute', bottom: 120, left: 0, right: 0 }}>
+            <TwoBytes
+              equipmentStudent={equipmentStudent}
+              equipmentTeacher={equipmentTeacher}
+              activeSpeaker={activeSpeaker}
+            />
+          </div>
+
+          {/* Speaker labels under Bytes */}
+          <div style={{
+            position: 'absolute', bottom: 85, left: 0, right: 0,
+            display: 'flex', justifyContent: 'center', gap: 120,
+          }}>
+            <span style={{ fontSize: 16, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#444', letterSpacing: '0.08em' }}>STUDENT</span>
+            <span style={{ fontSize: 16, fontWeight: 700, color: activeSpeaker === 'teacher' ? '#fb923c' : '#444', letterSpacing: '0.08em' }}>TEACHER</span>
+          </div>
+
+          <div style={{ position: 'absolute', bottom: 40, left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
+            <CoduyLogo height={18} />
+          </div>
         </>
       )}
 
-      {/* ===== CTA SCREEN ===== */}
+      {/* ===== CTA ===== */}
       {showCTA && (
         <AbsoluteFill style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          padding: 60, gap: 32, opacity: ctaOp,
+          padding: 60, gap: 28, opacity: ctaOp,
         }}>
-          <ByteMascot size={220} equipment={equipment} />
-          <h2 style={{
-            fontSize: 42, fontWeight: 800, color: '#fff',
-            textAlign: 'center', lineHeight: 1.3, margin: 0,
-            maxWidth: 750,
-          }}>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <ByteMascot size={140} equipment={equipmentStudent} />
+            <ByteMascot size={140} equipment={equipmentTeacher} />
+          </div>
+          <h2 style={{ fontSize: 40, fontWeight: 800, color: '#fff', textAlign: 'center', lineHeight: 1.3, margin: 0 }}>
             Full lesson available on
           </h2>
-          <div style={{ marginTop: 8 }}>
-            <CoduyLogo height={48} />
-          </div>
-          <p style={{
-            fontSize: 24, color: '#888', fontWeight: 600,
-            textAlign: 'center', margin: 0,
-          }}>
+          <CoduyLogo height={44} />
+          <p style={{ fontSize: 22, color: '#888', fontWeight: 600, textAlign: 'center', margin: 0 }}>
             Free on App Store & Google Play
           </p>
         </AbsoluteFill>
-      )}
-
-      {/* Logo — always at bottom (except during title/CTA which have their own) */}
-      {showMain && (
-        <div style={{
-          position: 'absolute', bottom: 50,
-          left: 0, right: 0,
-          display: 'flex', justifyContent: 'center',
-        }}>
-          <CoduyLogo height={20} />
-        </div>
       )}
     </AbsoluteFill>
   );
@@ -355,24 +342,15 @@ export const LessonReel: React.FC<ReelProps> = ({
 const BackgroundParticles: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-
   return (
     <>
-      {Array.from({ length: 10 }, (_, i) => {
-        const x = 80 + (i * 110) % 920;
-        const baseY = 150 + (i * 200) % 1600;
-        const speed = 0.2 + (i % 4) * 0.15;
-        const size = 2 + (i % 3) * 2;
-        const y = baseY + Math.sin((frame / fps * speed) + i * 1.5) * 25;
-        const opacity = interpolate(Math.sin((frame / fps * 0.4) + i), [-1, 1], [0.02, 0.06]);
-
-        return (
-          <div key={i} style={{
-            position: 'absolute', left: x, top: y,
-            width: size, height: size, borderRadius: size / 2,
-            background: i % 2 === 0 ? '#4ade80' : '#60a5fa', opacity,
-          }} />
-        );
+      {Array.from({ length: 8 }, (_, i) => {
+        const x = 80 + (i * 130) % 920;
+        const baseY = 200 + (i * 230) % 1500;
+        const y = baseY + Math.sin((frame / fps * (0.2 + i * 0.1)) + i) * 20;
+        const op = interpolate(Math.sin((frame / fps * 0.4) + i), [-1, 1], [0.02, 0.05]);
+        const size = 3 + (i % 3);
+        return <div key={i} style={{ position: 'absolute', left: x, top: y, width: size, height: size, borderRadius: size, background: i % 2 === 0 ? '#4ade80' : '#fb923c', opacity: op }} />;
       })}
     </>
   );
