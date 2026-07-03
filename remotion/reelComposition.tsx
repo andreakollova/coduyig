@@ -138,6 +138,55 @@ const ConversationCaptions: React.FC<{
   );
 };
 
+/** Inline version (not absolutely positioned) for flex layout */
+const ConversationCaptionsInline: React.FC<{
+  allWords: WordTiming[];
+  titleCardFrames: number;
+}> = ({ allWords, titleCardFrames }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const currentTime = (frame - titleCardFrames) / fps;
+
+  let currentWordIdx = -1;
+  for (let i = 0; i < allWords.length; i++) {
+    if (currentTime >= allWords[i].start - 0.05 && currentTime < allWords[i].end + 0.12) {
+      currentWordIdx = i;
+    }
+  }
+
+  if (currentWordIdx < 0) return null;
+
+  const windowSize = 6;
+  const windowStart = Math.max(0, currentWordIdx - 2);
+  const windowEnd = Math.min(allWords.length, windowStart + windowSize);
+  const visibleWords = allWords.slice(windowStart, windowEnd);
+
+  const parts: React.ReactNode[] = [];
+  visibleWords.forEach((w, i) => {
+    const globalIdx = windowStart + i;
+    const isActive = globalIdx === currentWordIdx;
+    const isPast = globalIdx < currentWordIdx;
+    const wordColor = w.speaker === 'student' ? '#FFFFFF' : '#fb923c';
+    const dimColor = w.speaker === 'student' ? 'rgba(255,255,255,0.45)' : 'rgba(251,146,60,0.45)';
+
+    if (i > 0) parts.push(' ');
+    parts.push(
+      <span key={`${globalIdx}-${w.word}`} style={{
+        color: isActive ? wordColor : dimColor,
+        transform: isActive ? 'scale(1.1)' : 'scale(1)',
+        display: 'inline',
+        textShadow: isActive
+          ? `0 0 20px ${w.speaker === 'student' ? 'rgba(255,255,255,0.4)' : 'rgba(251,146,60,0.4)'}, 0 2px 8px rgba(0,0,0,0.8)`
+          : '0 2px 4px rgba(0,0,0,0.5)',
+      }}>
+        {w.word}
+      </span>
+    );
+  });
+
+  return <>{parts}</>;
+};
+
 /* ========== TWO BYTES — bottom, side by side ========== */
 
 const TwoBytes: React.FC<{
@@ -279,35 +328,44 @@ export const LessonReel: React.FC<ReelProps> = ({
       {/* ===== MAIN CONTENT ===== */}
       {showMain && (
         <>
-          {/* CODE — top */}
-          {codeSnippet && (
-            <div style={{ position: 'absolute', top: 70, left: 36, right: 36 }}>
-              <CodeBlock code={codeSnippet} />
+          {/* Everything centered vertically */}
+          <AbsoluteFill style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            padding: '60px 36px',
+            gap: 28,
+          }}>
+            {/* CODE */}
+            {codeSnippet && (
+              <div style={{ width: '100%' }}>
+                <CodeBlock code={codeSnippet} />
+              </div>
+            )}
+
+            {/* CAPTIONS */}
+            <div style={{
+              maxWidth: 700, width: '100%',
+              fontFamily, fontWeight: 800, fontSize: 44, lineHeight: 1.4,
+              textAlign: 'center', minHeight: 130,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <ConversationCaptionsInline allWords={allWords} titleCardFrames={TITLE_FRAMES} />
             </div>
-          )}
 
-          {/* CAPTIONS — between code and Bytes */}
-          <ConversationCaptions allWords={allWords} titleCardFrames={TITLE_FRAMES} />
-
-          {/* TWO BYTES — bottom, tight to captions */}
-          <div style={{ position: 'absolute', bottom: 160, left: 0, right: 0 }}>
+            {/* TWO BYTES */}
             <TwoBytes
               equipmentStudent={equipmentStudent}
               equipmentTeacher={equipmentTeacher}
               activeSpeaker={activeSpeaker}
             />
-          </div>
 
-          {/* Speaker labels */}
-          <div style={{
-            position: 'absolute', bottom: 125, left: 0, right: 0,
-            display: 'flex', justifyContent: 'center', gap: 100,
-          }}>
-            <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#444', letterSpacing: '0.08em' }}>STUDENT</span>
-            <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'teacher' ? '#fb923c' : '#444', letterSpacing: '0.08em' }}>TEACHER</span>
-          </div>
-
-          {/* No logo during main content */}
+            {/* Speaker labels */}
+            <div style={{
+              display: 'flex', justifyContent: 'center', gap: 100, marginTop: -12,
+            }}>
+              <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#555', letterSpacing: '0.08em' }}>STUDENT</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'teacher' ? '#fb923c' : '#555', letterSpacing: '0.08em' }}>TEACHER</span>
+            </div>
+          </AbsoluteFill>
         </>
       )}
 
