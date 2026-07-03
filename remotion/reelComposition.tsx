@@ -67,7 +67,7 @@ const CodeBlock: React.FC<{ code: string }> = ({ code }) => {
         color: '#e0e0e0', margin: 0, textAlign: 'left', lineHeight: 1.7,
         fontFamily: "'JetBrains Mono', monospace", whiteSpace: 'pre-wrap',
       }}>
-        {code}
+        {code.replace(/\\n/g, '\n')}
       </pre>
     </div>
   );
@@ -138,7 +138,10 @@ const ConversationCaptions: React.FC<{
   );
 };
 
-/** Inline version (not absolutely positioned) for flex layout */
+/**
+ * Inline captions — shows the FULL current speaker's sentence.
+ * Words highlight one by one but the text doesn't move/shift.
+ */
 const ConversationCaptionsInline: React.FC<{
   allWords: WordTiming[];
   titleCardFrames: number;
@@ -147,6 +150,7 @@ const ConversationCaptionsInline: React.FC<{
   const { fps } = useVideoConfig();
   const currentTime = (frame - titleCardFrames) / fps;
 
+  // Find current word
   let currentWordIdx = -1;
   for (let i = 0; i < allWords.length; i++) {
     if (currentTime >= allWords[i].start - 0.05 && currentTime < allWords[i].end + 0.12) {
@@ -156,28 +160,43 @@ const ConversationCaptionsInline: React.FC<{
 
   if (currentWordIdx < 0) return null;
 
-  const windowSize = 6;
-  const windowStart = Math.max(0, currentWordIdx - 2);
-  const windowEnd = Math.min(allWords.length, windowStart + windowSize);
-  const visibleWords = allWords.slice(windowStart, windowEnd);
+  // Find the current "chunk" — all consecutive words from the same speaker
+  const currentSpeaker = allWords[currentWordIdx].speaker;
+  let chunkStart = currentWordIdx;
+  let chunkEnd = currentWordIdx;
 
+  // Go backwards to find start of this speaker's chunk
+  while (chunkStart > 0 && allWords[chunkStart - 1].speaker === currentSpeaker) {
+    // Also check for time gaps — if gap > 1s it's a new sentence
+    if (allWords[chunkStart].start - allWords[chunkStart - 1].end > 1.0) break;
+    chunkStart--;
+  }
+  // Go forwards to find end
+  while (chunkEnd < allWords.length - 1 && allWords[chunkEnd + 1].speaker === currentSpeaker) {
+    if (allWords[chunkEnd + 1].start - allWords[chunkEnd].end > 1.0) break;
+    chunkEnd++;
+  }
+
+  const chunkWords = allWords.slice(chunkStart, chunkEnd + 1);
+
+  // Render ALL words in the chunk, highlight current one
   const parts: React.ReactNode[] = [];
-  visibleWords.forEach((w, i) => {
-    const globalIdx = windowStart + i;
+  chunkWords.forEach((w, i) => {
+    const globalIdx = chunkStart + i;
     const isActive = globalIdx === currentWordIdx;
     const isPast = globalIdx < currentWordIdx;
-    const wordColor = w.speaker === 'student' ? '#FFFFFF' : '#fb923c';
-    const dimColor = w.speaker === 'student' ? 'rgba(255,255,255,0.45)' : 'rgba(251,146,60,0.45)';
+    const activeColor = w.speaker === 'student' ? '#FFFFFF' : '#fb923c';
+    const pastColor = w.speaker === 'student' ? 'rgba(255,255,255,0.55)' : 'rgba(251,146,60,0.55)';
+    const futureColor = w.speaker === 'student' ? 'rgba(255,255,255,0.3)' : 'rgba(251,146,60,0.3)';
 
     if (i > 0) parts.push(' ');
     parts.push(
       <span key={`${globalIdx}-${w.word}`} style={{
-        color: isActive ? wordColor : dimColor,
-        transform: isActive ? 'scale(1.1)' : 'scale(1)',
-        display: 'inline',
+        color: isActive ? activeColor : isPast ? pastColor : futureColor,
+        fontWeight: isActive ? 900 : 800,
         textShadow: isActive
-          ? `0 0 20px ${w.speaker === 'student' ? 'rgba(255,255,255,0.4)' : 'rgba(251,146,60,0.4)'}, 0 2px 8px rgba(0,0,0,0.8)`
-          : '0 2px 4px rgba(0,0,0,0.5)',
+          ? `0 0 16px ${w.speaker === 'student' ? 'rgba(255,255,255,0.35)' : 'rgba(251,146,60,0.35)'}`
+          : 'none',
       }}>
         {w.word}
       </span>
@@ -301,12 +320,8 @@ export const LessonReel: React.FC<ReelProps> = ({
       {showTitle && (
         <AbsoluteFill style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          padding: 60, gap: 20, opacity: titleOp,
+          padding: 60, gap: 24, opacity: titleOp,
         }}>
-          <div style={{ display: 'flex', gap: 16 }}>
-            <ByteMascot size={160} equipment={equipmentStudent} />
-            <ByteMascot size={160} equipment={equipmentTeacher} />
-          </div>
           <div style={{
             padding: '10px 24px', borderRadius: 30,
             background: '#161616', border: '1px solid #2a2a2a',
@@ -321,7 +336,11 @@ export const LessonReel: React.FC<ReelProps> = ({
           }}>
             {lessonTitle || ''}
           </h1>
-          <CoduyLogo height={24} />
+          <CoduyLogo height={28} />
+          <div style={{ display: 'flex', gap: 16, marginTop: 12 }}>
+            <ByteMascot size={160} equipment={equipmentStudent} />
+            <ByteMascot size={160} equipment={equipmentTeacher} />
+          </div>
         </AbsoluteFill>
       )}
 
@@ -336,7 +355,7 @@ export const LessonReel: React.FC<ReelProps> = ({
           }}>
             {/* CODE */}
             {codeSnippet && (
-              <div style={{ width: '100%' }}>
+              <div style={{ width: '85%' }}>
                 <CodeBlock code={codeSnippet} />
               </div>
             )}
@@ -358,9 +377,9 @@ export const LessonReel: React.FC<ReelProps> = ({
               activeSpeaker={activeSpeaker}
             />
 
-            {/* Speaker labels */}
+            {/* Speaker labels — aligned under each Byte */}
             <div style={{
-              display: 'flex', justifyContent: 'center', gap: 100, marginTop: -12,
+              display: 'flex', justifyContent: 'center', gap: 160, marginTop: -12,
             }}>
               <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#555', letterSpacing: '0.08em' }}>STUDENT</span>
               <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'teacher' ? '#fb923c' : '#555', letterSpacing: '0.08em' }}>TEACHER</span>
