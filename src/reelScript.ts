@@ -37,7 +37,7 @@ RULES:
 - NEVER read code aloud. Code is shown on screen, not spoken.
 - Be casual, like two friends chatting.
 - Line 6 MUST use the lesson's introduction/analogy — this is the key moment.
-- Total: 120-160 words. Make the teacher's explanations thorough, detailed, and conversational. Don't rush — explain well.
+- Total: 150-180 words MINIMUM. Make the teacher's explanations thorough, detailed, and conversational. Don't rush — explain well. The video needs to be at least 40 seconds long so write MORE not less.
 
 Also pick ONE code snippet (MAX 3 lines) from the lesson. Attach it to line 2 or 4. If no code exists, return code as null.
 

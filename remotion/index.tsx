@@ -53,7 +53,8 @@ export const RemotionRoot: React.FC = () => (
       defaultProps={{ prompt: 'Fill in:', codeAnswer: 'x = 5', correct: '5', options: ['a', 'b'], equipment: {}, lang: 'en' }} />
     <Composition id="SlideCodeExplanation" component={SlideCodeExplanation} durationInFrames={1} fps={FPS} width={W} height={H}
       defaultProps={{ prompt: 'Fill in:', correct: '5', explanation: 'Because...', lang: 'en' }} />
-    <Composition id="LessonReel" component={LessonReel} durationInFrames={30 * FPS} fps={FPS} width={REEL_W} height={REEL_H}
+    <Composition id="LessonReel" component={LessonReel} durationInFrames={90 * FPS} fps={FPS} width={REEL_W} height={REEL_H}
+      calculateMetadata={({ props }) => ({ durationInFrames: props.durationInFrames || 90 * FPS })}
       defaultProps={{
         lines: [
           { speaker: 'student' as const, audioUrl: '', words: [{ word: 'Hey', start: 0, end: 0.3, speaker: 'student' as const }], startTime: 0, duration: 1 },
