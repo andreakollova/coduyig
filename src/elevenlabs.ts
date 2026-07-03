@@ -9,8 +9,8 @@ const API = 'https://api.elevenlabs.io/v1';
 
 // Two voices for conversation
 const VOICES = {
-  teacher: 'ErXwobaYiN019PkySvjV', // Antoni — confident, friendly
-  student: 'VR6AewLTigWG4xSOukaG', // Arnold — curious, younger
+  teacher: 'q0IMILNRPxOgtBTS4taI', // Matt — clear, confident
+  student: 'VR6AewLTigWG4xSOukaG', // Arnold — curious, younger (will swap to Drew/Liam when ID available)
 };
 
 export interface WordTiming {

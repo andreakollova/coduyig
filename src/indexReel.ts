@@ -151,6 +151,7 @@ async function main() {
     durationInFrames,
     lessonTitle: lesson.title,
     lessonNumber: lesson.lesson_number,
+    moduleTitle: mod?.title,
   };
 
   const comp = await selectComposition({ serveUrl, id: 'LessonReel', inputProps: reelProps });

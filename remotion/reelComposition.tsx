@@ -39,6 +39,7 @@ export interface ReelProps {
   durationInFrames: number;
   lessonTitle?: string;
   lessonNumber?: number;
+  moduleTitle?: string;
 }
 
 /* ========== CODE BLOCK — top of screen ========== */
@@ -273,7 +274,7 @@ function useActiveSpeaker(allWords: WordTiming[], titleCardFrames: number): 'stu
 
 export const LessonReel: React.FC<ReelProps> = ({
   lines, bgMusicUrl, equipmentStudent, equipmentTeacher,
-  durationInFrames, lessonTitle, lessonNumber,
+  durationInFrames, lessonTitle, lessonNumber, moduleTitle,
 }) => {
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -327,14 +328,13 @@ export const LessonReel: React.FC<ReelProps> = ({
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
           padding: 60, gap: 24,
         }}>
-          <CoduyLogo height={32} />
           <div style={{
             padding: '10px 24px', borderRadius: 30,
             background: '#161616', border: '1px solid #2a2a2a',
             fontSize: 20, color: '#4ade80', fontWeight: 700,
             letterSpacing: '0.1em', textTransform: 'uppercase' as const,
           }}>
-            Lesson {lessonNumber || ''}
+            {moduleTitle || `Lesson ${lessonNumber || ''}`}
           </div>
           <h1 style={{
             fontSize: 62, fontWeight: 800, color: '#fff',
@@ -406,7 +406,7 @@ export const LessonReel: React.FC<ReelProps> = ({
           {/* CODE — fixed position below title */}
           {codeSnippet && (
             <div style={{
-              position: 'absolute', top: 110, left: 60, right: 60,
+              position: 'absolute', top: 240, left: 60, right: 60,
             }}>
               <CodeBlock code={codeSnippet} />
             </div>
@@ -425,7 +425,7 @@ export const LessonReel: React.FC<ReelProps> = ({
           </div>
 
           {/* TWO BYTES — fixed bottom */}
-          <div style={{ position: 'absolute', bottom: 180, left: 0, right: 0 }}>
+          <div style={{ position: 'absolute', bottom: 310, left: 0, right: 0 }}>
             <TwoBytes
               equipmentStudent={equipmentStudent}
               equipmentTeacher={equipmentTeacher}
@@ -435,7 +435,7 @@ export const LessonReel: React.FC<ReelProps> = ({
 
           {/* Speaker labels — fixed under Bytes */}
           <div style={{
-            position: 'absolute', bottom: 145, left: 0, right: 0,
+            position: 'absolute', bottom: 275, left: 0, right: 0,
             display: 'flex', justifyContent: 'center', gap: 160,
           }}>
             <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#555', letterSpacing: '0.08em' }}>STUDENT</span>
