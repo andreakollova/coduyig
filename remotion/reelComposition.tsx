@@ -406,7 +406,7 @@ export const LessonReel: React.FC<ReelProps> = ({
           {/* CODE — fixed position below title */}
           {codeSnippet && (
             <div style={{
-              position: 'absolute', top: 280, left: 60, right: 60,
+              position: 'absolute', top: 280, left: 120, right: 120,
             }}>
               <CodeBlock code={codeSnippet} />
             </div>
@@ -417,7 +417,7 @@ export const LessonReel: React.FC<ReelProps> = ({
             position: 'absolute', top: 520, left: 50, right: 50,
             bottom: 560,
             maxWidth: 700, margin: '0 auto',
-            fontFamily, fontWeight: 800, fontSize: 44, lineHeight: 1.4,
+            fontFamily, fontWeight: 800, fontSize: 38, lineHeight: 1.35,
             textAlign: 'center',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
