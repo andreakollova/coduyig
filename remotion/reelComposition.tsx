@@ -157,20 +157,33 @@ const ConversationCaptionsInline: React.FC<{
 
   if (allWords.length === 0) return null;
 
-  // Split into groups by speaker turns + max 10 words per group
-  const MAX_PER_GROUP = 10;
+  // Split into groups by: speaker change, punctuation, or max 12 words
+  const MAX_PER_GROUP = 12;
   const groups: WordTiming[][] = [];
   let currentGroup: WordTiming[] = [];
   let currentSpeaker: string | null = null;
 
   for (const w of allWords) {
-    // New group on speaker change or when group is full
-    if (w.speaker !== currentSpeaker || currentGroup.length >= MAX_PER_GROUP) {
+    // New group on speaker change
+    if (w.speaker !== currentSpeaker) {
       if (currentGroup.length > 0) groups.push(currentGroup);
       currentGroup = [];
       currentSpeaker = w.speaker;
     }
+
     currentGroup.push(w);
+
+    // Split at punctuation (end of clause) if we have enough words (4+)
+    const endsWithPunct = /[.,!?;:]$/.test(w.word);
+    if (endsWithPunct && currentGroup.length >= 4) {
+      groups.push(currentGroup);
+      currentGroup = [];
+    }
+    // Also split if too long
+    else if (currentGroup.length >= MAX_PER_GROUP) {
+      groups.push(currentGroup);
+      currentGroup = [];
+    }
   }
   if (currentGroup.length > 0) groups.push(currentGroup);
 
