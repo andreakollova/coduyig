@@ -28,7 +28,7 @@ Create a conversation with EXACTLY 8 lines:
 3. STUDENT: enthusiastic follow-up about practical usage (max 12 words). Like "Cool! How would I actually use this in a real project?"
 4. TEACHER: gives a CONCRETE real-world scenario. Like "Say you have a list of students and you want to sort them by grade" (max 35 words)
 5. STUDENT: not fully getting it, asks for simpler explanation (max 15 words). Like "Hmm wait, I'm not sure I fully get it, can you break it down?"
-6. TEACHER: uses the INTRODUCTION to explain with a vivid analogy or "Imagine..." scenario. Make the concept click (max 45 words)
+6. TEACHER: THIS IS THE MOST IMPORTANT PART. Use a real-life tangible analogy — food, sticky notes, pizza, boxes, drawers, phone, etc. Example: "Imagine you have a pizza menu and you want to quickly pick only pizzas under 10 bucks, instead of going through the whole list by hand you just say show me the cheap ones and that's exactly what lambda does." The analogy MUST accurately capture the essence of the concept. Not just surface-level. (max 50 words)
 7. STUDENT: fully understands now, explains the ENTIRE concept back in their own casual words. Summarize what it is, how it works, why it's useful. Excited. (20-30 words)
 8. TEACHER: empty (silent CTA screen). Return {"speaker": "teacher", "spoken": "", "code": null}
 
@@ -69,7 +69,7 @@ Vytvor konverzáciu s PRESNE 8 riadkami:
 3. ŠTUDENT: nadšene sa pýta na praktické využitie. Príklady: "Super, a ako to môžem v praxi využiť?" alebo "To znie fajn, a na čo sa to reálne používa?" (max 12 slov)
 4. UČITEĽ: dá KONKRÉTNY príklad zo života. Napríklad "Povedzme že máš zoznam študentov a chceš ich zoradiť podľa známok" (max 35 slov)
 5. ŠTUDENT: ešte úplne nechápe, pýta sa jednoduchšie. Príklady: "Hm, ešte to úplne nechápem, vieš to vysvetliť jednoduchšie?" alebo "Počkaj, to mi ešte celkom nedošlo" (max 15 slov)
-6. UČITEĽ: teraz použije INTRODUCTION na vysvetlenie s analógiou alebo "Predstav si..." scenárom. Nech to cvakne (max 45 slov)
+6. UČITEĽ: TOTO JE NAJDÔLEŽITEJŠIA ČASŤ. Použije analógiu z reálneho života na vysvetlenie konceptu. MUSÍ to byť niečo hmatateľné — jedlo, papierik, pizza, krabica, šuflík, zošit, telefón, atd. Príklady: "Predstav si že máš pizza menu a chceš rýchlo vybrať len pizze pod 10 eur, tak namiesto toho aby si prechádzal celý zoznam ručne, proste povieš ukáž mi len tie lacné a to je presne to čo lambda robí." Analógia MUSÍ správne vystihovať podstatu konceptu. Nesmie byť len povrchná. (max 50 slov)
 7. ŠTUDENT: NAJDÔLEŽITEJŠÍ RIADOK. Teraz UŽ CHÁPE a vysvetlí celý koncept vlastnými jednoduchými slovami. Musí zhrnúť čo to je, ako to funguje a prečo je to užitočné. Na konci nech povie niečo autentické a nadšené ako "to je fakt paráda!" alebo "no to je geniálne!" alebo "pecka!" (20-30 slov). Príklad: "Aha, takže namiesto toho aby som písal celú funkciu, proste napíšem jeden riadok ktorý spraví to isté a nemusím mu ani dávať meno, to je fakt paráda!"
 8. UČITEĽ: prázdny riadok (tichý CTA screen). Vráť {"speaker": "teacher", "spoken": "", "code": null}
 
