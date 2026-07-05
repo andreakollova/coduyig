@@ -67,9 +67,13 @@ export const SlideCodeQuestion: React.FC<{
         {lang === 'sk' ? 'Doplň chýbajúci kód' : 'Fill in the code'}
       </h1>
 
-      {/* Task description */}
+      {/* Task description — strip "Fill in the code" / "Doplň chýbajúci kód" prefix */}
       <p style={{ fontSize: 26, color: '#aaa', margin: '0 0 28px', fontWeight: 500, maxWidth: 860, lineHeight: 1.4 }}>
-        {prompt}
+        {prompt
+          .replace(/^Doplň chýbajúci kód\s*[-—:.]?\s*/i, '')
+          .replace(/^Fill in the code\s*[-—:.]?\s*/i, '')
+          .replace(/^[-—:]\s*/, '')
+        }
       </p>
 
       {/* Code block with highlighted ? blank */}
@@ -163,7 +167,11 @@ export const SlideCodeAnswer: React.FC<{
 
       {/* Task description */}
       <p style={{ fontSize: 24, color: '#aaa', margin: '0 0 24px', fontWeight: 500, maxWidth: 860, lineHeight: 1.4 }}>
-        {prompt}
+        {prompt
+          .replace(/^Doplň chýbajúci kód\s*[-—:.]?\s*/i, '')
+          .replace(/^Fill in the code\s*[-—:.]?\s*/i, '')
+          .replace(/^[-—:]\s*/, '')
+        }
       </p>
 
       {/* Code with correct answer — green border */}
