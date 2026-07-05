@@ -40,8 +40,13 @@ RULES:
 - Be casual and natural, like two friends chatting
 - Line 6 is the "aha moment" — use a real-world analogy from the introduction
 - Total spoken text: 150-200 words
-- NEVER use colons (:) or semicolons (;) in spoken text. Use periods and commas only. The text will be read aloud so it must sound natural when spoken.
+- ABSOLUTELY NEVER use colons (:) anywhere in spoken text. This is the #1 rule. No colons EVER. Not even before examples. Replace "For example:" with "For example," or just remove it.
+- NEVER use semicolons (;). Use periods and commas ONLY.
 - NEVER use bullet points, dashes, or lists. Write in full flowing sentences.
+- The text is READ ALOUD — it must sound like natural speech, not written text.
+- Write FLOWING sentences, not choppy fragments. BAD: "Lambda is a function. It is small. It has no name." GOOD: "Lambda is a small anonymous function that doesn't need a name and automatically returns its result."
+- Connect ideas with "and", "which", "that", "so", "because" instead of starting new sentences.
+- Maximum 2-3 sentences per teacher line, but make them LONG and flowing, not short and robotic.
 
 Also pick ONE code snippet (MAX 3 lines) from the LEARNING CONTENT. The most illustrative example. Attach it to line 2 or 4.
 

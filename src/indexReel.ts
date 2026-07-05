@@ -62,12 +62,12 @@ const INTRO_GREETINGS_EN = [
 
 const INTRO_GREETINGS_SK = [
   { introStudent: 'Máš chvíľku?', introTeacher: 'Jasné.' },
-  { introStudent: 'Môžem sa niečo opýtať?', introTeacher: 'Samozrejme.' },
-  { introStudent: 'Potrebujem pomoc.', introTeacher: 'Poďme na to.' },
-  { introStudent: 'Kde začneme?', introTeacher: 'Úplne od základov.' },
+  { introStudent: 'Môžem sa opýtať?', introTeacher: 'Samozrejme.' },
   { introStudent: 'Mám otázku.', introTeacher: 'Pýtaj sa.' },
   { introStudent: 'Pomôžeš mi?', introTeacher: 'Vždy.' },
-  { introStudent: 'Čo dnes?', introTeacher: 'Niečo nové.' },
+  { introStudent: 'Vysvetlíš mi to?', introTeacher: 'Jasné.' },
+  { introStudent: 'Som pripravený.', introTeacher: 'Poďme.' },
+  { introStudent: 'Čau!', introTeacher: 'Ahoj!' },
 ];
 
 function pickIntroGreeting(lang: 'en' | 'sk') {
@@ -213,6 +213,7 @@ async function main() {
     lessonTitle: lessonTitle,
     lessonNumber: lesson.lesson_number,
     moduleTitle: (lang === 'sk' && mod?.title_sk) ? mod.title_sk : mod?.title,
+    lang,
     ...pickIntroGreeting(lang),
   };
 

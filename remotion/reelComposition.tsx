@@ -42,6 +42,7 @@ export interface ReelProps {
   moduleTitle?: string;
   introStudent?: string;
   introTeacher?: string;
+  lang?: string;
 }
 
 /* ========== CODE BLOCK — top of screen ========== */
@@ -308,7 +309,7 @@ function useActiveSpeaker(allWords: WordTiming[], titleCardFrames: number): 'stu
 export const LessonReel: React.FC<ReelProps> = ({
   lines, bgMusicUrl, equipmentStudent, equipmentTeacher,
   durationInFrames, lessonTitle, lessonNumber, moduleTitle,
-  introStudent, introTeacher,
+  introStudent, introTeacher, lang,
 }) => {
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -489,7 +490,7 @@ export const LessonReel: React.FC<ReelProps> = ({
             <ByteMascot size={150} equipment={equipmentTeacher} />
           </div>
           <h2 style={{ fontSize: 38, fontWeight: 800, color: '#fff', textAlign: 'center', lineHeight: 1.3, margin: 0 }}>
-            Full lesson available on
+            {lang === 'sk' ? 'Celá lekcia na' : 'Full lesson available on'}
           </h2>
           <CoduyLogo height={70} />
           <div style={{ display: 'flex', gap: 20, marginTop: 8 }}>
