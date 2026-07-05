@@ -25,19 +25,19 @@ Two characters:
 Given a lesson title, introduction, and learning content, create a conversation with EXACTLY 8 lines:
 
 1. STUDENT: greeting + asks what the topic is (max 10 words). Like "Hey! What are lambda functions?"
-2. TEACHER: gives a clear technical explanation (max 30 words)
-3. STUDENT: asks a follow-up about usage (max 10 words). Like "Oh nice! When do you use them?"
-4. TEACHER: answers with practical examples and details (max 25 words)
-5. STUDENT: says they're confused, asks for simpler explanation (max 12 words). Like "Hmm, I'm not sure I get it. Can you explain it simpler?"
-6. TEACHER: uses the INTRODUCTION content to explain with an analogy or "Imagine..." scenario (max 35 words). This MUST be based on the lesson's introduction — rephrase it conversationally. Make it vivid and relatable.
+2. TEACHER: gives a clear, detailed technical explanation. Define the concept, explain how it works, give a concrete example described in words (max 40 words)
+3. STUDENT: asks a follow-up about practical usage (max 10 words). Like "Oh nice! When would I actually use this?"
+4. TEACHER: answers with real-world examples and practical details. Mention specific use cases (max 35 words)
+5. STUDENT: says they're a bit confused, asks for a simpler explanation (max 12 words). Like "Hmm wait, I'm not sure I fully get it. Can you break it down?"
+6. TEACHER: uses the INTRODUCTION content to explain with a vivid analogy or "Imagine..." scenario. Paint a picture. Make the concept click (max 45 words). This MUST be based on the lesson's introduction.
 7. STUDENT: now understands, reacts positively (max 8 words). Like "Ohh okay, that makes so much sense now!"
-8. TEACHER: "Check out the full lesson on the app."
+8. TEACHER: This line is EMPTY — no spoken text. Just return {"speaker": "teacher", "spoken": "", "code": null}. The CTA screen with logo will show visually without voiceover.
 
 RULES:
 - NEVER read code aloud. Code is shown on screen, not spoken.
 - Be casual, like two friends chatting.
 - Line 6 MUST use the lesson's introduction/analogy — this is the key moment.
-- Total: 150-180 words MINIMUM. Make the teacher's explanations thorough, detailed, and conversational. Don't rush — explain well. The video needs to be at least 40 seconds long so write MORE not less.
+- Total: 170-220 words MINIMUM. The teacher MUST explain thoroughly — give definitions, examples, and analogies. Don't be vague. The viewer should LEARN something real. The video needs to be 45-60 seconds.
 
 Also pick ONE code snippet (MAX 3 lines) from the lesson. Attach it to line 2 or 4. If no code exists, return code as null.
 
@@ -51,7 +51,7 @@ Return VALID JSON:
     {"speaker": "student", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "student", "spoken": "...", "code": null},
-    {"speaker": "teacher", "spoken": "Check out the full lesson on the app.", "code": null}
+    {"speaker": "teacher", "spoken": "", "code": null}
   ]
 }`;
 
@@ -114,6 +114,6 @@ function fallbackScript(title: string, introduction?: string): ReelScript {
     { speaker: 'student', spoken: `Hmm, I'm not sure I get it. Can you explain it simpler?` },
     { speaker: 'teacher', spoken: intro },
     { speaker: 'student', spoken: `Ohh okay, that makes sense now!` },
-    { speaker: 'teacher', spoken: `Check out the full lesson on the app.` },
+    { speaker: 'teacher', spoken: '' },
   ]};
 }

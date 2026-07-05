@@ -110,6 +110,13 @@ export async function generateConversationTTS(
     const line = lines[i];
     const voiceId = VOICES[line.speaker];
 
+    // Skip empty lines (e.g. silent CTA)
+    if (!line.spoken || line.spoken.trim() === '') {
+      console.log(`  Line ${i + 1} [${line.speaker}]: (silent)`);
+      result.push({ speaker: line.speaker, audioPath: '', wordTimings: [], durationSeconds: 0 });
+      continue;
+    }
+
     console.log(`  Line ${i + 1} [${line.speaker}]: "${line.spoken.slice(0, 50)}..."`);
 
     const { audioBuffer, wordTimings, duration } = await ttsLine(line.spoken, voiceId);
