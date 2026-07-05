@@ -70,7 +70,7 @@ Vytvor konverzáciu s PRESNE 9 riadkami:
 2. UČITEĽ: krátke, jasné vysvetlenie konceptu z LEARNING CONTENT. Rýchlo k veci, nie prednáška. Ako úvod lekcie. (max 25 slov). NIKDY nečítaj kód.
 3. ŠTUDENT: nadšená zvedavá otázka — NIE zmätený, ale zaujatý a zapálený (max 12 slov). "To je zaujímavé! A kedy sa to reálne používa?" alebo "Počkaj, fakt? A ako to funguje v praxi?"
 4. UČITEĽ: vysvetlí to HMATATEĽNOU analógiou zo života, ktorá zachytí to čo robí TENTO koncept UNIKÁTNYM. Nie generická — musí presne vystihovať tú špecifickú vec. (max 35 slov)
-5. ŠTUDENT: pochopil, nadšene to vysvetlí vlastnými slovami (15-20 slov). Musí znieť naozaj nadšene. "Aha takže je to v podstate rýchla jednorazová funkcia, to je bomba!"
+5. ŠTUDENT: pochopil, nadšene to vysvetlí vlastnými slovami (15-20 slov). Musí znieť naozaj nadšene. NIKDY nepoužívaj slovo "bomba". Príklady: "Aha takže je to v podstate rýchla jednorazová funkcia, to je super šikovné!" alebo "Jasné, už to chápem, to je fakt cool!"
 6. UČITEĽ: príklady z reálneho sveta — KTO to používa. Spomeň 2 REÁLNE firmy. Krátko a výstižne. (max 25 slov)
 7. ŠTUDENT: krátka nadšená reakcia (max 8 slov). "Nie, to je fakt šialené!" alebo "No tak to je oveľa zaujímavejšie ako som čakal!"
 8. UČITEĽ: jedna krátka záverečná veta prečo na tom záleží (max 12 slov). Výstižne, motivujúco.
