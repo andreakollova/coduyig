@@ -24,13 +24,13 @@ Two characters:
 Create a conversation with EXACTLY 9 lines:
 
 1. STUDENT: casual greeting + asks about today's topic (max 12 words)
-2. TEACHER: explains the core concept TECHNICALLY from LEARNING CONTENT. Professional definition, how it works, key details. This should sound like a proper explanation. Flowing sentences (max 45 words)
-3. STUDENT: confused, doesn't fully understand the technical explanation (max 15 words). Like "Hmm wait, that sounds complicated, can you explain it in a simpler way?"
-4. TEACHER: NOW explains it with a TANGIBLE real-life analogy. The analogy MUST capture what makes THIS concept UNIQUE and DIFFERENT from similar things. Think deeply about WHAT SPECIFICALLY distinguishes this concept. For lambda, it's not just "filtering" (regular functions do that too) — it's the fact that it's a THROWAWAY one-liner you write on the spot without naming it. The analogy must make the UNIQUE aspect click. (max 50 words)
-5. STUDENT: now gets it, excited, summarizes in their own simple words (20-30 words). Must be accurate but casual.
-6. TEACHER: gives real-world examples of WHO uses this and HOW. Mention REAL companies or products. Like "Netflix uses this to handle millions of streams" or "Google Maps relies on this for route calculations" or "Every time you log into Instagram, this runs behind the scenes." Give 2-3 specific examples. (max 45 words)
-7. STUDENT: impressed, reacts naturally (max 10 words). Like "Wow, I had no idea it was everywhere!" or "That's crazy, so basically every app uses this!"
-8. TEACHER: closing thought — why this matters for the student's coding journey (max 20 words). Like "Once you master this, you'll write much cleaner and more efficient code."
+2. TEACHER: short, clear explanation of the concept from LEARNING CONTENT. Keep it punchy, not a lecture. Like the lesson intro — get to the point fast. (max 25 words)
+3. STUDENT: excited follow-up question, not confused — genuinely curious and engaged (max 12 words). Like "Oh that's cool! So when would I actually use that?" or "Wait really? How does that work in practice?"
+4. TEACHER: explains with a TANGIBLE real-life analogy that captures what makes THIS concept UNIQUE. Not generic — the analogy must nail the specific thing that makes this different. (max 35 words)
+5. STUDENT: gets it, excited, explains it back enthusiastically in their own words (15-20 words). Sound genuinely pumped, not robotic. Like "Ohhh so it's basically a quick throwaway function you write on the fly, that's sick!"
+6. TEACHER: real-world examples — WHO uses this. Mention 2 REAL companies. Keep it short and punchy. (max 25 words)
+7. STUDENT: short excited reaction (max 8 words). Genuinely impressed. "No way, that's actually insane!" or "Okay that's way cooler than I thought!"
+8. TEACHER: one short closing line about why it matters (max 12 words). Punchy, motivating.
 9. TEACHER: empty (silent CTA screen). Return {"speaker": "teacher", "spoken": "", "code": null}
 
 RULES:
@@ -39,7 +39,7 @@ RULES:
 - ABSOLUTELY NEVER use colons (:) anywhere in spoken text. Periods and commas ONLY.
 - Write FLOWING sentences. Connect with "and", "which", "so", "because". NOT choppy fragments.
 - Maximum 2-3 sentences per teacher line, but LONG and flowing.
-- Total spoken text: 170-220 words.
+- Total spoken text: 120-160 words. Keep it PUNCHY and fast-paced, not a lecture.
 
 Also pick ONE code snippet (MAX 3 lines) from the LEARNING CONTENT. Attach to line 2.
 
@@ -67,13 +67,13 @@ Dve postavy:
 Vytvor konverzáciu s PRESNE 9 riadkami:
 
 1. ŠTUDENT: neformálny pozdrav + pýta sa na tému. "Čauko, aká je téma dnešnej hodiny?" alebo "Hej, o čom sa dnes učíme?" (max 12 slov)
-2. UČITEĽ: vysvetlí koncept ODBORNE z LEARNING CONTENT. Profesionálna definícia, ako to funguje, kľúčové detaily. Plynulé dlhé vety (max 45 slov). NIKDY nečítaj kód.
-3. ŠTUDENT: zmätený, nerozumie odbornému vysvetleniu (max 15 slov). Napríklad "Hm, to znie dosť zložito, vieš mi to vysvetliť nejak jednoduchšie?"
-4. UČITEĽ: TERAZ to vysvetlí pomocou HMATATEĽNEJ analógie zo života. Analógia MUSÍ zachytiť to čo robí TENTO koncept JEDINEČNÝM a ODLIŠNÝM od podobných vecí. Zamysli sa hlboko nad tým, ČO KONKRÉTNE odlišuje tento koncept. Pre lambda to nie je len "filtrovanie" (to robí aj bežná funkcia) — je to fakt, že je to JEDNORAZOVÁ skratka, ktorú napíšeš na mieste bez pomenovania. Analógia musí presne vystihovať tú UNIKÁTNU vlastnosť. (max 50 slov)
-5. ŠTUDENT: TERAZ UŽ CHÁPE. Nadšene zhŕňa čo pochopil vlastnými jednoduchými slovami (20-30 slov). Musí byť presné ale casual. Koniec nech je autentický a rôzny — NIE vždy "to je fakt paráda". Príklady koncov: "no to dáva zmysel!", "tak to je geniálne!", "jasné, to je easy!", "super, už mi to cvaklo!", "aha, tak toto je fakt šikovné!"
-6. UČITEĽ: dá príklady z reálneho sveta — KTO to používa a AKO. Spomeň REÁLNE firmy alebo produkty. Napríklad "Netflix to používa na spracovanie miliónov streamov" alebo "Zakaždým keď sa prihlásiš na Instagram, toto beží na pozadí." Daj 2-3 konkrétne príklady. (max 45 slov)
-7. ŠTUDENT: ohromený, reaguje prirodzene (max 10 slov). "Vau, to som nevedel že je to všade!" alebo "To je crazy, takže to fakt používa každá appka!"
-8. UČITEĽ: záverečná myšlienka — prečo je to dôležité pre študentovu cestu programovania (max 20 slov). "Keď toto zvládneš, budeš písať oveľa čistejší a efektívnejší kód."
+2. UČITEĽ: krátke, jasné vysvetlenie konceptu z LEARNING CONTENT. Rýchlo k veci, nie prednáška. Ako úvod lekcie. (max 25 slov). NIKDY nečítaj kód.
+3. ŠTUDENT: nadšená zvedavá otázka — NIE zmätený, ale zaujatý a zapálený (max 12 slov). "To je zaujímavé! A kedy sa to reálne používa?" alebo "Počkaj, fakt? A ako to funguje v praxi?"
+4. UČITEĽ: vysvetlí to HMATATEĽNOU analógiou zo života, ktorá zachytí to čo robí TENTO koncept UNIKÁTNYM. Nie generická — musí presne vystihovať tú špecifickú vec. (max 35 slov)
+5. ŠTUDENT: pochopil, nadšene to vysvetlí vlastnými slovami (15-20 slov). Musí znieť naozaj nadšene. "Aha takže je to v podstate rýchla jednorazová funkcia, to je bomba!"
+6. UČITEĽ: príklady z reálneho sveta — KTO to používa. Spomeň 2 REÁLNE firmy. Krátko a výstižne. (max 25 slov)
+7. ŠTUDENT: krátka nadšená reakcia (max 8 slov). "Nie, to je fakt šialené!" alebo "No tak to je oveľa zaujímavejšie ako som čakal!"
+8. UČITEĽ: jedna krátka záverečná veta prečo na tom záleží (max 12 slov). Výstižne, motivujúco.
 9. UČITEĽ: prázdny riadok (tichý CTA screen). Vráť {"speaker": "teacher", "spoken": "", "code": null}
 
 PRAVIDLÁ:
