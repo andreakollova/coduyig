@@ -46,7 +46,7 @@ export async function generateSlideContent(
   }
 
   const langNote = lang === 'sk'
-    ? '\n\nWRITE EVERYTHING IN SLOVAK (slovenčina). Proper grammar. Never Czech. Remove "vysvetlené" from headings.'
+    ? '\n\nWRITE EVERYTHING IN SLOVAK (slovenčina). Proper grammar. Never Czech. Remove "vysvetlené" from headings.\nTerminology: "Linked List" = "Spojový zoznam" (NEVER "Zoznam spojený"). "Array" = "Pole". "Hash Table" = "Hašovacia tabuľka". Use standard Slovak CS terminology.'
     : '';
 
   const prompt = `LEARNING:\n${learningContent.slice(0, 4000)}\n\nREAL WORLD:\n${(realWorldContent || '').slice(0, 1500)}\n\nFUN FACTS:\n${(interestingFacts || '').slice(0, 1000)}${langNote}`;
