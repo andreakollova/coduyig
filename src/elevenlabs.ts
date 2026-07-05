@@ -14,8 +14,8 @@ const VOICES = {
     student: 's3TPKV1kjDlVtZbl4Ksh',
   },
   sk: {
-    teacher: 'ErXwobaYiN019PkySvjV', // Antoni — best SK pronunciation, confident
-    student: 'VR6AewLTigWG4xSOukaG', // Arnold — energetic, good SK pronunciation
+    teacher: 'bYqmvVkXUBwLwYpGHGz3',
+    student: '2ST3sI2j7fz4A5oXjnbA',
   },
 };
 
