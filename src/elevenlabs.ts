@@ -15,7 +15,7 @@ const VOICES = {
   },
   sk: {
     teacher: 'bYqmvVkXUBwLwYpGHGz3',
-    student: 'DXwrzy2wtKORwDTbsMwk',
+    student: 'Zai7B4Aol2bJtneyq0L1',
   },
 };
 

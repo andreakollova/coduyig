@@ -349,7 +349,7 @@ export const LessonReel: React.FC<ReelProps> = ({
         const startFrame = TITLE_FRAMES + Math.round(line.startTime * fps);
         return (
           <Sequence key={i} from={startFrame} durationInFrames={Math.ceil(line.duration * fps) + 10}>
-            <Audio src={line.audioUrl} volume={1} />
+            <Audio src={line.audioUrl} volume={line.speaker === 'teacher' ? 1.4 : 1} />
           </Sequence>
         );
       })}
