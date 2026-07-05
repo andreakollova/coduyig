@@ -73,7 +73,7 @@ function charsToWords(chars: ELResponse['alignment']): WordTiming[] {
   return words;
 }
 
-async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en'): Promise<{ audioBuffer: Buffer; wordTimings: WordTiming[]; duration: number }> {
+async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', speed = 1.3): Promise<{ audioBuffer: Buffer; wordTimings: WordTiming[]; duration: number }> {
   // Multilingual v2 for Slovak (better pronunciation), turbo for English (faster, smoother)
   const model = lang === 'sk' ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5';
 
@@ -84,7 +84,7 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en'):
       text,
       model_id: model,
       voice_settings: { stability: 0.45, similarity_boost: 0.75, style: 0.5, use_speaker_boost: true },
-      speed: 1.3,
+      speed,
     }),
   });
 
@@ -132,7 +132,11 @@ export async function generateConversationTTS(
 
     console.log(`  Line ${i + 1} [${line.speaker}]: "${line.spoken.slice(0, 50)}..."`);
 
-    const { audioBuffer, wordTimings, duration } = await ttsLine(line.spoken, voiceId, lang);
+    // Last student line (summary) speaks slower for clarity
+    const isLastStudentLine = line.speaker === 'student' && i === lines.length - 2;
+    const lineSpeed = isLastStudentLine ? 1.1 : 1.3;
+
+    const { audioBuffer, wordTimings, duration } = await ttsLine(line.spoken, voiceId, lang, lineSpeed);
 
     // Save raw audio then normalize volume
     const rawPath = path.join(outputDir, `line_${i}_raw.mp3`);
