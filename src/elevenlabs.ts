@@ -3,6 +3,7 @@
  */
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 
 const API_KEY = process.env.ELEVENLABS_API_KEY || '';
 const API = 'https://api.elevenlabs.io/v1';
@@ -133,9 +134,19 @@ export async function generateConversationTTS(
 
     const { audioBuffer, wordTimings, duration } = await ttsLine(line.spoken, voiceId, lang);
 
-    // Save audio file
+    // Save raw audio then normalize volume
+    const rawPath = path.join(outputDir, `line_${i}_raw.mp3`);
     const audioPath = path.join(outputDir, `line_${i}.mp3`);
-    fs.writeFileSync(audioPath, audioBuffer);
+    fs.writeFileSync(rawPath, audioBuffer);
+
+    // Normalize audio to -1dB peak using ffmpeg
+    try {
+      execSync(`ffmpeg -y -i "${rawPath}" -af "loudnorm=I=-14:TP=-1:LRA=11" "${audioPath}" 2>/dev/null`);
+      fs.unlinkSync(rawPath);
+    } catch {
+      // If ffmpeg fails, use raw audio
+      fs.renameSync(rawPath, audioPath);
+    }
 
     // Offset word timings to be sequential
     const offsetTimings = wordTimings.map(w => ({
