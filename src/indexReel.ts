@@ -23,6 +23,8 @@ const lessonIdArg = args.findIndex(a => a === '--lesson-id');
 const lessonId = lessonIdArg >= 0 ? parseInt(args[lessonIdArg + 1]) : undefined;
 const codeArg = args.findIndex(a => a === '--code');
 const customCode = codeArg >= 0 ? args[codeArg + 1] : undefined;
+const langArg = args.findIndex(a => a === '--lang');
+const lang: 'en' | 'sk' = (langArg >= 0 && args[langArg + 1] === 'sk') ? 'sk' : 'en';
 
 /* ========== EQUIPMENT ========== */
 
@@ -45,7 +47,7 @@ const teacherEquipByLevel: Record<DiffLevel, Record<string, string>> = {
 
 /* ========== INTRO GREETINGS ========== */
 
-const INTRO_GREETINGS = [
+const INTRO_GREETINGS_EN = [
   { introStudent: 'Got a minute?', introTeacher: 'Always.' },
   { introStudent: 'Can you help me?', introTeacher: 'Of course.' },
   { introStudent: 'Quick question.', introTeacher: 'Go ahead.' },
@@ -58,8 +60,22 @@ const INTRO_GREETINGS = [
   { introStudent: "What's today's topic?", introTeacher: 'A good one.' },
 ];
 
-function pickIntroGreeting() {
-  const pick = INTRO_GREETINGS[Math.floor(Math.random() * INTRO_GREETINGS.length)];
+const INTRO_GREETINGS_SK = [
+  { introStudent: 'Máš minútku?', introTeacher: 'Vždy.' },
+  { introStudent: 'Pomôžeš mi?', introTeacher: 'Jasné.' },
+  { introStudent: 'Rýchla otázka.', introTeacher: 'Povedz.' },
+  { introStudent: 'Kde mám začať?', introTeacher: 'Práve tu.' },
+  { introStudent: 'Mám veľa otázok.', introTeacher: 'Začneme jednoducho.' },
+  { introStudent: 'Nauč ma niečo!', introTeacher: 'Toto sa ti bude páčiť.' },
+  { introStudent: 'Som pripravený!', introTeacher: 'Poďme na to.' },
+  { introStudent: 'Potrebujem pomoc.', introTeacher: 'Mám ťa.' },
+  { introStudent: 'Čo je dnes na programe?', introTeacher: 'Niečo super.' },
+  { introStudent: 'Znie to dobre.', introTeacher: 'Máš otázky?' },
+];
+
+function pickIntroGreeting(lang: 'en' | 'sk') {
+  const pool = lang === 'sk' ? INTRO_GREETINGS_SK : INTRO_GREETINGS_EN;
+  const pick = pool[Math.floor(Math.random() * pool.length)];
   console.log(`💬 Intro: Student: "${pick.introStudent}" | Teacher: "${pick.introTeacher}"`);
   return pick;
 }
@@ -89,13 +105,15 @@ async function waitForContainer(id: string, token: string, max = 60) {
 
 async function main() {
   console.log('🎬 Coduy Conversational Reels Publisher');
-  console.log(`   Mode: ${dryRun ? 'DRY RUN' : 'LIVE'}\n`);
+  console.log(`   Mode: ${dryRun ? 'DRY RUN' : 'LIVE'}`);
+  console.log(`   Lang: ${lang.toUpperCase()}\n`);
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
   // 1. Fetch lesson
+  const skFields = lang === 'sk' ? ', title_sk, introduction_sk, learning_content_sk, key_takeaways_sk' : '';
   let query = sb.from('cb_lessons')
-    .select('id, title, introduction, learning_content, key_takeaways, module_id, lesson_number');
+    .select(`id, title, introduction, learning_content, key_takeaways, module_id, lesson_number${skFields}`);
 
   if (lessonId) {
     query = query.eq('id', lessonId);
@@ -107,20 +125,27 @@ async function main() {
   if (error || !lessons?.length) { console.log('❌ No lesson found'); process.exit(0); }
   const lesson = lessonId ? lessons[0] : lessons[Math.floor(Math.random() * lessons.length)];
 
-  const { data: mod } = await sb.from('cb_modules').select('module_number, title').eq('id', lesson.module_id).single();
+  const { data: mod } = await sb.from('cb_modules').select('module_number, title, title_sk').eq('id', lesson.module_id).single();
   const moduleNumber = mod?.module_number || 1;
   const level = getLevel(moduleNumber);
   const equipTeacher = teacherEquipByLevel[level];
 
-  console.log(`📖 Lesson: ${lesson.title} (id=${lesson.id}, M${moduleNumber}, ${level})`);
+  // Pick correct language fields
+  const lessonTitle = (lang === 'sk' && lesson.title_sk) ? lesson.title_sk : lesson.title;
+  const lessonIntro = (lang === 'sk' && lesson.introduction_sk) ? lesson.introduction_sk : (lesson.introduction || '');
+  const lessonContent = (lang === 'sk' && lesson.learning_content_sk) ? lesson.learning_content_sk : (lesson.learning_content || '');
+  const lessonTakeaways = (lang === 'sk' && lesson.key_takeaways_sk) ? lesson.key_takeaways_sk : (lesson.key_takeaways || []);
+
+  console.log(`📖 Lesson: ${lessonTitle} (id=${lesson.id}, M${moduleNumber}, ${level}, ${lang.toUpperCase()})`);
 
   // 2. Generate conversation script
   console.log('\n=== Generating script ===');
   const script = await generateReelScript(
-    lesson.title,
-    lesson.introduction || '',
-    lesson.learning_content || '',
-    lesson.key_takeaways || [],
+    lessonTitle,
+    lessonIntro,
+    lessonContent,
+    lessonTakeaways,
+    lang,
   );
   // Override code if --code was provided
   if (customCode) {
@@ -140,6 +165,7 @@ async function main() {
   const tts = await generateConversationTTS(
     script.lines.map(l => ({ speaker: l.speaker, spoken: l.spoken })),
     OUT_DIR,
+    lang,
   );
 
   // 4. Upload audio files to Supabase
@@ -187,10 +213,10 @@ async function main() {
     equipmentStudent: studentEquip,
     equipmentTeacher: equipTeacher,
     durationInFrames,
-    lessonTitle: lesson.title,
+    lessonTitle: lessonTitle,
     lessonNumber: lesson.lesson_number,
-    moduleTitle: mod?.title,
-    ...pickIntroGreeting(),
+    moduleTitle: (lang === 'sk' && mod?.title_sk) ? mod.title_sk : mod?.title,
+    ...pickIntroGreeting(lang),
   };
 
   const comp = await selectComposition({ serveUrl, id: 'LessonReel', inputProps: reelProps });
@@ -206,7 +232,9 @@ async function main() {
   const { data: videoUrlData } = sb.storage.from(BUCKET).getPublicUrl(videoRemotePath);
   const videoUrl = videoUrlData.publicUrl;
 
-  const caption = `CODUY Lesson — ${lesson.title}\n\nFor more lessons and exercises download the CODUY app.\n📲 coduy.com | Free on App Store & Google Play\n\n#coding #programming #learntocode #coduy #developer #tech #python #reels`;
+  const caption = lang === 'sk'
+    ? `CODUY Lekcia — ${lessonTitle}\n\nViac lekcií a cvičení nájdeš v aplikácii CODUY.\n📲 coduy.sk | Zadarmo na App Store a Google Play\n\n#coding #programming #learntocode #coduy #developer #tech #python #reels`
+    : `CODUY Lesson — ${lessonTitle}\n\nFor more lessons and exercises download the CODUY app.\n📲 coduy.com | Free on App Store & Google Play\n\n#coding #programming #learntocode #coduy #developer #tech #python #reels`;
 
   if (dryRun) {
     console.log(`\n🏁 DRY RUN — video at ${videoPath}`);
@@ -215,8 +243,8 @@ async function main() {
 
   // 7. Publish Reel
   console.log('\n=== Publishing Reel ===');
-  const token = process.env.IG_PAGE_TOKEN_EN!;
-  const userId = process.env.IG_USER_ID_EN!;
+  const token = lang === 'sk' ? process.env.IG_PAGE_TOKEN_SK! : process.env.IG_PAGE_TOKEN_EN!;
+  const userId = lang === 'sk' ? process.env.IG_USER_ID_SK! : process.env.IG_USER_ID_EN!;
 
   const container = await igPost(`${API}/${userId}/media`, {
     media_type: 'REELS', video_url: videoUrl, caption, access_token: token,

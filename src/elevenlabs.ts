@@ -7,10 +7,16 @@ import path from 'path';
 const API_KEY = process.env.ELEVENLABS_API_KEY || '';
 const API = 'https://api.elevenlabs.io/v1';
 
-// Two voices for conversation
+// Voices per language
 const VOICES = {
-  teacher: '3TStB8f3X3To0Uj5R7RK',
-  student: 's3TPKV1kjDlVtZbl4Ksh', // Ada — young, curious
+  en: {
+    teacher: '3TStB8f3X3To0Uj5R7RK',
+    student: 's3TPKV1kjDlVtZbl4Ksh',
+  },
+  sk: {
+    teacher: 'bYqmvVkXUBwLwYpGHGz3',
+    student: 's3TPKV1kjDlVtZbl4Ksh',
+  },
 };
 
 export interface WordTiming {
@@ -99,17 +105,19 @@ async function ttsLine(text: string, voiceId: string): Promise<{ audioBuffer: Bu
 export async function generateConversationTTS(
   lines: { speaker: 'student' | 'teacher'; spoken: string }[],
   outputDir: string,
+  lang: 'en' | 'sk' = 'en',
 ): Promise<ConversationTTS> {
   if (!API_KEY) throw new Error('ELEVENLABS_API_KEY not set');
 
-  console.log(`🎙️ Generating conversation TTS (${lines.length} lines)...`);
+  const voices = VOICES[lang];
+  console.log(`🎙️ Generating conversation TTS (${lines.length} lines, ${lang.toUpperCase()})...`);
 
   const result: LineTTS[] = [];
   let cumulativeTime = 0;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    const voiceId = VOICES[line.speaker];
+    const voiceId = voices[line.speaker];
 
     // Skip empty lines (e.g. silent CTA)
     if (!line.spoken || line.spoken.trim() === '') {

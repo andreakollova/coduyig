@@ -62,10 +62,15 @@ export async function generateReelScript(
   introduction: string,
   learningContent: string,
   keyTakeaways: string[],
+  lang: 'en' | 'sk' = 'en',
 ): Promise<ReelScript> {
   if (!OPENAI_KEY) {
     return fallbackScript(title, introduction);
   }
+
+  const langNote = lang === 'sk'
+    ? '\n\nIMPORTANT: Write the ENTIRE script in SLOVAK (slovenčina). Proper Slovak grammar. Never Czech. The conversation must be natural Slovak, not a translation.'
+    : '';
 
   const prompt = `LESSON TITLE: ${title}
 
@@ -76,7 +81,7 @@ LEARNING CONTENT (use this for lines 2 and 4 — the actual teaching):
 ${learningContent.slice(0, 4000)}
 
 KEY TAKEAWAYS:
-${keyTakeaways.join('\n')}`;
+${keyTakeaways.join('\n')}${langNote}`;
 
   try {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
