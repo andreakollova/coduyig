@@ -141,7 +141,7 @@ export async function generateConversationTTS(
 
     // Normalize audio + remove background noise using ffmpeg
     try {
-      execSync(`ffmpeg -y -i "${rawPath}" -af "highpass=f=60,afftdn=nf=-40,loudnorm=I=-14:TP=-1:LRA=11" "${audioPath}" 2>/dev/null`);
+      execSync(`ffmpeg -y -i "${rawPath}" -af "loudnorm=I=-14:TP=-1:LRA=11" "${audioPath}" 2>/dev/null`);
       fs.unlinkSync(rawPath);
     } catch {
       // If ffmpeg fails, use raw audio
