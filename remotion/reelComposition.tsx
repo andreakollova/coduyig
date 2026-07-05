@@ -157,12 +157,22 @@ const ConversationCaptionsInline: React.FC<{
 
   if (allWords.length === 0) return null;
 
-  // Pre-split all words into fixed groups of ~8 words
-  const GROUP_SIZE = 10;
+  // Split into groups by speaker turns + max 10 words per group
+  const MAX_PER_GROUP = 10;
   const groups: WordTiming[][] = [];
-  for (let i = 0; i < allWords.length; i += GROUP_SIZE) {
-    groups.push(allWords.slice(i, i + GROUP_SIZE));
+  let currentGroup: WordTiming[] = [];
+  let currentSpeaker: string | null = null;
+
+  for (const w of allWords) {
+    // New group on speaker change or when group is full
+    if (w.speaker !== currentSpeaker || currentGroup.length >= MAX_PER_GROUP) {
+      if (currentGroup.length > 0) groups.push(currentGroup);
+      currentGroup = [];
+      currentSpeaker = w.speaker;
+    }
+    currentGroup.push(w);
   }
+  if (currentGroup.length > 0) groups.push(currentGroup);
 
   // Find which group is currently active (based on current time)
   let activeGroupIdx = 0;
@@ -187,7 +197,10 @@ const ConversationCaptionsInline: React.FC<{
   }
 
   // Global start index of this group
-  const groupStartIdx = activeGroupIdx * GROUP_SIZE;
+  let groupStartIdx = 0;
+  for (let g = 0; g < activeGroupIdx; g++) {
+    groupStartIdx += groups[g].length;
+  }
 
   return (
     <span>
