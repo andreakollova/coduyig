@@ -14,8 +14,8 @@ const VOICES = {
     student: 's3TPKV1kjDlVtZbl4Ksh',
   },
   sk: {
-    teacher: 'bYqmvVkXUBwLwYpGHGz3',
-    student: 's3TPKV1kjDlVtZbl4Ksh',
+    teacher: 'ErXwobaYiN019PkySvjV', // Antoni — best SK pronunciation, confident
+    student: 'VR6AewLTigWG4xSOukaG', // Arnold — energetic, good SK pronunciation
   },
 };
 
@@ -72,15 +72,18 @@ function charsToWords(chars: ELResponse['alignment']): WordTiming[] {
   return words;
 }
 
-async function ttsLine(text: string, voiceId: string): Promise<{ audioBuffer: Buffer; wordTimings: WordTiming[]; duration: number }> {
+async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en'): Promise<{ audioBuffer: Buffer; wordTimings: WordTiming[]; duration: number }> {
+  // Multilingual v2 for Slovak (better pronunciation), turbo for English (faster, smoother)
+  const model = lang === 'sk' ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5';
+
   const res = await fetch(`${API}/text-to-speech/${voiceId}/with-timestamps`, {
     method: 'POST',
     headers: { 'xi-api-key': API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       text,
-      model_id: 'eleven_turbo_v2_5',
+      model_id: model,
       voice_settings: { stability: 0.45, similarity_boost: 0.75, style: 0.5, use_speaker_boost: true },
-      speed: 1.2,
+      speed: lang === 'sk' ? 1.1 : 1.2,
     }),
   });
 
@@ -128,7 +131,7 @@ export async function generateConversationTTS(
 
     console.log(`  Line ${i + 1} [${line.speaker}]: "${line.spoken.slice(0, 50)}..."`);
 
-    const { audioBuffer, wordTimings, duration } = await ttsLine(line.spoken, voiceId);
+    const { audioBuffer, wordTimings, duration } = await ttsLine(line.spoken, voiceId, lang);
 
     // Save audio file
     const audioPath = path.join(outputDir, `line_${i}.mp3`);
