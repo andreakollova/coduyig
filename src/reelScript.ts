@@ -24,7 +24,7 @@ Two characters:
 Create a conversation with EXACTLY 9 lines:
 
 1. STUDENT: casual greeting + asks about today's topic (max 12 words)
-2. TEACHER: short, clear explanation of the concept from LEARNING CONTENT. Keep it punchy, not a lecture. Like the lesson intro — get to the point fast. (max 25 words)
+2. TEACHER: clear explanation of the concept from LEARNING CONTENT. Start with a short definition, then add one technical detail about HOW it works. Punchy but informative — not a lecture, but enough to actually learn something. (max 35 words)
 3. STUDENT: excited follow-up question, not confused — genuinely curious and engaged (max 12 words). Like "Oh that's cool! So when would I actually use that?" or "Wait really? How does that work in practice?"
 4. TEACHER: explains with a TANGIBLE real-life analogy that captures what makes THIS concept UNIQUE. Not generic — the analogy must nail the specific thing that makes this different. (max 35 words)
 5. STUDENT: gets it, excited, explains it back enthusiastically in their own words (15-20 words). Sound genuinely pumped, not robotic. Like "Ohhh so it's basically a quick throwaway function you write on the fly, that's sick!"
@@ -67,7 +67,7 @@ Dve postavy:
 Vytvor konverzáciu s PRESNE 9 riadkami:
 
 1. ŠTUDENT: neformálny pozdrav + pýta sa na tému. "Čauko, aká je téma dnešnej hodiny?" alebo "Hej, o čom sa dnes učíme?" (max 12 slov)
-2. UČITEĽ: krátke, jasné vysvetlenie konceptu z LEARNING CONTENT. Rýchlo k veci, nie prednáška. Ako úvod lekcie. (max 25 slov). NIKDY nečítaj kód.
+2. UČITEĽ: jasné vysvetlenie konceptu z LEARNING CONTENT. Začni definíciou, potom pridaj jeden technický detail o tom AKO to funguje. Výstižne ale informatívne — nie prednáška, ale dosť na to aby sa niečo naučil. (max 35 slov). NIKDY nečítaj kód.
 3. ŠTUDENT: nadšená zvedavá otázka — NIE zmätený, ale zaujatý a zapálený (max 12 slov). "To je zaujímavé! A kedy sa to reálne používa?" alebo "Počkaj, fakt? A ako to funguje v praxi?"
 4. UČITEĽ: vysvetlí to HMATATEĽNOU analógiou zo života, ktorá zachytí to čo robí TENTO koncept UNIKÁTNYM. Nie generická — musí presne vystihovať tú špecifickú vec. (max 35 slov)
 5. ŠTUDENT: pochopil, nadšene to vysvetlí vlastnými slovami (15-20 slov). Musí znieť naozaj nadšene. NIKDY nepoužívaj slovo "bomba". Príklady: "Aha takže je to v podstate rýchla jednorazová funkcia, to je super šikovné!" alebo "Jasné, už to chápem, to je fakt cool!"
