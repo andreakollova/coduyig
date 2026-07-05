@@ -254,7 +254,6 @@ const ConversationCaptionsInline: React.FC<{
             {i > 0 && <span>{' '}</span>}
             <span style={{
               color: isActive ? activeColor : isPast ? pastColor : futureColor,
-              fontWeight: isActive ? 900 : 800,
               textShadow: isActive
                 ? `0 0 16px ${w.speaker === 'student' ? 'rgba(255,255,255,0.35)' : 'rgba(251,146,60,0.35)'}`
                 : 'none',
