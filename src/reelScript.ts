@@ -40,6 +40,8 @@ RULES:
 - Be casual and natural, like two friends chatting
 - Line 6 is the "aha moment" — use a real-world analogy from the introduction
 - Total spoken text: 150-200 words
+- NEVER use colons (:) or semicolons (;) in spoken text. Use periods and commas only. The text will be read aloud so it must sound natural when spoken.
+- NEVER use bullet points, dashes, or lists. Write in full flowing sentences.
 
 Also pick ONE code snippet (MAX 3 lines) from the LEARNING CONTENT. The most illustrative example. Attach it to line 2 or 4.
 
