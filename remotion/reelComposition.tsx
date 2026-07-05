@@ -142,8 +142,10 @@ const ConversationCaptions: React.FC<{
 };
 
 /**
- * Inline captions — sliding window of max 8 words (~3 lines).
- * No blinking — window slides smoothly as words progress.
+ * Inline captions — pre-split into fixed groups of ~8 words.
+ * Each group stays on screen until all its words are spoken,
+ * then switches to the next group. Words highlight one by one.
+ * Text NEVER moves while a group is displayed.
  */
 const ConversationCaptionsInline: React.FC<{
   allWords: WordTiming[];
@@ -153,7 +155,30 @@ const ConversationCaptionsInline: React.FC<{
   const { fps } = useVideoConfig();
   const currentTime = (frame - titleCardFrames) / fps;
 
-  // Find current word
+  if (allWords.length === 0) return null;
+
+  // Pre-split all words into fixed groups of ~8 words
+  const GROUP_SIZE = 10;
+  const groups: WordTiming[][] = [];
+  for (let i = 0; i < allWords.length; i += GROUP_SIZE) {
+    groups.push(allWords.slice(i, i + GROUP_SIZE));
+  }
+
+  // Find which group is currently active (based on current time)
+  let activeGroupIdx = 0;
+  for (let g = 0; g < groups.length; g++) {
+    const groupEnd = groups[g][groups[g].length - 1].end;
+    if (currentTime <= groupEnd + 0.2) {
+      activeGroupIdx = g;
+      break;
+    }
+    if (g === groups.length - 1) activeGroupIdx = g;
+  }
+
+  const activeGroup = groups[activeGroupIdx];
+  if (!activeGroup) return null;
+
+  // Find current word index within all words
   let currentWordIdx = -1;
   for (let i = 0; i < allWords.length; i++) {
     if (currentTime >= allWords[i].start - 0.05 && currentTime < allWords[i].end + 0.15) {
@@ -161,23 +186,18 @@ const ConversationCaptionsInline: React.FC<{
     }
   }
 
-  if (currentWordIdx < 0) return null;
-
-  // Sliding window: show max 8 words, centered around current word
-  const MAX_WORDS = 8;
-  const windowStart = Math.max(0, currentWordIdx - 3);
-  const windowEnd = Math.min(allWords.length, windowStart + MAX_WORDS);
-  const visibleWords = allWords.slice(windowStart, windowEnd);
+  // Global start index of this group
+  const groupStartIdx = activeGroupIdx * GROUP_SIZE;
 
   return (
     <span>
-      {visibleWords.map((w, i) => {
-        const globalIdx = windowStart + i;
+      {activeGroup.map((w, i) => {
+        const globalIdx = groupStartIdx + i;
         const isActive = globalIdx === currentWordIdx;
         const isPast = globalIdx < currentWordIdx;
         const activeColor = w.speaker === 'student' ? '#FFFFFF' : '#fb923c';
-        const pastColor = w.speaker === 'student' ? 'rgba(255,255,255,0.4)' : 'rgba(251,146,60,0.4)';
-        const futureColor = w.speaker === 'student' ? 'rgba(255,255,255,0.25)' : 'rgba(251,146,60,0.25)';
+        const pastColor = w.speaker === 'student' ? 'rgba(255,255,255,0.45)' : 'rgba(251,146,60,0.45)';
+        const futureColor = w.speaker === 'student' ? 'rgba(255,255,255,0.2)' : 'rgba(251,146,60,0.2)';
 
         return (
           <React.Fragment key={`${globalIdx}-${w.word}`}>
