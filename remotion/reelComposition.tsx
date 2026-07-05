@@ -158,14 +158,15 @@ const ConversationCaptionsInline: React.FC<{
 
   if (allWords.length === 0) return null;
 
-  // Split into groups by: speaker change, punctuation, or max 12 words
-  const MAX_PER_GROUP = 12;
+  // Split into consistent groups of 6-10 words for stable 2-3 line captions
+  const MIN_GROUP = 6;
+  const MAX_GROUP = 10;
   const groups: WordTiming[][] = [];
   let currentGroup: WordTiming[] = [];
   let currentSpeaker: string | null = null;
 
   for (const w of allWords) {
-    // New group on speaker change
+    // Always split on speaker change
     if (w.speaker !== currentSpeaker) {
       if (currentGroup.length > 0) groups.push(currentGroup);
       currentGroup = [];
@@ -174,19 +175,26 @@ const ConversationCaptionsInline: React.FC<{
 
     currentGroup.push(w);
 
-    // Split at punctuation (end of clause) if we have enough words (4+)
-    const endsWithPunct = /[.,!?;:]$/.test(w.word);
-    if (endsWithPunct && currentGroup.length >= 4) {
+    // Split at punctuation only if we have enough words (6+)
+    const endsWithPunct = /[.,!?]$/.test(w.word);
+    if (endsWithPunct && currentGroup.length >= MIN_GROUP) {
       groups.push(currentGroup);
       currentGroup = [];
     }
-    // Also split if too long
-    else if (currentGroup.length >= MAX_PER_GROUP) {
+    // Hard split at max
+    else if (currentGroup.length >= MAX_GROUP) {
       groups.push(currentGroup);
       currentGroup = [];
     }
   }
-  if (currentGroup.length > 0) groups.push(currentGroup);
+  if (currentGroup.length > 0) {
+    // If leftover is too small (1-3 words), merge with previous group
+    if (currentGroup.length < 4 && groups.length > 0) {
+      groups[groups.length - 1] = groups[groups.length - 1].concat(currentGroup);
+    } else {
+      groups.push(currentGroup);
+    }
+  }
 
   // Find current word — with gap bridging so captions never disappear
   let currentWordIdx = -1;
