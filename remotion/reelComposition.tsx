@@ -70,7 +70,7 @@ const CodeBlock: React.FC<{ code: string }> = ({ code }) => {
         color: '#e0e0e0', margin: 0, textAlign: 'left', lineHeight: 1.7,
         fontFamily: "'JetBrains Mono', monospace", whiteSpace: 'pre-wrap',
       }}>
-        {code.replace(/\\n/g, '\n').split('\n').slice(0, 3).join('\n')}
+        {code.replace(/\\n/g, '\n')}
       </pre>
     </div>
   );
