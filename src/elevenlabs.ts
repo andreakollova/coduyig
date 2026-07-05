@@ -16,7 +16,7 @@ const VOICES = {
   },
   sk: {
     teacher: 'bYqmvVkXUBwLwYpGHGz3',
-    student: 'Zai7B4Aol2bJtneyq0L1',
+    student: '2ST3sI2j7fz4A5oXjnbA',
   },
 };
 
@@ -84,7 +84,7 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en'):
       text,
       model_id: model,
       voice_settings: { stability: 0.45, similarity_boost: 0.75, style: 0.5, use_speaker_boost: true },
-      speed: lang === 'sk' ? 1.1 : 1.2,
+      speed: lang === 'sk' ? 1.2 : 1.2,
     }),
   });
 
