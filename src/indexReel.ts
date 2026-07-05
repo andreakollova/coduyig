@@ -140,6 +140,12 @@ async function main() {
     const tl = tts.lines[i];
     const sl = script.lines[i];
 
+    // Skip silent lines (no audio)
+    if (!tl.audioPath || tl.durationSeconds === 0) {
+      console.log(`  Line ${i + 1}: (silent, skipped)`);
+      continue;
+    }
+
     // Upload audio
     const audioBytes = fs.readFileSync(tl.audioPath);
     const remotePath = `reels/${lesson.id}/${timestamp}/line_${i}.mp3`;

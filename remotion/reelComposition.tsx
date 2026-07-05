@@ -142,8 +142,8 @@ const ConversationCaptions: React.FC<{
 };
 
 /**
- * Inline captions — shows the FULL current speaker's sentence.
- * Words highlight one by one but the text doesn't move/shift.
+ * Inline captions — sliding window of max 8 words (~3 lines).
+ * No blinking — window slides smoothly as words progress.
  */
 const ConversationCaptionsInline: React.FC<{
   allWords: WordTiming[];
@@ -156,43 +156,28 @@ const ConversationCaptionsInline: React.FC<{
   // Find current word
   let currentWordIdx = -1;
   for (let i = 0; i < allWords.length; i++) {
-    if (currentTime >= allWords[i].start - 0.05 && currentTime < allWords[i].end + 0.12) {
+    if (currentTime >= allWords[i].start - 0.05 && currentTime < allWords[i].end + 0.15) {
       currentWordIdx = i;
     }
   }
 
   if (currentWordIdx < 0) return null;
 
-  // Find the current "chunk" — all consecutive words from the same speaker
-  const currentSpeaker = allWords[currentWordIdx].speaker;
-  let chunkStart = currentWordIdx;
-  let chunkEnd = currentWordIdx;
+  // Sliding window: show max 8 words, centered around current word
+  const MAX_WORDS = 8;
+  const windowStart = Math.max(0, currentWordIdx - 3);
+  const windowEnd = Math.min(allWords.length, windowStart + MAX_WORDS);
+  const visibleWords = allWords.slice(windowStart, windowEnd);
 
-  // Go backwards to find start of this speaker's chunk
-  while (chunkStart > 0 && allWords[chunkStart - 1].speaker === currentSpeaker) {
-    // Also check for time gaps — if gap > 1s it's a new sentence
-    if (allWords[chunkStart].start - allWords[chunkStart - 1].end > 1.0) break;
-    chunkStart--;
-  }
-  // Go forwards to find end
-  while (chunkEnd < allWords.length - 1 && allWords[chunkEnd + 1].speaker === currentSpeaker) {
-    if (allWords[chunkEnd + 1].start - allWords[chunkEnd].end > 1.0) break;
-    chunkEnd++;
-  }
-
-  const chunkWords = allWords.slice(chunkStart, chunkEnd + 1);
-
-  // Render ALL words in the chunk, highlight current one
-  // Use a single string approach with word wrapping
   return (
-    <span style={{ wordSpacing: '8px' }}>
-      {chunkWords.map((w, i) => {
-        const globalIdx = chunkStart + i;
+    <span>
+      {visibleWords.map((w, i) => {
+        const globalIdx = windowStart + i;
         const isActive = globalIdx === currentWordIdx;
         const isPast = globalIdx < currentWordIdx;
         const activeColor = w.speaker === 'student' ? '#FFFFFF' : '#fb923c';
-        const pastColor = w.speaker === 'student' ? 'rgba(255,255,255,0.55)' : 'rgba(251,146,60,0.55)';
-        const futureColor = w.speaker === 'student' ? 'rgba(255,255,255,0.3)' : 'rgba(251,146,60,0.3)';
+        const pastColor = w.speaker === 'student' ? 'rgba(255,255,255,0.4)' : 'rgba(251,146,60,0.4)';
+        const futureColor = w.speaker === 'student' ? 'rgba(255,255,255,0.25)' : 'rgba(251,146,60,0.25)';
 
         return (
           <React.Fragment key={`${globalIdx}-${w.word}`}>
