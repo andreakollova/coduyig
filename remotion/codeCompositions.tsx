@@ -63,9 +63,14 @@ export const SlideCodeQuestion: React.FC<{
       </p>
 
       {/* Prompt — big */}
-      <h1 style={{ fontSize: 48, fontWeight: 800, color: '#fff', margin: '0 0 32px', lineHeight: 1.12, maxWidth: 920 }}>
-        {lang === 'sk' ? 'Doplň chýbajúci kód:' : 'Fill in the code:'}
+      <h1 style={{ fontSize: 48, fontWeight: 800, color: '#fff', margin: '0 0 12px', lineHeight: 1.12, maxWidth: 920 }}>
+        {lang === 'sk' ? 'Doplň chýbajúci kód' : 'Fill in the code'}
       </h1>
+
+      {/* Task description */}
+      <p style={{ fontSize: 26, color: '#aaa', margin: '0 0 28px', fontWeight: 500, maxWidth: 860, lineHeight: 1.4 }}>
+        {prompt}
+      </p>
 
       {/* Code block with highlighted ? blank */}
       <div style={{ width: '100%', maxWidth: 900, borderRadius: 20, overflow: 'hidden', border: '1px solid #222', marginBottom: 32 }}>
@@ -152,9 +157,14 @@ export const SlideCodeAnswer: React.FC<{
       </p>
 
       {/* Prompt */}
-      <h1 style={{ fontSize: 46, fontWeight: 800, color: '#fff', margin: '0 0 28px', lineHeight: 1.12, maxWidth: 920 }}>
-        {lang === 'sk' ? 'Doplň chýbajúci kód:' : 'Fill in the code:'}
+      <h1 style={{ fontSize: 46, fontWeight: 800, color: '#fff', margin: '0 0 10px', lineHeight: 1.12, maxWidth: 920 }}>
+        {lang === 'sk' ? 'Doplň chýbajúci kód' : 'Fill in the code'}
       </h1>
+
+      {/* Task description */}
+      <p style={{ fontSize: 24, color: '#aaa', margin: '0 0 24px', fontWeight: 500, maxWidth: 860, lineHeight: 1.4 }}>
+        {prompt}
+      </p>
 
       {/* Code with correct answer — green border */}
       <div style={{ width: '100%', maxWidth: 900, borderRadius: 20, overflow: 'hidden', border: '2px solid rgba(74,222,128,0.4)', marginBottom: 28 }}>
