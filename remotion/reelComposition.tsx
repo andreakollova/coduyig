@@ -188,27 +188,42 @@ const ConversationCaptionsInline: React.FC<{
   }
   if (currentGroup.length > 0) groups.push(currentGroup);
 
-  // Find which group is currently active (based on current time)
-  let activeGroupIdx = 0;
-  for (let g = 0; g < groups.length; g++) {
-    const groupEnd = groups[g][groups[g].length - 1].end;
-    if (currentTime <= groupEnd + 0.2) {
-      activeGroupIdx = g;
-      break;
-    }
-    if (g === groups.length - 1) activeGroupIdx = g;
-  }
-
-  const activeGroup = groups[activeGroupIdx];
-  if (!activeGroup) return null;
-
-  // Find current word index within all words
+  // Find current word — with gap bridging so captions never disappear
   let currentWordIdx = -1;
   for (let i = 0; i < allWords.length; i++) {
     if (currentTime >= allWords[i].start - 0.05 && currentTime < allWords[i].end + 0.15) {
       currentWordIdx = i;
     }
   }
+
+  // If we're in a gap between words, stick to the last spoken word
+  if (currentWordIdx < 0) {
+    for (let i = allWords.length - 1; i >= 0; i--) {
+      if (currentTime >= allWords[i].end) {
+        currentWordIdx = i;
+        break;
+      }
+    }
+  }
+
+  // Before first word or after all words — don't show
+  if (currentWordIdx < 0) return null;
+  if (currentTime > allWords[allWords.length - 1].end + 1.0) return null;
+
+  // Find which group contains the current word
+  let activeGroupIdx = 0;
+  let wordCount = 0;
+  for (let g = 0; g < groups.length; g++) {
+    if (currentWordIdx < wordCount + groups[g].length) {
+      activeGroupIdx = g;
+      break;
+    }
+    wordCount += groups[g].length;
+    if (g === groups.length - 1) activeGroupIdx = g;
+  }
+
+  const activeGroup = groups[activeGroupIdx];
+  if (!activeGroup) return null;
 
   // Global start index of this group
   let groupStartIdx = 0;
