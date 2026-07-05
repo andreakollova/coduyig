@@ -1,7 +1,6 @@
 /**
- * Generate a conversational script for IG Reel — two characters talking.
- * Student asks, Teacher explains, Student asks for simpler explanation,
- * Teacher uses the lesson introduction ("Imagine..."), Student gets it.
+ * Generate a conversational script for IG Reel from lesson content.
+ * Student asks, Teacher explains using ACTUAL lesson content.
  */
 
 const OPENAI_KEY = process.env.OPENAI_API_KEY || '';
@@ -20,32 +19,35 @@ const SYSTEM = `You write conversational scripts for Instagram Reels about progr
 
 Two characters:
 - STUDENT: curious beginner, asks questions, sometimes confused
-- TEACHER: friendly expert, explains clearly
+- TEACHER: friendly expert who explains using the ACTUAL lesson content provided
 
-Given a lesson title, introduction, and learning content, create a conversation with EXACTLY 8 lines:
+You will receive the lesson's INTRODUCTION and LEARNING CONTENT. The teacher MUST use this content — don't invent new explanations. Rephrase it conversationally but keep the substance.
 
-1. STUDENT: greeting + asks what the topic is (max 10 words). Like "Hey! What are lambda functions?"
-2. TEACHER: gives a clear, detailed technical explanation. Define the concept, explain how it works, give a concrete example described in words (max 40 words)
-3. STUDENT: asks a follow-up about practical usage (max 10 words). Like "Oh nice! When would I actually use this?"
-4. TEACHER: answers with real-world examples and practical details. Mention specific use cases (max 35 words)
-5. STUDENT: says they're a bit confused, asks for a simpler explanation (max 12 words). Like "Hmm wait, I'm not sure I fully get it. Can you break it down?"
-6. TEACHER: uses the INTRODUCTION content to explain with a vivid analogy or "Imagine..." scenario. Paint a picture. Make the concept click (max 45 words). This MUST be based on the lesson's introduction.
-7. STUDENT: now understands, reacts positively (max 8 words). Like "Ohh okay, that makes so much sense now!"
-8. TEACHER: This line is EMPTY — no spoken text. Just return {"speaker": "teacher", "spoken": "", "code": null}. The CTA screen with logo will show visually without voiceover.
+Create a conversation with EXACTLY 8 lines:
+
+1. STUDENT: greeting + asks what the topic is (max 10 words)
+2. TEACHER: explains the core concept using facts from the LEARNING CONTENT. What is it? How does it work? Give the definition and key details (max 40 words). Do NOT read code — describe what it does.
+3. STUDENT: follow-up question about usage or a detail (max 10 words)
+4. TEACHER: answers using more details from LEARNING CONTENT — practical use cases, how to use it, key rules (max 30 words)
+5. STUDENT: says they're confused, asks for a simpler explanation (max 12 words). Like "Hmm wait, can you break that down simpler?"
+6. TEACHER: NOW use the INTRODUCTION to explain with a simple analogy or everyday comparison. Start with "Think of it like..." or "Imagine..." Use the introduction's analogy if there is one. Make it click (max 40 words)
+7. STUDENT: now gets it, reacts positively and summarizes what they learned (max 12 words). Like "Ohh so it's basically a shortcut for quick functions!"
+8. TEACHER: empty line (silent — CTA screen shows visually). Return {"speaker": "teacher", "spoken": "", "code": null}
 
 RULES:
-- NEVER read code aloud. Code is shown on screen, not spoken.
-- Be casual, like two friends chatting.
-- Line 6 MUST use the lesson's introduction/analogy — this is the key moment.
-- Total: 170-220 words MINIMUM. The teacher MUST explain thoroughly — give definitions, examples, and analogies. Don't be vague. The viewer should LEARN something real. The video needs to be 45-60 seconds.
+- NEVER read code aloud. Say "you can write a one-liner that squares a number" NOT "lambda x: x times x"
+- Teacher's explanations MUST come from the provided lesson content, not invented
+- Be casual and natural, like two friends chatting
+- Line 6 is the "aha moment" — use a real-world analogy from the introduction
+- Total spoken text: 150-200 words
 
-Also pick ONE code snippet (MAX 3 lines) from the lesson. Attach it to line 2 or 4. If no code exists, return code as null.
+Also pick ONE code snippet (MAX 3 lines) from the LEARNING CONTENT. The most illustrative example. Attach it to line 2 or 4.
 
 Return VALID JSON:
 {
   "lines": [
     {"speaker": "student", "spoken": "...", "code": null},
-    {"speaker": "teacher", "spoken": "...", "code": "x = lambda a: a + 1"},
+    {"speaker": "teacher", "spoken": "...", "code": "square = lambda x: x ** 2"},
     {"speaker": "student", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "student", "spoken": "...", "code": null},
@@ -65,13 +67,13 @@ export async function generateReelScript(
     return fallbackScript(title, introduction);
   }
 
-  const prompt = `LESSON: ${title}
+  const prompt = `LESSON TITLE: ${title}
 
-INTRODUCTION (use this for line 6 — the "explain it simpler" moment):
-${introduction.slice(0, 2000)}
+INTRODUCTION (use this for line 6 — the simple analogy/explanation):
+${introduction.slice(0, 2500)}
 
-LEARNING CONTENT:
-${learningContent.slice(0, 2500)}
+LEARNING CONTENT (use this for lines 2 and 4 — the actual teaching):
+${learningContent.slice(0, 4000)}
 
 KEY TAKEAWAYS:
 ${keyTakeaways.join('\n')}`;
@@ -83,8 +85,8 @@ ${keyTakeaways.join('\n')}`;
       body: JSON.stringify({
         model: 'gpt-4o',
         messages: [{ role: 'system', content: SYSTEM }, { role: 'user', content: prompt }],
-        temperature: 0.5,
-        max_tokens: 1200,
+        temperature: 0.4,
+        max_tokens: 1500,
         response_format: { type: 'json_object' },
       }),
     });
@@ -104,16 +106,16 @@ ${keyTakeaways.join('\n')}`;
 
 function fallbackScript(title: string, introduction?: string): ReelScript {
   const intro = introduction
-    ? introduction.split('.').slice(0, 2).join('.') + '.'
-    : `Think of it like a shortcut that makes your code simpler.`;
+    ? introduction.split('.').slice(0, 3).join('.') + '.'
+    : `Think of it like a shortcut that makes everything simpler.`;
   return { lines: [
     { speaker: 'student', spoken: `Hey! What's ${title}?` },
-    { speaker: 'teacher', spoken: `It's one of the key concepts every developer should know.` },
-    { speaker: 'student', spoken: `Oh cool! Why does it matter?` },
-    { speaker: 'teacher', spoken: `It makes your code cleaner and more efficient.` },
-    { speaker: 'student', spoken: `Hmm, I'm not sure I get it. Can you explain it simpler?` },
+    { speaker: 'teacher', spoken: `It's one of the key concepts every developer should know. Let me explain how it works and why it matters.` },
+    { speaker: 'student', spoken: `Oh cool! When would I actually use this?` },
+    { speaker: 'teacher', spoken: `You'd use it all the time in real projects. It makes your code cleaner and more efficient.` },
+    { speaker: 'student', spoken: `Hmm wait, can you break that down simpler?` },
     { speaker: 'teacher', spoken: intro },
-    { speaker: 'student', spoken: `Ohh okay, that makes sense now!` },
+    { speaker: 'student', spoken: `Ohh okay, that makes so much sense now!` },
     { speaker: 'teacher', spoken: '' },
   ]};
 }
