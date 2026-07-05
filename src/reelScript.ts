@@ -24,9 +24,9 @@ Two characters:
 Create a conversation with EXACTLY 9 lines:
 
 1. STUDENT: casual greeting + asks about today's topic (max 12 words)
-2. TEACHER: clear explanation of the concept from LEARNING CONTENT. Start with a short definition, then add one technical detail about HOW it works. Punchy but informative — not a lecture, but enough to actually learn something. (max 35 words)
+2. TEACHER: first sentence MUST explain the POINT — why this exists, what problem it solves. Then one technical detail about how it works. For lambda: "Sometimes you need a function just once and don't want to write a full definition. Lambda lets you write a one-line function without a name." Punchy but informative. (max 35 words)
 3. STUDENT: excited follow-up question, not confused — genuinely curious and engaged (max 12 words). Like "Oh that's cool! So when would I actually use that?" or "Wait really? How does that work in practice?"
-4. TEACHER: explains with a TANGIBLE real-life analogy that captures what makes THIS concept UNIQUE. Not generic — the analogy must nail the specific thing that makes this different. (max 35 words)
+4. TEACHER: explains with a simple everyday analogy. DO NOT use sticky notes, post-its, or paper. Use food, clothes, phone, school, sports. The analogy must capture what makes this concept UNIQUE. (max 35 words)
 5. STUDENT: gets it, excited, explains it back enthusiastically in their own words (15-20 words). Sound genuinely pumped, not robotic. Like "Ohhh so it's basically a quick throwaway function you write on the fly, that's sick!"
 6. TEACHER: real-world examples — WHO uses this. Mention 2 REAL companies. Keep it short and punchy. (max 25 words)
 7. STUDENT: short excited reaction (max 8 words). Genuinely impressed. "No way, that's actually insane!" or "Okay that's way cooler than I thought!"
@@ -67,9 +67,9 @@ Dve postavy:
 Vytvor konverzáciu s PRESNE 9 riadkami:
 
 1. ŠTUDENT: neformálny pozdrav + pýta sa na tému. "Čauko, aká je téma dnešnej hodiny?" alebo "Hej, o čom sa dnes učíme?" (max 12 slov)
-2. UČITEĽ: jasné vysvetlenie konceptu z LEARNING CONTENT. Začni definíciou, potom pridaj jeden technický detail o tom AKO to funguje. Výstižne ale informatívne — nie prednáška, ale dosť na to aby sa niečo naučil. (max 35 slov). NIKDY nečítaj kód.
+2. UČITEĽ: prvá veta MUSÍ vysvetliť POINTU — prečo to existuje, aký problém to rieši. Potom jeden technický detail ako to funguje. Napríklad pre lambda: "Niekedy potrebuješ funkciu len raz a nechceš písať celú definíciu. Lambda ti umožní napísať jednoriadkovú funkciu bez mena." Výstižne ale informatívne. (max 35 slov). NIKDY nečítaj kód.
 3. ŠTUDENT: nadšená zvedavá otázka — NIE zmätený, ale zaujatý a zapálený (max 12 slov). "To je zaujímavé! A kedy sa to reálne používa?" alebo "Počkaj, fakt? A ako to funguje v praxi?"
-4. UČITEĽ: vysvetlí to HMATATEĽNOU analógiou zo života, ktorá zachytí to čo robí TENTO koncept UNIKÁTNYM. Nie generická — musí presne vystihovať tú špecifickú vec. (max 35 slov)
+4. UČITEĽ: vysvetlí to jednoduchou analógiou zo života. NEPOUŽÍVAJ post-it, poznámky ani papieriky. Použi niečo každodenné — jedlo, oblečenie, telefón, škola, šport. Analógia musí vystihovať to čo robí koncept UNIKÁTNYM. (max 35 slov)
 5. ŠTUDENT: pochopil, nadšene to vysvetlí vlastnými slovami (15-20 slov). Musí znieť naozaj nadšene. NIKDY nepoužívaj slovo "bomba". Príklady: "Aha takže je to v podstate rýchla jednorazová funkcia, to je super šikovné!" alebo "Jasné, už to chápem, to je fakt cool!"
 6. UČITEĽ: príklady z reálneho sveta — KTO to používa. Spomeň 2 REÁLNE firmy. Krátko a výstižne. (max 25 slov)
 7. ŠTUDENT: krátka nadšená reakcia (max 8 slov). "Nie, to je fakt šialené!" alebo "No tak to je oveľa zaujímavejšie ako som čakal!"
