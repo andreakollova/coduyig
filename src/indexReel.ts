@@ -21,6 +21,8 @@ const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
 const lessonIdArg = args.findIndex(a => a === '--lesson-id');
 const lessonId = lessonIdArg >= 0 ? parseInt(args[lessonIdArg + 1]) : undefined;
+const codeArg = args.findIndex(a => a === '--code');
+const customCode = codeArg >= 0 ? args[codeArg + 1] : undefined;
 
 /* ========== EQUIPMENT ========== */
 
@@ -120,6 +122,15 @@ async function main() {
     lesson.learning_content || '',
     lesson.key_takeaways || [],
   );
+  // Override code if --code was provided
+  if (customCode) {
+    // Remove GPT's code, put custom code on the first teacher line
+    for (const line of script.lines) line.code = undefined;
+    const teacherLine = script.lines.find(l => l.speaker === 'teacher' && l.spoken);
+    if (teacherLine) teacherLine.code = customCode;
+    console.log(`📋 Custom code: ${customCode.slice(0, 50)}...`);
+  }
+
   for (const line of script.lines) {
     console.log(`   [${line.speaker}]: "${line.spoken}" ${line.code ? '+ code' : ''}`);
   }

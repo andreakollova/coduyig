@@ -27,11 +27,11 @@ Create a conversation with EXACTLY 8 lines:
 
 1. STUDENT: greeting + asks what the topic is (max 10 words)
 2. TEACHER: explains the core concept using facts from the LEARNING CONTENT. What is it? How does it work? Give the definition and key details (max 40 words). Do NOT read code — describe what it does.
-3. STUDENT: follow-up question about usage or a detail (max 10 words)
-4. TEACHER: answers using more details from LEARNING CONTENT — practical use cases, how to use it, key rules (max 30 words)
+3. STUDENT: follow-up question about practical usage (max 10 words). Like "Cool! How would I actually use this?"
+4. TEACHER: gives a CONCRETE real-world example. NOT just listing functions. Paint a scenario: "Say you have a list of students and you want to sort them by grade — you can use a lambda as the sorting key." or "Imagine you're filtering a list of products to find ones under 20 dollars." ALWAYS a specific, relatable scenario (max 35 words)
 5. STUDENT: says they're confused, asks for a simpler explanation (max 12 words). Like "Hmm wait, can you break that down simpler?"
 6. TEACHER: NOW use the INTRODUCTION to explain with a simple analogy or everyday comparison. Start with "Think of it like..." or "Imagine..." Use the introduction's analogy if there is one. Make it click (max 40 words)
-7. STUDENT: now gets it, reacts positively and summarizes what they learned (max 12 words). Like "Ohh so it's basically a shortcut for quick functions!"
+7. STUDENT: THIS IS THE MOST IMPORTANT LINE. The student now fully understands and explains the ENTIRE concept back in their own simple words. They MUST summarize everything they learned — what it is, how it works, and why it's useful — but in casual, simple language. This should be a LONG line (20-30 words). Example: "Ohh okay I get it now! So basically instead of writing a whole function with def and return, you just write a tiny one-liner that does the same thing, and you don't even need to name it! That's super handy for quick stuff!"
 8. TEACHER: empty line (silent — CTA screen shows visually). Return {"speaker": "teacher", "spoken": "", "code": null}
 
 RULES:
