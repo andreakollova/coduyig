@@ -9,7 +9,7 @@ const API = 'https://api.elevenlabs.io/v1';
 
 // Two voices for conversation
 const VOICES = {
-  teacher: 'q0IMILNRPxOgtBTS4taI', // Drew — casual, curious, fun
+  teacher: '3TStB8f3X3To0Uj5R7RK',
   student: 's3TPKV1kjDlVtZbl4Ksh', // Ada — young, curious
 };
 
