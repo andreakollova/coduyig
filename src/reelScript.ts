@@ -1,6 +1,6 @@
 /**
  * Generate a conversational script for IG Reel from lesson content.
- * Student asks, Teacher explains using ACTUAL lesson content.
+ * Structure: technical explanation → student confused → simple analogy → real-world examples
  */
 
 const OPENAI_KEY = process.env.OPENAI_API_KEY || '';
@@ -21,26 +21,27 @@ Two characters:
 - STUDENT: curious beginner, asks questions, sometimes confused
 - TEACHER: friendly expert who explains using the ACTUAL lesson content provided
 
-Create a conversation with EXACTLY 8 lines:
+Create a conversation with EXACTLY 9 lines:
 
 1. STUDENT: casual greeting + asks about today's topic (max 12 words)
-2. TEACHER: explains the core concept from LEARNING CONTENT. Definition, how it works, key details. Flowing sentences (max 40 words). Do NOT read code.
-3. STUDENT: enthusiastic follow-up about practical usage (max 12 words). Like "Cool! How would I actually use this in a real project?"
-4. TEACHER: gives a CONCRETE real-world scenario. Like "Say you have a list of students and you want to sort them by grade" (max 35 words)
-5. STUDENT: not fully getting it, asks for simpler explanation (max 15 words). Like "Hmm wait, I'm not sure I fully get it, can you break it down?"
-6. TEACHER: THIS IS THE MOST IMPORTANT PART. Use a real-life tangible analogy — food, sticky notes, pizza, boxes, drawers, phone, etc. Example: "Imagine you have a pizza menu and you want to quickly pick only pizzas under 10 bucks, instead of going through the whole list by hand you just say show me the cheap ones and that's exactly what lambda does." The analogy MUST accurately capture the essence of the concept. Not just surface-level. (max 50 words)
-7. STUDENT: fully understands now, explains the ENTIRE concept back in their own casual words. Summarize what it is, how it works, why it's useful. Excited. (20-30 words)
-8. TEACHER: empty (silent CTA screen). Return {"speaker": "teacher", "spoken": "", "code": null}
+2. TEACHER: explains the core concept TECHNICALLY from LEARNING CONTENT. Professional definition, how it works, key details. This should sound like a proper explanation. Flowing sentences (max 45 words)
+3. STUDENT: confused, doesn't fully understand the technical explanation (max 15 words). Like "Hmm wait, that sounds complicated, can you explain it in a simpler way?"
+4. TEACHER: NOW explains it with a TANGIBLE real-life analogy — pizza, sticky notes, drawers, phone, etc. Start with "Think of it like..." or "Imagine..." The analogy MUST accurately capture the essence of the concept. (max 50 words)
+5. STUDENT: now gets it, excited, summarizes in their own simple words (20-30 words). Must be accurate but casual.
+6. TEACHER: gives real-world examples of WHO uses this and HOW. Mention REAL companies or products. Like "Netflix uses this to handle millions of streams" or "Google Maps relies on this for route calculations" or "Every time you log into Instagram, this runs behind the scenes." Give 2-3 specific examples. (max 45 words)
+7. STUDENT: impressed, reacts naturally (max 10 words). Like "Wow, I had no idea it was everywhere!" or "That's crazy, so basically every app uses this!"
+8. TEACHER: closing thought — why this matters for the student's coding journey (max 20 words). Like "Once you master this, you'll write much cleaner and more efficient code."
+9. TEACHER: empty (silent CTA screen). Return {"speaker": "teacher", "spoken": "", "code": null}
 
 RULES:
-- ABSOLUTELY NEVER use colons (:) or semicolons (;). Periods and commas ONLY.
+- ABSOLUTELY NEVER read code, syntax, variable names, function names, or operators aloud. NO "lambda x", NO "def square", NO "print()", NO "map()", NO "filter()". Describe what code DOES in everyday language only. This is the #1 RULE.
+- Teacher's explanations MUST come from the provided lesson content, not invented
+- ABSOLUTELY NEVER use colons (:) anywhere in spoken text. Periods and commas ONLY.
 - Write FLOWING sentences. Connect with "and", "which", "so", "because". NOT choppy fragments.
 - Maximum 2-3 sentences per teacher line, but LONG and flowing.
-- ABSOLUTELY NEVER read code, syntax, variable names, function names, or operators aloud. NO "lambda x", NO "def square", NO "print()", NO "map()", NO "filter()", NO "square = lambda". Describe what code DOES in everyday language only. This is the #1 RULE.
-- Teacher MUST use provided lesson content, not invent.
-- Total: 150-200 words.
+- Total spoken text: 170-220 words.
 
-Also pick ONE code snippet (MAX 3 lines) from the LEARNING CONTENT. Attach to line 2 or 4.
+Also pick ONE code snippet (MAX 3 lines) from the LEARNING CONTENT. Attach to line 2.
 
 Return VALID JSON:
 {
@@ -52,6 +53,7 @@ Return VALID JSON:
     {"speaker": "student", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "student", "spoken": "...", "code": null},
+    {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "", "code": null}
   ]
 }`;
@@ -59,31 +61,31 @@ Return VALID JSON:
 const SYSTEM_SK = `Píšeš konverzačné skripty pre Instagram Reels o programovaní. Celý skript MUSÍ byť v SLOVENČINE.
 
 Dve postavy:
-- ŠTUDENT: zvedavý začiatočník, pýta sa otázky, niekedy nechapá. Hovorí mladícky a prirodzene.
+- ŠTUDENT: zvedavý začiatočník, pýta sa, niekedy nechápe. Hovorí mladícky a prirodzene.
 - UČITEĽ: priateľský expert, vysvetľuje pomocou SKUTOČNÉHO obsahu lekcie.
 
-Vytvor konverzáciu s PRESNE 8 riadkami:
+Vytvor konverzáciu s PRESNE 9 riadkami:
 
-1. ŠTUDENT: neformálny pozdrav + pýta sa na tému. Príklady: "Čauko, aká je téma dnešnej hodiny?" alebo "Hej, o čom sa dnes učíme?" alebo "No tak, čo máme dnes nové?" (max 12 slov)
-2. UČITEĽ: vysvetlí koncept z LEARNING CONTENT. Čo to je, ako to funguje, kľúčové detaily. Plynulé dlhé vety (max 40 slov). NIKDY nečítaj kód nahlas — iba opisuj čo robí.
-3. ŠTUDENT: nadšene sa pýta na praktické využitie. Príklady: "Super, a ako to môžem v praxi využiť?" alebo "To znie fajn, a na čo sa to reálne používa?" (max 12 slov)
-4. UČITEĽ: dá KONKRÉTNY príklad zo života. Napríklad "Povedzme že máš zoznam študentov a chceš ich zoradiť podľa známok" (max 35 slov)
-5. ŠTUDENT: ešte úplne nechápe, pýta sa jednoduchšie. Príklady: "Hm, ešte to úplne nechápem, vieš to vysvetliť jednoduchšie?" alebo "Počkaj, to mi ešte celkom nedošlo" (max 15 slov)
-6. UČITEĽ: TOTO JE NAJDÔLEŽITEJŠIA ČASŤ. Použije analógiu z reálneho života na vysvetlenie konceptu. MUSÍ to byť niečo hmatateľné — jedlo, papierik, pizza, krabica, šuflík, zošit, telefón, atd. Príklady: "Predstav si že máš pizza menu a chceš rýchlo vybrať len pizze pod 10 eur, tak namiesto toho aby si prechádzal celý zoznam ručne, proste povieš ukáž mi len tie lacné a to je presne to čo lambda robí." Analógia MUSÍ správne vystihovať podstatu konceptu. Nesmie byť len povrchná. (max 50 slov)
-7. ŠTUDENT: NAJDÔLEŽITEJŠÍ RIADOK. Teraz UŽ CHÁPE a vysvetlí celý koncept vlastnými jednoduchými slovami. Musí zhrnúť čo to je, ako to funguje a prečo je to užitočné. Na konci nech povie niečo autentické a nadšené ako "to je fakt paráda!" alebo "no to je geniálne!" alebo "pecka!" (20-30 slov). Príklad: "Aha, takže namiesto toho aby som písal celú funkciu, proste napíšem jeden riadok ktorý spraví to isté a nemusím mu ani dávať meno, to je fakt paráda!"
-8. UČITEĽ: prázdny riadok (tichý CTA screen). Vráť {"speaker": "teacher", "spoken": "", "code": null}
+1. ŠTUDENT: neformálny pozdrav + pýta sa na tému. "Čauko, aká je téma dnešnej hodiny?" alebo "Hej, o čom sa dnes učíme?" (max 12 slov)
+2. UČITEĽ: vysvetlí koncept ODBORNE z LEARNING CONTENT. Profesionálna definícia, ako to funguje, kľúčové detaily. Plynulé dlhé vety (max 45 slov). NIKDY nečítaj kód.
+3. ŠTUDENT: zmätený, nerozumie odbornému vysvetleniu (max 15 slov). Napríklad "Hm, to znie dosť zložito, vieš mi to vysvetliť nejak jednoduchšie?"
+4. UČITEĽ: TERAZ to vysvetlí pomocou HMATATEĽNEJ analógie zo života — pizza, papierik, krabica, šuflík, telefón. Začni s "Predstav si..." Analógia MUSÍ presne vystihovať podstatu konceptu. (max 50 slov)
+5. ŠTUDENT: TERAZ UŽ CHÁPE. Nadšene zhŕňa čo pochopil vlastnými jednoduchými slovami (20-30 slov). Musí byť presné ale casual. Koniec nech je autentický a rôzny — NIE vždy "to je fakt paráda". Príklady koncov: "no to dáva zmysel!", "tak to je geniálne!", "jasné, to je easy!", "super, už mi to cvaklo!", "aha, tak toto je fakt šikovné!"
+6. UČITEĽ: dá príklady z reálneho sveta — KTO to používa a AKO. Spomeň REÁLNE firmy alebo produkty. Napríklad "Netflix to používa na spracovanie miliónov streamov" alebo "Zakaždým keď sa prihlásiš na Instagram, toto beží na pozadí." Daj 2-3 konkrétne príklady. (max 45 slov)
+7. ŠTUDENT: ohromený, reaguje prirodzene (max 10 slov). "Vau, to som nevedel že je to všade!" alebo "To je crazy, takže to fakt používa každá appka!"
+8. UČITEĽ: záverečná myšlienka — prečo je to dôležité pre študentovu cestu programovania (max 20 slov). "Keď toto zvládneš, budeš písať oveľa čistejší a efektívnejší kód."
+9. UČITEĽ: prázdny riadok (tichý CTA screen). Vráť {"speaker": "teacher", "spoken": "", "code": null}
 
 PRAVIDLÁ:
+- ABSOLÚTNE NIKDY nečítaj kód, syntax, názvy premenných, funkcií ani operátorov nahlas. ŽIADNE "lambda x", ŽIADNE "def square", ŽIADNE "print()", ŽIADNE "map()", ŽIADNE "filter()". Opisuj čo kód ROBÍ bežným jazykom. Toto je pravidlo číslo 1.
 - NIKDY nepoužívaj dvojbodky (:) alebo bodkočiarky (;). Iba bodky a čiarky.
 - Píš PLYNULÉ vety. Spájaj cez "a", "ktorý", "takže", "pretože". NIE krátke fragmenty.
-- Maximum 2-3 vety na učiteľov riadok, ale DLHÉ a plynulé.
-- ABSOLÚTNE NIKDY nečítaj kód, syntax, názvy premenných, funkcií ani operátorov nahlas. ŽIADNE "lambda x", ŽIADNE "def square", ŽIADNE "print()", ŽIADNE "map()", ŽIADNE "filter()". Opisuj čo kód ROBÍ bežným jazykom. Toto je pravidlo číslo 1.
-- Učiteľ MUSÍ používať poskytnutý obsah lekcie.
-- Použi neformálnu slovenčinu. "Čauko" nie "Ahoj", "super" nie "výborne", "fajn" nie "dobre", "hm", "no", "aha", "jasné".
-- NIKDY čeština. Vždy slovenčina.
-- Celkovo: 150-200 slov.
+- Použi neformálnu slovenčinu. "Čauko", "super", "fajn", "hm", "aha", "jasné", "pecka", "paráda", "crazy".
+- NIKDY čeština.
+- Správna slovenská gramatika. Pred "ktorý", "ktorá", "ktoré", "kde", "keď", "pretože", "lebo" VŽDY daj čiarku.
+- Celkovo: 170-220 slov.
 
-Tiež vyber JEDEN kód snippet (MAX 3 riadky) z LEARNING CONTENT. Pridaj ho k riadku 2 alebo 4.
+Vyber JEDEN kód snippet (MAX 3 riadky) z LEARNING CONTENT. Pridaj ho k riadku 2.
 
 Vráť VALID JSON:
 {
@@ -95,6 +97,7 @@ Vráť VALID JSON:
     {"speaker": "student", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "student", "spoken": "...", "code": null},
+    {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "", "code": null}
   ]
 }`;
@@ -114,10 +117,10 @@ export async function generateReelScript(
 
   const prompt = `LESSON TITLE: ${title}
 
-INTRODUCTION (use this for line 6):
+INTRODUCTION (use for the simple analogy in line 4):
 ${introduction.slice(0, 2500)}
 
-LEARNING CONTENT (use this for lines 2 and 4):
+LEARNING CONTENT (use for technical explanation in line 2):
 ${learningContent.slice(0, 4000)}
 
 KEY TAKEAWAYS:
@@ -131,13 +134,13 @@ ${keyTakeaways.join('\n')}`;
         model: 'gpt-4o',
         messages: [{ role: 'system', content: system }, { role: 'user', content: prompt }],
         temperature: 0.5,
-        max_tokens: 1500,
+        max_tokens: 1800,
         response_format: { type: 'json_object' },
       }),
     });
     const data = await res.json();
     const parsed = JSON.parse(data.choices?.[0]?.message?.content || '{}');
-    if (!parsed.lines || parsed.lines.length < 7) throw new Error('Invalid');
+    if (!parsed.lines || parsed.lines.length < 8) throw new Error('Invalid');
 
     const totalWords = parsed.lines.reduce((s: number, l: any) => s + l.spoken.split(/\s+/).length, 0);
     console.log(`📝 Script: ${totalWords} words, ${parsed.lines.length} lines`);
@@ -156,25 +159,27 @@ function fallbackScript(title: string, introduction?: string, lang: 'en' | 'sk' 
 
   if (lang === 'sk') {
     return { lines: [
-      { speaker: 'student', spoken: `Čauko, o čom sa dnes učíme?` },
+      { speaker: 'student', spoken: 'Čauko, o čom sa dnes učíme?' },
       { speaker: 'teacher', spoken: `Dnes si povieme niečo o ${title}, je to jeden z kľúčových konceptov, ktorý by mal poznať každý vývojár.` },
-      { speaker: 'student', spoken: `Super, a ako to môžem v praxi využiť?` },
-      { speaker: 'teacher', spoken: `Používa sa to v reálnych projektoch neustále, robí to tvoj kód čistejší a efektívnejší.` },
-      { speaker: 'student', spoken: `Hm, ešte to úplne nechápem, vieš to vysvetliť jednoduchšie?` },
+      { speaker: 'student', spoken: 'Hm, to znie dosť zložito, vieš to vysvetliť jednoduchšie?' },
       { speaker: 'teacher', spoken: intro },
-      { speaker: 'student', spoken: `Aha, už to chápem, to dáva zmysel!` },
+      { speaker: 'student', spoken: 'Aha, už to chápem, to je fakt paráda!' },
+      { speaker: 'teacher', spoken: 'Toto používajú firmy ako Netflix, Google aj Spotify každý deň vo svojich aplikáciách.' },
+      { speaker: 'student', spoken: 'Vau, to je crazy!' },
+      { speaker: 'teacher', spoken: 'Keď toto zvládneš, budeš písať oveľa lepší kód.' },
       { speaker: 'teacher', spoken: '' },
     ]};
   }
 
   return { lines: [
-    { speaker: 'student', spoken: `Hey! What's ${title}?` },
-    { speaker: 'teacher', spoken: `It's one of the key concepts every developer should know, let me explain how it works and why it matters.` },
-    { speaker: 'student', spoken: `Cool! How would I actually use this?` },
-    { speaker: 'teacher', spoken: `You'd use it all the time in real projects, it makes your code cleaner and more efficient.` },
-    { speaker: 'student', spoken: `Hmm wait, can you break that down simpler?` },
+    { speaker: 'student', spoken: `Hey! What's today's topic?` },
+    { speaker: 'teacher', spoken: `Today we're looking at ${title}, one of the key concepts every developer should know.` },
+    { speaker: 'student', spoken: 'Hmm, that sounds complicated, can you explain it simpler?' },
     { speaker: 'teacher', spoken: intro },
-    { speaker: 'student', spoken: `Ohh okay, that makes so much sense now!` },
+    { speaker: 'student', spoken: 'Ohh okay, that makes sense now, that is really cool!' },
+    { speaker: 'teacher', spoken: 'Companies like Netflix, Google and Spotify use this every day in their applications.' },
+    { speaker: 'student', spoken: 'Wow, I had no idea!' },
+    { speaker: 'teacher', spoken: 'Once you master this, you will write much better code.' },
     { speaker: 'teacher', spoken: '' },
   ]};
 }

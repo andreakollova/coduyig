@@ -339,7 +339,7 @@ export const LessonReel: React.FC<ReelProps> = ({
   const allWords: WordTiming[] = lines.flatMap(l => l.words);
   const codeSnippet = lines.find(l => l.code)?.code;
 
-  const TITLE_FRAMES = fps * 2;
+  const TITLE_FRAMES = fps * 1;
 
   // CTA starts after last word + 0.5s
   const lastWordEnd = allWords.length > 0 ? allWords[allWords.length - 1].end : 0;

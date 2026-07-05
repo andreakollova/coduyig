@@ -199,7 +199,7 @@ async function main() {
   // 5. Render video
   console.log('\n=== Rendering video ===');
   const FPS = 30;
-  const TITLE_S = 2;
+  const TITLE_S = 1;
   const CTA_S = 3;
   const durationInFrames = Math.ceil((tts.totalDuration + TITLE_S + CTA_S) * FPS) + 15;
 
