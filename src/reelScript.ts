@@ -36,7 +36,7 @@ RULES:
 - ABSOLUTELY NEVER use colons (:) or semicolons (;). Periods and commas ONLY.
 - Write FLOWING sentences. Connect with "and", "which", "so", "because". NOT choppy fragments.
 - Maximum 2-3 sentences per teacher line, but LONG and flowing.
-- NEVER read code aloud. Describe what code does naturally.
+- ABSOLUTELY NEVER read code, syntax, variable names, function names, or operators aloud. NO "lambda x", NO "def square", NO "print()", NO "map()", NO "filter()", NO "square = lambda". Describe what code DOES in everyday language only. This is the #1 RULE.
 - Teacher MUST use provided lesson content, not invent.
 - Total: 150-200 words.
 
@@ -65,7 +65,7 @@ Dve postavy:
 Vytvor konverzáciu s PRESNE 8 riadkami:
 
 1. ŠTUDENT: neformálny pozdrav + pýta sa na tému. Príklady: "Čauko, aká je téma dnešnej hodiny?" alebo "Hej, o čom sa dnes učíme?" alebo "No tak, čo máme dnes nové?" (max 12 slov)
-2. UČITEĽ: vysvetlí koncept z LEARNING CONTENT. Čo to je, ako to funguje, kľúčové detaily. Plynulé dlhé vety (max 40 slov). NEČÍTAJ kód.
+2. UČITEĽ: vysvetlí koncept z LEARNING CONTENT. Čo to je, ako to funguje, kľúčové detaily. Plynulé dlhé vety (max 40 slov). NIKDY nečítaj kód nahlas — iba opisuj čo robí.
 3. ŠTUDENT: nadšene sa pýta na praktické využitie. Príklady: "Super, a ako to môžem v praxi využiť?" alebo "To znie fajn, a na čo sa to reálne používa?" (max 12 slov)
 4. UČITEĽ: dá KONKRÉTNY príklad zo života. Napríklad "Povedzme že máš zoznam študentov a chceš ich zoradiť podľa známok" (max 35 slov)
 5. ŠTUDENT: ešte úplne nechápe, pýta sa jednoduchšie. Príklady: "Hm, ešte to úplne nechápem, vieš to vysvetliť jednoduchšie?" alebo "Počkaj, to mi ešte celkom nedošlo" (max 15 slov)
@@ -77,7 +77,7 @@ PRAVIDLÁ:
 - NIKDY nepoužívaj dvojbodky (:) alebo bodkočiarky (;). Iba bodky a čiarky.
 - Píš PLYNULÉ vety. Spájaj cez "a", "ktorý", "takže", "pretože". NIE krátke fragmenty.
 - Maximum 2-3 vety na učiteľov riadok, ale DLHÉ a plynulé.
-- NEČÍTAJ kód nahlas. Opisuj čo kód robí prirodzene.
+- ABSOLÚTNE NIKDY nečítaj kód, syntax, názvy premenných, funkcií ani operátorov nahlas. ŽIADNE "lambda x", ŽIADNE "def square", ŽIADNE "print()", ŽIADNE "map()", ŽIADNE "filter()". Opisuj čo kód ROBÍ bežným jazykom. Toto je pravidlo číslo 1.
 - Učiteľ MUSÍ používať poskytnutý obsah lekcie.
 - Použi neformálnu slovenčinu. "Čauko" nie "Ahoj", "super" nie "výborne", "fajn" nie "dobre", "hm", "no", "aha", "jasné".
 - NIKDY čeština. Vždy slovenčina.

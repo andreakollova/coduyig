@@ -92,20 +92,38 @@ const advancedEquip: Record<string, string>[] = [
   { hat: 'hat-fire-crown', glasses: 'glasses-flame' },
 ];
 
-let postedIds: string[] = [];
+import { createClient } from '@supabase/supabase-js';
+const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+
+async function getPostedCodeIds(): Promise<string[]> {
+  try {
+    const { data } = await sb.storage.from('ig-media').download('tracking/code_posted.json');
+    if (data) return JSON.parse(await data.text());
+  } catch {}
+  return [];
+}
+
+async function markCodePosted(id: string) {
+  const posted = await getPostedCodeIds();
+  posted.push(id);
+  await sb.storage.from('ig-media').upload('tracking/code_posted.json', Buffer.from(JSON.stringify(posted)), { contentType: 'application/json', upsert: true });
+}
 
 export async function pickCodeChallenge(): Promise<CodeChallengeData | null> {
-  // Pick random unposted
-  const available = fillExercises.filter(e => !postedIds.includes(e.id));
+  let postedIds = await getPostedCodeIds();
+  let available = fillExercises.filter(e => !postedIds.includes(e.id));
+
   if (available.length === 0) {
-    postedIds = []; // reset cycle
-    return pickCodeChallenge();
+    console.log('🔄 All code challenges posted — resetting cycle');
+    await sb.storage.from('ig-media').remove(['tracking/code_posted.json']);
+    postedIds = [];
+    available = fillExercises;
   }
 
   const ex = available[Math.floor(Math.random() * available.length)];
-  postedIds.push(ex.id);
+  await markCodePosted(ex.id);
 
-  const postNumber = postedIds.length;
+  const postNumber = postedIds.length + 1;
   const pool = ex.difficulty === 'advanced' ? advancedEquip : beginnerEquip;
   const equipment = pool[Math.floor(Math.random() * pool.length)];
 

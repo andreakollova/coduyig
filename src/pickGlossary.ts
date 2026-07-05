@@ -117,10 +117,43 @@ const professionalEquip: Record<string, string>[] = [
 
 const antennas = ['ant-heart', 'ant-star', 'ant-lightning', 'ant-diamond', 'ant-flame-orb', 'ant-frost-crystal', 'ant-golden-star'];
 
+// Track posted glossary terms to avoid repeats
+async function getPostedGlossaryIds(): Promise<string[]> {
+  try {
+    const { data } = await sb.storage.from('ig-media').download('tracking/glossary_posted.json');
+    if (data) {
+      const text = await data.text();
+      return JSON.parse(text);
+    }
+  } catch {}
+  return [];
+}
+
+async function markGlossaryPosted(id: string) {
+  const posted = await getPostedGlossaryIds();
+  posted.push(id);
+  const buf = Buffer.from(JSON.stringify(posted));
+  await sb.storage.from('ig-media').upload('tracking/glossary_posted.json', buf, { contentType: 'application/json', upsert: true });
+}
+
 export async function pickGlossary(): Promise<GlossaryData | null> {
-  const entry = glossary[Math.floor(Math.random() * glossary.length)];
+  // Get already posted IDs
+  let postedIds = await getPostedGlossaryIds();
+
+  // Filter out posted ones
+  let available = glossary.filter(e => !postedIds.includes(e.id));
+
+  // If all posted, reset cycle
+  if (available.length === 0) {
+    console.log('🔄 All glossary terms posted — resetting cycle');
+    await sb.storage.from('ig-media').remove(['tracking/glossary_posted.json']);
+    postedIds = [];
+    available = glossary;
+  }
+
+  const entry = available[Math.floor(Math.random() * available.length)];
   const antenna = antennas[Math.floor(Math.random() * antennas.length)];
-  const postNumber = Math.floor(Math.random() * 900) + 1;
+  const postNumber = postedIds.length + 1;
 
   // Pick outfit based on term difficulty
   const diff = termDifficulty[entry.id] || 'beginner';
@@ -128,7 +161,10 @@ export async function pickGlossary(): Promise<GlossaryData | null> {
   const equipment = pool[Math.floor(Math.random() * pool.length)];
 
   const simpleExplanation = await generateSimple(entry);
-  console.log(`📖 Picked glossary: ${entry.term} (${diff})`);
+  console.log(`📖 Picked glossary: ${entry.term} (${diff}) [${available.length} remaining]`);
+
+  // Mark as posted
+  await markGlossaryPosted(entry.id);
 
   return { ...entry, simpleExplanation, postNumber, antenna, equipment };
 }
