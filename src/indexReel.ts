@@ -61,16 +61,13 @@ const INTRO_GREETINGS_EN = [
 ];
 
 const INTRO_GREETINGS_SK = [
-  { introStudent: 'Máš minútku?', introTeacher: 'Vždy.' },
-  { introStudent: 'Pomôžeš mi?', introTeacher: 'Jasné.' },
-  { introStudent: 'Rýchla otázka.', introTeacher: 'Povedz.' },
-  { introStudent: 'Kde mám začať?', introTeacher: 'Práve tu.' },
-  { introStudent: 'Mám veľa otázok.', introTeacher: 'Začneme jednoducho.' },
-  { introStudent: 'Nauč ma niečo!', introTeacher: 'Toto sa ti bude páčiť.' },
-  { introStudent: 'Som pripravený!', introTeacher: 'Poďme na to.' },
-  { introStudent: 'Potrebujem pomoc.', introTeacher: 'Mám ťa.' },
-  { introStudent: 'Čo je dnes na programe?', introTeacher: 'Niečo super.' },
-  { introStudent: 'Znie to dobre.', introTeacher: 'Máš otázky?' },
+  { introStudent: 'Máš chvíľku?', introTeacher: 'Jasné.' },
+  { introStudent: 'Môžem sa niečo opýtať?', introTeacher: 'Samozrejme.' },
+  { introStudent: 'Potrebujem pomoc.', introTeacher: 'Poďme na to.' },
+  { introStudent: 'Kde začneme?', introTeacher: 'Úplne od základov.' },
+  { introStudent: 'Mám otázku.', introTeacher: 'Pýtaj sa.' },
+  { introStudent: 'Pomôžeš mi?', introTeacher: 'Vždy.' },
+  { introStudent: 'Čo dnes?', introTeacher: 'Niečo nové.' },
 ];
 
 function pickIntroGreeting(lang: 'en' | 'sk') {
