@@ -402,44 +402,44 @@ export const LessonReel: React.FC<ReelProps> = ({
           <div style={{ position: 'relative', marginTop: 80 }}>
             {/* Speech bubble from student (left) */}
             <div style={{
-              position: 'absolute', top: -52, left: 5,
-              padding: '10px 22px', borderRadius: 18,
+              position: 'absolute', top: -60, left: 0,
+              padding: '12px 26px', borderRadius: 20,
               background: '#222', border: '1px solid #333',
-              fontSize: 19, color: '#fff', fontWeight: 600,
+              fontSize: 22, color: '#fff', fontWeight: 600,
               whiteSpace: 'nowrap',
             }}>
               {introStudent || 'Where do I start?'}
               <div style={{
                 position: 'absolute', bottom: -7, left: 35,
-                width: 14, height: 14, background: '#222',
+                width: 16, height: 16, background: '#222',
                 border: '1px solid #333', borderTop: 'none', borderLeft: 'none',
                 transform: 'rotate(45deg)',
               }} />
             </div>
             {/* Speech bubble from teacher (right) */}
             <div style={{
-              position: 'absolute', top: -52, right: 5,
-              padding: '10px 22px', borderRadius: 18,
+              position: 'absolute', top: -60, right: 0,
+              padding: '12px 26px', borderRadius: 20,
               background: '#222', border: '1px solid #444',
-              fontSize: 19, color: '#fb923c', fontWeight: 600,
+              fontSize: 22, color: '#fb923c', fontWeight: 600,
               whiteSpace: 'nowrap',
             }}>
               {introTeacher || 'Right here.'}
               <div style={{
                 position: 'absolute', bottom: -7, right: 35,
-                width: 14, height: 14, background: '#222',
+                width: 16, height: 16, background: '#222',
                 border: '1px solid #444', borderTop: 'none', borderLeft: 'none',
                 transform: 'rotate(45deg)',
               }} />
             </div>
-            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 20 }}>
-              <ByteMascot size={192} equipment={equipmentStudent} />
-              <ByteMascot size={192} equipment={equipmentTeacher} />
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 24 }}>
+              <ByteMascot size={230} equipment={equipmentStudent} />
+              <ByteMascot size={230} equipment={equipmentTeacher} />
             </div>
             {/* Ground line */}
             <div style={{
-              width: 500, height: 2, background: 'rgba(255,255,255,0.15)',
-              borderRadius: 1, marginTop: 6, margin: '6px auto 0',
+              width: 580, height: 3, background: 'rgba(255,255,255,0.18)',
+              borderRadius: 2, marginTop: 8, margin: '8px auto 0',
             }} />
           </div>
         </AbsoluteFill>

@@ -86,9 +86,9 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
       text,
       model_id: model,
       voice_settings: {
-        stability: isSkStudent ? 0.6 : isSkTeacher ? 0.35 : 0.45,
+        stability: isSkStudent ? 0.6 : isSkTeacher ? 0.3 : 0.45,
         similarity_boost: 0.75,
-        style: isSkStudent ? 0.3 : isSkTeacher ? 0.7 : 0.5,
+        style: isSkStudent ? 0.3 : isSkTeacher ? 0.8 : 0.5,
         use_speaker_boost: true,
       },
       speed,
@@ -142,7 +142,7 @@ export async function generateConversationTTS(
     // Last student line (summary) speaks slower for clarity
     const isLastStudentLine = line.speaker === 'student' && i === lines.length - 2;
     let baseSpeed = 1.3;
-    if (lang === 'sk' && line.speaker === 'teacher') baseSpeed = 1.9;
+    if (lang === 'sk' && line.speaker === 'teacher') baseSpeed = 2.0;
     if (lang === 'sk' && line.speaker === 'student') baseSpeed = 1.1; // slower for clearer SK pronunciation
     const lineSpeed = isLastStudentLine ? 0.95 : baseSpeed;
 
