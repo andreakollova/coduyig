@@ -24,12 +24,12 @@ Two characters:
 Create a conversation with EXACTLY 9 lines:
 
 1. STUDENT: casual greeting + asks about today's topic (max 12 words)
-2. TEACHER: first ANSWER the student's question (e.g. "Today we're looking at lambda functions.") then give a short technical definition — what it is and what it's for. NEVER start straight with a definition. Every sentence complete. (max 30 words). NEVER read code.
+2. TEACHER: answer naturally, use filler words like "so basically", "right so", "well". Connect sentences with commas not periods for natural flow. Example: "Right so, today we're looking at lambda functions, which are basically small anonymous functions that don't need a name and just have one expression." Every sentence must be complete. (max 35 words). NEVER read code.
 3. STUDENT: excited follow-up question, not confused — genuinely curious and engaged (max 12 words). Like "Oh that's cool! So when would I actually use that?" or "Wait really? How does that work in practice?"
-4. TEACHER: explain the SAME thing in SIMPLER WORDS using SHORT SENTENCES. Each sentence max 10-12 words. Use 3-4 short sentences instead of one long one. For lambda: "Sometimes you need a function just once. You don't want to write the whole thing. So you write it in one line. It doesn't even need a name." NO real-life analogies. (max 45 words)
+4. TEACHER: explain it simply but NATURALLY, connect ideas with commas. Use "so basically", "right", "you know". Example: "So basically, when you need a function just once, instead of writing the whole thing out and giving it a name, you just throw it in one line and you're good to go." NO real-life analogies. (max 45 words)
 5. STUDENT: gets it, excited, explains it back enthusiastically in their own words (15-20 words). Sound genuinely pumped, not robotic. Like "Ohhh so it's basically a quick throwaway function you write on the fly, that's sick!"
 6. TEACHER: real-world examples — WHO uses this. Mention 2 REAL companies. Keep it short and punchy. (max 25 words)
-7. TEACHER: expanded closing thought — explain SPECIFICALLY why this matters in programming, what problem it solves in practice, what would happen without it. Not just "makes code cleaner" but explain HOW and WHY. (max 25 words)
+7. TEACHER: closing thought naturally. Use "and honestly", "the cool thing is". Connect with commas. Example: "And honestly, without this you'd be writing way more code for simple stuff, so it really saves you time and keeps things clean." (max 25 words)
 8. STUDENT: final line of the whole video. Positive, grateful, enthusiastic. "That's awesome, thanks, this really helped!" or "Cool, I get it now, thanks for explaining!" (max 12 words)
 9. TEACHER: empty (silent CTA screen). Return {"speaker": "teacher", "spoken": "", "code": null}
 
@@ -68,12 +68,12 @@ Dve postavy:
 Vytvor konverzáciu s PRESNE 9 riadkami:
 
 1. ŠTUDENT: neformálny pozdrav + pýta sa na tému. "Čauko, aká je téma dnešnej hodiny?" alebo "Hej, o čom sa dnes učíme?" (max 12 slov)
-2. UČITEĽ: najprv ODPOVIE na otázku študenta (napr. "Dnes sa pozrieme na lambda funkcie.") a potom povie krátku odbornú poučku — čo to je a na čo to slúži. NIKDY nezačínaj hneď definíciou. Každá veta musí byť úplná. (max 30 slov). NIKDY nečítaj kód.
+2. UČITEĽ: najprv ODPOVIE na otázku a potom vysvetlí. Hovor prirodzene, použi "no tak", "v podstate", "jednoducho povedané". Spájaj vety čiarkami namiesto bodiek aby to bolo plynulé. Napríklad: "No tak, dnes sa pozrieme na lambda funkcie, čo sú v podstate malé anonymné funkcie, ktoré nepotrebujú meno a obsahujú len jeden výraz." NIKDY nekončí vetou bez dokončenia. (max 35 slov). NIKDY nečítaj kód.
 3. ŠTUDENT: nadšená zvedavá otázka — NIE zmätený, ale zaujatý a zapálený (max 12 slov). "To je zaujímavé! A kedy sa to reálne používa?" alebo "Počkaj, fakt? A ako to funguje v praxi?"
-4. UČITEĽ: vysvetlí to JEDNODUCHO ĽUDSKÝMI SLOVAMI v KRÁTKYCH VETÁCH. Každá veta max 10-12 slov. Použi 3-4 krátke vety namiesto jednej dlhej. Pre lambda: "V podstate niekedy potrebuješ funkciu len raz. Nechceš ju celú vypisovať. Tak ju napíšeš do jedného riadku. Nepotrebuje ani meno." ŽIADNE analógie zo života. (max 45 slov)
+4. UČITEĽ: vysvetlí to JEDNODUCHO ale PLYNULO. Spájaj myšlienky čiarkami, nie bodkami. Použi "takže", "čiže", "v podstate", "no a". Napríklad: "No v podstate, keď potrebuješ funkciu len na jedno použitie, tak namiesto toho aby si ju celú vypisoval a dával jej meno, jednoducho ju hodíš do jedného riadku a hotovo." ŽIADNE analógie zo života. (max 45 slov)
 5. ŠTUDENT: pochopil, nadšene to vysvetlí vlastnými slovami (15-20 slov). Musí znieť naozaj nadšene. NIKDY nepoužívaj slovo "bomba". Príklady: "Aha takže je to v podstate rýchla jednorazová funkcia, to je super šikovné!" alebo "Jasné, už to chápem, to je fakt cool!"
 6. UČITEĽ: príklady z reálneho sveta — KTO to používa. Spomeň 2 REÁLNE firmy. Krátko a výstižne. (max 25 slov)
-7. UČITEĽ: rozvinutá záverečná myšlienka — prečo je to KONKRÉTNE dôležité pri programovaní, aký problém to rieši v praxi, čo by sa stalo bez toho. Nie len "zjednodušuje kód" ale vysvetli AKO a PREČO. (max 25 slov)
+7. UČITEĽ: záverečná myšlienka plynulo a prirodzene — prečo je to dôležité. Použi "no a hlavne", "čiže v praxi". Spájaj čiarkami. Napríklad: "No a hlavne, bez tohto by si musel písať oveľa viac kódu, čiže ti to reálne šetrí čas a robí kód prehľadnejší." (max 25 slov)
 8. ŠTUDENT: posledná veta celého videa. Pozitívna, vďačná, entuziastická. "Super, ďakujem, toto mi fakt pomohlo!" alebo "To je super, teraz to už chápem, vďaka!" alebo "Dobre, ďakujem za vysvetlenie, toto je fakt užitočné!" (max 12 slov)
 9. UČITEĽ: prázdny riadok (tichý CTA screen). Vráť {"speaker": "teacher", "spoken": "", "code": null}
 

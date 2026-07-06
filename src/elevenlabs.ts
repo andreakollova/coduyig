@@ -77,6 +77,7 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
   // Multilingual v2 for Slovak (better pronunciation), turbo for English (faster, smoother)
   const model = lang === 'sk' ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5';
   const isSkStudent = lang === 'sk' && speaker === 'student';
+  const isSkTeacher = lang === 'sk' && speaker === 'teacher';
 
   const res = await fetch(`${API}/text-to-speech/${voiceId}/with-timestamps`, {
     method: 'POST',
@@ -85,9 +86,9 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
       text,
       model_id: model,
       voice_settings: {
-        stability: isSkStudent ? 0.6 : 0.45,
+        stability: isSkStudent ? 0.6 : isSkTeacher ? 0.35 : 0.45,
         similarity_boost: 0.75,
-        style: isSkStudent ? 0.3 : 0.5,
+        style: isSkStudent ? 0.3 : isSkTeacher ? 0.7 : 0.5,
         use_speaker_boost: true,
       },
       speed,
