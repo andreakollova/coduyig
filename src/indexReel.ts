@@ -73,18 +73,18 @@ const EXTRA_ITEMS: Record<string, string>[] = [
 function pickTeacherEquipment(): Record<string, string> {
   // Always one orange item
   const orange = ORANGE_ITEMS[Math.floor(Math.random() * ORANGE_ITEMS.length)];
-
-  // Add 1-2 random extra items (different slot than orange)
   const orangeSlot = Object.keys(orange)[0];
-  const available = EXTRA_ITEMS.filter(item => !Object.keys(item).includes(orangeSlot));
-  const shuffled = available.sort(() => Math.random() - 0.5);
-  const extras = shuffled.slice(0, 1 + Math.floor(Math.random() * 2));
 
-  const equip = { ...orange };
-  for (const extra of extras) {
-    const slot = Object.keys(extra)[0];
-    if (!equip[slot]) {
-      equip[slot] = extra[slot];
+  // Fill ALL slots: hat, glasses, accessory, antenna — one from each
+  const slots = ['hat', 'glasses', 'accessory', 'antenna'];
+  const equip: Record<string, string> = { ...orange };
+
+  for (const slot of slots) {
+    if (equip[slot]) continue; // orange already fills this slot
+    const options = EXTRA_ITEMS.filter(item => Object.keys(item)[0] === slot);
+    if (options.length > 0) {
+      const pick = options[Math.floor(Math.random() * options.length)];
+      equip[slot] = pick[slot];
     }
   }
 

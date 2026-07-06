@@ -438,8 +438,8 @@ export const LessonReel: React.FC<ReelProps> = ({
             </div>
             {/* Ground line */}
             <div style={{
-              width: 720, height: 3, background: 'rgba(255,255,255,0.18)',
-              borderRadius: 2, marginTop: 10, margin: '10px auto 0',
+              width: 720, height: 2, background: 'rgba(255,255,255,0.5)',
+              borderRadius: 1, marginTop: 4, margin: '4px auto 0',
             }} />
           </div>
         </AbsoluteFill>
@@ -490,10 +490,10 @@ export const LessonReel: React.FC<ReelProps> = ({
             />
           </div>
 
-          {/* Speaker labels — fixed under Bytes */}
+          {/* Speaker labels — under Bytes, spread wider */}
           <div style={{
-            position: 'absolute', bottom: 390, left: 0, right: 0,
-            display: 'flex', justifyContent: 'center', gap: 160,
+            position: 'absolute', bottom: 350, left: 0, right: 0,
+            display: 'flex', justifyContent: 'center', gap: 220,
           }}>
             <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#555', letterSpacing: '0.08em' }}>STUDENT</span>
             <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'teacher' ? '#fb923c' : '#555', letterSpacing: '0.08em' }}>TEACHER</span>
