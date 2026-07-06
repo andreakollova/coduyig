@@ -28,7 +28,7 @@ Create a conversation with EXACTLY 9 lines:
 3. STUDENT: excited follow-up question, not confused — genuinely curious and engaged (max 12 words). Like "Oh that's cool! So when would I actually use that?" or "Wait really? How does that work in practice?"
 4. TEACHER: explain it simply, connect ideas with commas. Just say it plainly. Example: "When you need a function just once, instead of writing the whole thing out and giving it a name, you just write it in one line and you're good to go." NO filler words, NO real-life analogies. (max 45 words)
 5. STUDENT: gets it, excited, explains it back enthusiastically in their own words (15-20 words). Sound genuinely pumped, not robotic. Like "Ohhh so it's basically a quick throwaway function you write on the fly, that's sick!"
-6. TEACHER: real-world examples — WHO uses this. Mention 2 REAL companies. Keep it short and punchy. (max 25 words)
+6. TEACHER: real-world examples — WHO uses this. Mention 2 REAL well-known companies. VARY them — don't always use Google/Netflix. Choose from Spotify, Tesla, Airbnb, Discord, TikTok, Uber, Amazon, Stripe, GitHub, Slack, Duolingo, Notion, Figma, WhatsApp, Shopify. Pick relevant ones. (max 25 words)
 7. TEACHER: closing thought — just say why it matters plainly. Example: "Without this you'd be writing way more code for simple stuff, so it really saves you time and keeps things clean." (max 25 words)
 8. STUDENT: final line of the whole video. Positive, grateful, enthusiastic. "That's awesome, thanks, this really helped!" or "Cool, I get it now, thanks for explaining!" (max 12 words)
 9. TEACHER: empty (silent CTA screen). Return {"speaker": "teacher", "spoken": "", "code": null}
@@ -72,7 +72,7 @@ Vytvor konverzáciu s PRESNE 9 riadkami:
 3. ŠTUDENT: nadšená zvedavá otázka — NIE zmätený, ale zaujatý a zapálený (max 12 slov). "To je zaujímavé! A kedy sa to reálne používa?" alebo "Počkaj, fakt? A ako to funguje v praxi?"
 4. UČITEĽ: vysvetlí to jednoducho a plynulo. Spájaj myšlienky čiarkami. NEPOUŽÍVAJ "v podstate", "no tak", "no a". Jednoducho plynulo hovor. Napríklad: "Keď potrebuješ funkciu len na jedno použitie, tak namiesto toho aby si ju celú vypisoval a dával jej meno, jednoducho ju napíšeš do jedného riadku a hotovo." ŽIADNE analógie zo života. (max 45 slov)
 5. ŠTUDENT: pochopil, nadšene to vysvetlí vlastnými slovami (15-20 slov). Musí znieť naozaj nadšene. NIKDY nepoužívaj slovo "bomba". Príklady: "Aha takže je to v podstate rýchla jednorazová funkcia, to je super šikovné!" alebo "Jasné, už to chápem, to je fakt cool!"
-6. UČITEĽ: príklady z reálneho sveta — KTO to používa. Spomeň 2 REÁLNE firmy. Krátko a výstižne. (max 25 slov)
+6. UČITEĽ: príklady z reálneho sveta — KTO to používa. Spomeň 2 REÁLNE známe firmy. STRIEDAJ ich — nepoužívaj vždy Google/Netflix. Vyber z Spotify, Tesla, Airbnb, Discord, TikTok, Uber, Amazon, Stripe, GitHub, Slack, Duolingo, Notion, Figma, WhatsApp, Shopify. Vyber relevantné. (max 25 slov)
 7. UČITEĽ: záverečná myšlienka plynulo — prečo je to dôležité. Jednoducho povedz prečo. Napríklad: "Bez tohto by si musel písať oveľa viac kódu, takže ti to reálne šetrí čas a robí kód prehľadnejší." (max 25 slov)
 8. ŠTUDENT: posledná veta celého videa. Pozitívna, vďačná, entuziastická. "Super, ďakujem, toto mi fakt pomohlo!" alebo "To je super, teraz to už chápem, vďaka!" alebo "Dobre, ďakujem za vysvetlenie, toto je fakt užitočné!" (max 12 slov)
 9. UČITEĽ: prázdny riadok (tichý CTA screen). Vráť {"speaker": "teacher", "spoken": "", "code": null}

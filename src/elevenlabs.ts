@@ -73,7 +73,88 @@ function charsToWords(chars: ELResponse['alignment']): WordTiming[] {
   return words;
 }
 
+/** Map English programming terms to phonetic Slovak pronunciation for TTS */
+const SK_PHONETICS: Record<string, string> = {
+  'try': 'traj',
+  'Try': 'Traj',
+  'except': 'eksept',
+  'Except': 'Eksept',
+  'print': 'print',
+  'import': 'import',
+  'lambda': 'lambda',
+  'while': 'vajl',
+  'While': 'Vajl',
+  'break': 'brejk',
+  'Break': 'Brejk',
+  'continue': 'kontinju',
+  'Continue': 'Kontinju',
+  'raise': 'rejz',
+  'Raise': 'Rejz',
+  'yield': 'jíld',
+  'Yield': 'Jíld',
+  'async': 'ejsink',
+  'Async': 'Ejsink',
+  'await': 'evejt',
+  'Await': 'Evejt',
+  'None': 'nan',
+  'True': 'trú',
+  'False': 'fóls',
+  'tuple': 'tapl',
+  'Tuple': 'Tapl',
+  'cache': 'keš',
+  'Cache': 'Keš',
+  'thread': 'tred',
+  'Thread': 'Tred',
+  'scope': 'skóup',
+  'Scope': 'Skóup',
+  'debug': 'dybag',
+  'Debug': 'Dybag',
+  'debugger': 'dybager',
+  'Debugger': 'Dybager',
+  'loop': 'lúp',
+  'Loop': 'Lúp',
+  'boolean': 'búlián',
+  'Boolean': 'Búlián',
+  'byte': 'bajt',
+  'Byte': 'Bajt',
+  'float': 'flóut',
+  'Float': 'Flóut',
+  'string': 'string',
+  'queue': 'kjú',
+  'Queue': 'Kjú',
+  'stack': 'stek',
+  'Stack': 'Stek',
+  'slice': 'slajs',
+  'Slice': 'Slajs',
+  'range': 'rejndž',
+  'Range': 'Rejndž',
+  'finally': 'fajneli',
+  'Finally': 'Fajneli',
+  'TypeError': 'tajp eror',
+  'ValueError': 'velju eror',
+  'KeyError': 'kí eror',
+  'IndexError': 'index eror',
+  'NameError': 'nejm eror',
+  'FileNotFoundError': 'fajl not faund eror',
+  'ZeroDivisionError': 'zíro divížn eror',
+  'AttributeError': 'etribjút eror',
+};
+
+function applyPhonetics(text: string, lang: 'en' | 'sk'): string {
+  if (lang !== 'sk') return text;
+  let result = text;
+  // Sort by length descending so longer terms match first
+  const sorted = Object.entries(SK_PHONETICS).sort((a, b) => b[0].length - a[0].length);
+  for (const [en, sk] of sorted) {
+    // Only replace whole words (not inside other words)
+    result = result.replace(new RegExp(`\\b${en}\\b`, 'g'), sk);
+  }
+  return result;
+}
+
 async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', speed = 1.3, speaker: 'student' | 'teacher' = 'teacher'): Promise<{ audioBuffer: Buffer; wordTimings: WordTiming[]; duration: number }> {
+  // Apply phonetic pronunciation for SK
+  const ttsText = applyPhonetics(text, lang);
   // Multilingual v2 for Slovak (better pronunciation), turbo for English (faster, smoother)
   const model = lang === 'sk' ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5';
   const isSkStudent = lang === 'sk' && speaker === 'student';
@@ -83,7 +164,7 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
     method: 'POST',
     headers: { 'xi-api-key': API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      text,
+      text: ttsText,
       model_id: model,
       voice_settings: {
         stability: isSkStudent ? 0.6 : isSkTeacher ? 0.3 : 0.45,
