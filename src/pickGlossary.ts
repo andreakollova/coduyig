@@ -57,24 +57,24 @@ const glossary = [
     explanation_en: 'Four basic data operations. Every app in the world does CRUD — creates a record, reads it, updates it and deletes it. E-shop, social network, notes — everything is CRUD.',
     example: 'POST /users → Create\nGET /users → Read\nPUT /users/1 → Update\nDELETE /users/1 → Delete' },
   { id: 'jwt', term: 'JWT', category: 'skratka', short: 'JSON Web Token',
-    explanation_sk: 'Digitálny preukaz totožnosti. Po prihlásení server vytvorí JWT token a pošle ho tebe. Pri každej ďalšej požiadavke ho pošleš späť — server overí tvoju identitu bez hľadania v databáze.',
-    explanation_en: 'A digital ID card. After login, the server creates a JWT token and sends it to you. With every next request you send it back — the server verifies your identity without looking in the database.',
+    explanation_sk: 'JWT (JSON Web Token) je kompaktný, URL-bezpečný token na prenos overovacích informácií medzi klientom a serverom. Po prihlásení server vygeneruje podpísaný token, ktorý klient posiela pri každej požiadavke na overenie identity bez potreby opakovane pristupovať k databáze.',
+    explanation_en: 'JWT (JSON Web Token) is a compact, URL-safe token for transmitting authentication information between a client and server. After login, the server generates a signed token that the client sends with every request to verify identity without repeatedly accessing the database.',
     example: 'Login → server creates JWT\nJWT = header.payload.signature\nAuthorization: Bearer eyJhbG...' },
   { id: 'dom', term: 'DOM', category: 'koncept', short: 'Document Object Model',
-    explanation_sk: 'Stromová mapa webovej stránky v pamäti prehliadača. Keď JavaScript mení text, farbu alebo pridáva elementy — manipuluje DOM. React a Vue robia toto automaticky a efektívne.',
-    explanation_en: 'A tree-map of a web page in browser memory. When JavaScript changes text, color or adds elements — it manipulates the DOM. React and Vue do this automatically and efficiently.',
+    explanation_sk: 'DOM (Document Object Model) je stromová reprezentácia HTML dokumentu v pamäti prehliadača. Umožňuje JavaScriptu pristupovať k jednotlivým elementom stránky, meniť ich obsah, štýly a štruktúru. Frameworky ako React a Vue optimalizujú prácu s DOM automaticky.',
+    explanation_en: 'DOM (Document Object Model) is a tree representation of an HTML document in browser memory. It allows JavaScript to access individual page elements, modify their content, styles and structure. Frameworks like React and Vue optimize DOM manipulation automatically.',
     example: 'document.getElementById("title")\n  .innerText = "New Title";\n// → page updates instantly' },
   { id: 'ssh', term: 'SSH', category: 'skratka', short: 'Secure Shell',
-    explanation_sk: 'Šifrovaný tunel na vzdialený prístup k serverom. Vývojári ho používajú na správu serverov, deploy kódu a prenos súborov. Bezpečnejšie ako heslo — používa kryptografické kľúče.',
-    explanation_en: 'An encrypted tunnel for remote server access. Developers use it to manage servers, deploy code and transfer files. More secure than passwords — uses cryptographic keys.',
+    explanation_sk: 'SSH (Secure Shell) je bezpečný komunikačný protokol, ktorý umožňuje pripojiť sa k inému počítaču cez sieť a ovládať ho na diaľku. Zároveň sa používa na bezpečný prenos súborov a overovanie identity pomocou kryptografických kľúčov.',
+    explanation_en: 'SSH (Secure Shell) is a secure communication protocol that allows you to connect to another computer over a network and control it remotely. It is also used for secure file transfer and identity verification using cryptographic keys.',
     example: 'ssh user@server.com\nscp file.txt user@server:/path\nssh-keygen -t ed25519' },
   { id: 'tcp', term: 'TCP', category: 'skratka', short: 'Transmission Control Protocol',
-    explanation_sk: 'Spoľahlivý protokol na prenos dát. Garantuje že každý paket dorazí v správnom poradí. Používa sa pre web, email, súbory — všade kde nemôžeš stratiť ani bajt.',
-    explanation_en: 'A reliable protocol for data transfer. Guarantees every packet arrives in the correct order. Used for web, email, files — everywhere you cannot lose a single byte.',
+    explanation_sk: 'TCP (Transmission Control Protocol) je transportný protokol, ktorý zaručuje spoľahlivé doručenie dát v správnom poradí. Používa trojcestný handshake na nadviazanie spojenia a kontrolné mechanizmy na detekciu a opätovné zaslanie stratených paketov.',
+    explanation_en: 'TCP (Transmission Control Protocol) is a transport protocol that guarantees reliable delivery of data in the correct order. It uses a three-way handshake to establish connections and control mechanisms to detect and retransmit lost packets.',
     example: 'TCP three-way handshake:\n1. SYN → (I want to connect)\n2. SYN-ACK ← (OK)\n3. ACK → (Connected!)' },
   { id: 'oauth', term: 'OAuth', category: 'skratka', short: 'Open Authorization',
-    explanation_sk: 'Protokol pre prihlásenie cez tretiu stranu. Keď klikneš "Prihlásiť sa cez Google" — to je OAuth. Tvoje heslo Google nikdy neprejde cez aplikáciu. Bezpečné a pohodlné.',
-    explanation_en: 'A protocol for third-party login. When you click "Login with Google" — that is OAuth. Your Google password never passes through the app. Secure and convenient.',
+    explanation_sk: 'OAuth (Open Authorization) je autorizačný protokol, ktorý umožňuje aplikáciám pristupovať k zdrojom používateľa bez toho, aby poznali jeho heslo. Deleguje overovanie na dôveryhodného poskytovateľa identity ako Google, GitHub alebo Facebook.',
+    explanation_en: 'OAuth (Open Authorization) is an authorization protocol that allows applications to access user resources without knowing their password. It delegates authentication to a trusted identity provider like Google, GitHub or Facebook.',
     example: 'Click "Login with Google"\n→ Redirect to Google\n→ User approves\n→ Redirect back with token' },
 ];
 
@@ -172,7 +172,7 @@ export async function pickGlossary(): Promise<GlossaryData | null> {
 async function generateSimple(entry: any): Promise<{ en: string; sk: string }> {
   if (!OPENAI_KEY) return { en: 'A key programming concept.', sk: 'Dôležitý programátorský koncept.' };
 
-  const prompt = `You are explaining programming terms to a 14-year-old who has never coded.
+  const prompt = `You are explaining a programming term in a casual but smart way — like a cool older friend who knows tech, not like a children's book.
 
 Term: ${entry.term} (${entry.short})
 Technical explanation: ${entry.explanation_en}
@@ -180,9 +180,9 @@ Code example: ${entry.example}
 
 Write TWO explanations:
 
-1. "en" — English. Use a fun, relatable analogy from everyday life (like ordering food, using a phone, school, etc). 4-5 sentences. Max 350 chars. End with why it matters.
+1. "en" — English. Use a relatable analogy that actually matches the process of what this term does. Keep it smart but accessible — like explaining to a friend who's interested but new to coding. 3-4 sentences. Max 350 chars. End with why it matters.
 
-2. "sk" — Slovak (NEVER Czech). Same style, same analogy. 4-5 sentences. Max 350 chars.
+2. "sk" — Slovak (NEVER Czech). Same style. Use natural casual Slovak — "predstav si", "v podstate", "funguje to tak že". NOT childish ("kamoš", "tajný tunel"). 3-4 sentences. Max 350 chars.
 
 JSON only:
 {"en": "...", "sk": "..."}`;
