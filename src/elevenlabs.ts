@@ -141,7 +141,7 @@ export async function generateConversationTTS(
     // Last student line (summary) speaks slower for clarity
     const isLastStudentLine = line.speaker === 'student' && i === lines.length - 2;
     let baseSpeed = 1.3;
-    if (lang === 'sk' && line.speaker === 'teacher') baseSpeed = 1.7;
+    if (lang === 'sk' && line.speaker === 'teacher') baseSpeed = 1.9;
     if (lang === 'sk' && line.speaker === 'student') baseSpeed = 1.1; // slower for clearer SK pronunciation
     const lineSpeed = isLastStudentLine ? 0.95 : baseSpeed;
 
