@@ -39,12 +39,57 @@ function getLevel(mn: number): DiffLevel {
 // Student = basic look (white Byte)
 const studentEquip: Record<string, string> = {};
 
-// Teacher = equipped based on difficulty
-const teacherEquipByLevel: Record<DiffLevel, Record<string, string>> = {
-  beginner: { hat: 'hat-beanie', glasses: 'glasses-round' },
-  advanced: { hat: 'hat-graduation', glasses: 'glasses-cool', accessory: 'acc-medal' },
-  professional: { hat: 'hat-golden-crown', glasses: 'glasses-golden', aura: 'aura-golden', antenna: 'ant-golden-star' },
-};
+// Teacher outfits — always at least one orange item, rest varies randomly
+const ORANGE_ITEMS = [
+  { glasses: 'glasses-flame' },
+  { hat: 'hat-fire-crown' },
+  { accessory: 'acc-fire-cape' },
+  { antenna: 'ant-flame-orb' },
+  { aura: 'aura-fire' },
+];
+
+const EXTRA_ITEMS: Record<string, string>[] = [
+  { hat: 'hat-beanie' },
+  { hat: 'hat-graduation' },
+  { hat: 'hat-cowboy' },
+  { hat: 'hat-pilot' },
+  { hat: 'hat-samurai' },
+  { hat: 'hat-headband' },
+  { glasses: 'glasses-round' },
+  { glasses: 'glasses-cool' },
+  { glasses: 'glasses-aviator' },
+  { glasses: 'glasses-frost' },
+  { accessory: 'acc-medal' },
+  { accessory: 'acc-chain' },
+  { accessory: 'acc-crystal' },
+  { accessory: 'acc-scarf' },
+  { accessory: 'acc-bowtie' },
+  { antenna: 'ant-lightning' },
+  { antenna: 'ant-diamond' },
+  { antenna: 'ant-star' },
+  { antenna: 'ant-heart' },
+];
+
+function pickTeacherEquipment(): Record<string, string> {
+  // Always one orange item
+  const orange = ORANGE_ITEMS[Math.floor(Math.random() * ORANGE_ITEMS.length)];
+
+  // Add 1-2 random extra items (different slot than orange)
+  const orangeSlot = Object.keys(orange)[0];
+  const available = EXTRA_ITEMS.filter(item => !Object.keys(item).includes(orangeSlot));
+  const shuffled = available.sort(() => Math.random() - 0.5);
+  const extras = shuffled.slice(0, 1 + Math.floor(Math.random() * 2));
+
+  const equip = { ...orange };
+  for (const extra of extras) {
+    const slot = Object.keys(extra)[0];
+    if (!equip[slot]) {
+      equip[slot] = extra[slot];
+    }
+  }
+
+  return equip;
+}
 
 /* ========== INTRO GREETINGS ========== */
 
@@ -126,7 +171,7 @@ async function main() {
   const { data: mod } = await sb.from('cb_modules').select('module_number, title, title_sk').eq('id', lesson.module_id).single();
   const moduleNumber = mod?.module_number || 1;
   const level = getLevel(moduleNumber);
-  const equipTeacher = teacherEquipByLevel[level];
+  const equipTeacher = pickTeacherEquipment();
 
   // Pick correct language fields
   const lessonTitle = (lang === 'sk' && lesson.title_sk) ? lesson.title_sk : lesson.title;
