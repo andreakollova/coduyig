@@ -47,8 +47,25 @@ export async function pickQuiz(): Promise<QuizData | null> {
     return null;
   }
 
-  // Random pick
-  const q = questions[Math.floor(Math.random() * questions.length)];
+  // Filter: must have SK translations + options not too long (max 6 words)
+  const valid = questions.filter((q: any) => {
+    // Must have SK question text
+    if (!q.question_text_sk) return false;
+    // All options must have SK text
+    if (!q.options?.every((o: any) => o.option_text_sk)) return false;
+    // Options max 6 words (EN or SK)
+    if (q.options?.some((o: any) => (o.option_text || '').split(/\s+/).length > 6)) return false;
+    if (q.options?.some((o: any) => (o.option_text_sk || '').split(/\s+/).length > 6)) return false;
+    return true;
+  });
+
+  if (valid.length === 0) {
+    console.log('No valid quiz questions (missing SK translations or options too long)');
+    return null;
+  }
+
+  // Random pick from valid
+  const q = valid[Math.floor(Math.random() * valid.length)];
 
   // Get module number for outfit — question → lesson → module
   const { data: lessonData } = await sb.from('cb_lessons').select('module_id').eq('id', q.lesson_id).maybeSingle();
