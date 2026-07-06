@@ -399,10 +399,10 @@ export const LessonReel: React.FC<ReelProps> = ({
           }}>
             {lessonTitle || ''}
           </h1>
-          <div style={{ position: 'relative', marginTop: 80 }}>
+          <div style={{ position: 'relative', marginTop: 120 }}>
             {/* Speech bubble from student (left) */}
             <div style={{
-              position: 'absolute', top: -60, left: 0,
+              position: 'absolute', top: -65, left: -10,
               padding: '12px 26px', borderRadius: 20,
               background: '#222', border: '1px solid #333',
               fontSize: 22, color: '#fff', fontWeight: 600,
@@ -418,7 +418,7 @@ export const LessonReel: React.FC<ReelProps> = ({
             </div>
             {/* Speech bubble from teacher (right) */}
             <div style={{
-              position: 'absolute', top: -60, right: 0,
+              position: 'absolute', top: -65, right: -10,
               padding: '12px 26px', borderRadius: 20,
               background: '#222', border: '1px solid #444',
               fontSize: 22, color: '#fb923c', fontWeight: 600,
@@ -432,14 +432,14 @@ export const LessonReel: React.FC<ReelProps> = ({
                 transform: 'rotate(45deg)',
               }} />
             </div>
-            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 24 }}>
-              <ByteMascot size={230} equipment={equipmentStudent} />
-              <ByteMascot size={230} equipment={equipmentTeacher} />
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 28 }}>
+              <ByteMascot size={320} equipment={equipmentStudent} />
+              <ByteMascot size={320} equipment={equipmentTeacher} />
             </div>
             {/* Ground line */}
             <div style={{
-              width: 580, height: 3, background: 'rgba(255,255,255,0.18)',
-              borderRadius: 2, marginTop: 8, margin: '8px auto 0',
+              width: 720, height: 3, background: 'rgba(255,255,255,0.18)',
+              borderRadius: 2, marginTop: 10, margin: '10px auto 0',
             }} />
           </div>
         </AbsoluteFill>
