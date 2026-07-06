@@ -296,7 +296,7 @@ const TwoBytes: React.FC<{
         filter: activeSpeaker === 'student' ? 'drop-shadow(0 0 12px rgba(255,255,255,0.3))' : 'none',
         opacity: activeSpeaker === 'teacher' ? 0.6 : 1,
       }}>
-        <ByteMascot size={240} equipment={equipmentStudent} />
+        <ByteMascot size={310} equipment={equipmentStudent} />
       </div>
 
       {/* Teacher — right, orange outline glow when speaking */}
@@ -305,7 +305,7 @@ const TwoBytes: React.FC<{
         filter: activeSpeaker === 'teacher' ? 'drop-shadow(0 0 12px rgba(251,146,60,0.3))' : 'none',
         opacity: activeSpeaker === 'student' ? 0.6 : 1,
       }}>
-        <ByteMascot size={240} equipment={equipmentTeacher} />
+        <ByteMascot size={310} equipment={equipmentTeacher} />
       </div>
     </div>
   );
@@ -433,8 +433,8 @@ export const LessonReel: React.FC<ReelProps> = ({
               }} />
             </div>
             <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 28 }}>
-              <ByteMascot size={320} equipment={equipmentStudent} />
-              <ByteMascot size={320} equipment={equipmentTeacher} />
+              <ByteMascot size={416} equipment={equipmentStudent} />
+              <ByteMascot size={416} equipment={equipmentTeacher} />
             </div>
             {/* Ground line */}
             <div style={{
@@ -492,7 +492,7 @@ export const LessonReel: React.FC<ReelProps> = ({
 
           {/* Speaker labels — fixed under Bytes */}
           <div style={{
-            position: 'absolute', bottom: 345, left: 0, right: 0,
+            position: 'absolute', bottom: 390, left: 0, right: 0,
             display: 'flex', justifyContent: 'center', gap: 160,
           }}>
             <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#555', letterSpacing: '0.08em' }}>STUDENT</span>
@@ -508,8 +508,8 @@ export const LessonReel: React.FC<ReelProps> = ({
           padding: 60, gap: 32, opacity: ctaOp,
         }}>
           <div style={{ display: 'flex', gap: 16 }}>
-            <ByteMascot size={150} equipment={equipmentStudent} />
-            <ByteMascot size={150} equipment={equipmentTeacher} />
+            <ByteMascot size={195} equipment={equipmentStudent} />
+            <ByteMascot size={195} equipment={equipmentTeacher} />
           </div>
           <h2 style={{ fontSize: 38, fontWeight: 800, color: '#fff', textAlign: 'center', lineHeight: 1.3, margin: 0 }}>
             {lang === 'sk' ? 'Celá lekcia aj s cvičeniami na' : 'Full lesson with exercises on'}
