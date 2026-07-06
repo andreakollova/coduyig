@@ -153,8 +153,9 @@ function applyPhonetics(text: string, lang: 'en' | 'sk'): string {
 }
 
 async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', speed = 1.3, speaker: 'student' | 'teacher' = 'teacher'): Promise<{ audioBuffer: Buffer; wordTimings: WordTiming[]; duration: number }> {
-  // Apply phonetic pronunciation for SK
+  // Apply phonetic pronunciation for SK TTS only (captions keep original text)
   const ttsText = applyPhonetics(text, lang);
+  const originalWords = text.split(/\s+/);
   // Multilingual v2 for Slovak (better pronunciation), turbo for English (faster, smoother)
   const model = lang === 'sk' ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5';
   const isSkStudent = lang === 'sk' && speaker === 'student';
@@ -184,6 +185,14 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
   const data: ELResponse = await res.json();
   const audioBuffer = Buffer.from(data.audio_base64, 'base64');
   const wordTimings = charsToWords(data.alignment);
+
+  // Replace phonetic words with original text for captions
+  if (lang === 'sk') {
+    for (let i = 0; i < wordTimings.length && i < originalWords.length; i++) {
+      wordTimings[i].word = originalWords[i];
+    }
+  }
+
   const duration = wordTimings.length > 0 ? wordTimings[wordTimings.length - 1].end + 0.3 : 2;
 
   return { audioBuffer, wordTimings, duration };
