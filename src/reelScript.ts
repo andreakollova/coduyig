@@ -145,11 +145,75 @@ ${keyTakeaways.join('\n')}`;
     const totalWords = parsed.lines.reduce((s: number, l: any) => s + l.spoken.split(/\s+/).length, 0);
     console.log(`📝 Script: ${totalWords} words, ${parsed.lines.length} lines`);
 
-    return { lines: parsed.lines.map((l: any) => ({ speaker: l.speaker, spoken: l.spoken, code: l.code || undefined })) };
+    let lines = parsed.lines.map((l: any) => ({ speaker: l.speaker, spoken: l.spoken, code: l.code || undefined }));
+
+    // Slovak grammar verification pass
+    if (lang === 'sk') {
+      lines = await verifySlovakGrammar(lines);
+    }
+
+    return { lines };
   } catch (err) {
     console.error('⚠️ GPT failed:', err);
     return fallbackScript(title, introduction, lang);
   }
+}
+
+async function verifySlovakGrammar(lines: ReelLine[]): Promise<ReelLine[]> {
+  const allSpoken = lines.filter(l => l.spoken).map((l, i) => `${i}: ${l.spoken}`).join('\n');
+
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${OPENAI_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [{
+          role: 'user',
+          content: `Skontroluj a oprav tieto slovenské vety. Oprav:
+- gramatiku (skloňovanie, pády, rod, zhoda)
+- čiarky pred "ktorý/ktorá/kde/keď/pretože/lebo"
+- nesprávne frázy ("bez potreby menovania" → "bez pomenovania")
+- čechizmy
+- vety ktoré nedávajú zmysel
+
+Vráť JSON objekt kde kľúč je číslo riadku a hodnota je opravená veta.
+Ak je veta správna, NEVRACEJ ju. Vráť len opravené.
+
+{"2": "opravená veta", "5": "opravená veta"}
+
+Ak je všetko správne, vráť {}
+
+VETY:
+${allSpoken}`
+        }],
+        temperature: 0.1,
+        max_tokens: 1000,
+        response_format: { type: 'json_object' },
+      }),
+    });
+    const data = await res.json();
+    const fixes = JSON.parse(data.choices?.[0]?.message?.content || '{}');
+
+    const fixCount = Object.keys(fixes).length;
+    if (fixCount > 0) {
+      console.log(`🔍 SK grammar: ${fixCount} fixes`);
+      for (const [idx, fixed] of Object.entries(fixes)) {
+        const i = parseInt(idx);
+        const spokenLines = lines.filter(l => l.spoken);
+        if (spokenLines[i]) {
+          console.log(`   ${i}: "${spokenLines[i].spoken.slice(0, 40)}..." → "${(fixed as string).slice(0, 40)}..."`);
+          spokenLines[i].spoken = fixed as string;
+        }
+      }
+    } else {
+      console.log(`🔍 SK grammar: all correct`);
+    }
+  } catch (err) {
+    console.error('⚠️ Grammar check failed:', err);
+  }
+
+  return lines;
 }
 
 function fallbackScript(title: string, introduction?: string, lang: 'en' | 'sk' = 'en'): ReelScript {
