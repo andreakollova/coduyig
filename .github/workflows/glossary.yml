@@ -2,7 +2,7 @@ name: Daily Glossary Post
 
 on:
   schedule:
-    - cron: '0 7 * * 0,2,4,6'  # Sun, Tue, Thu, Sat — 07:00 UTC = 09:00 CEST
+    - cron: '0 7 * * 2,4,6'  # Tue, Thu, Sat — 07:00 UTC = 09:00 CEST
   workflow_dispatch:
     inputs:
       dry_run:
