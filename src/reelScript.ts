@@ -29,7 +29,7 @@ Create a conversation with EXACTLY 9 lines:
 4. TEACHER: explain with a simple real-life process that MATCHES what the concept does. NO cafes, sticky notes, or paper. The example must describe the SAME PROCESS as the concept. For lambda: something you do once quickly without preparation (like quickly googling an answer instead of going to a library). (max 35 words)
 5. STUDENT: gets it, excited, explains it back enthusiastically in their own words (15-20 words). Sound genuinely pumped, not robotic. Like "Ohhh so it's basically a quick throwaway function you write on the fly, that's sick!"
 6. TEACHER: real-world examples — WHO uses this. Mention 2 REAL companies. Keep it short and punchy. (max 25 words)
-7. STUDENT: short excited reaction (max 8 words). Genuinely impressed. "No way, that's actually insane!" or "Okay that's way cooler than I thought!"
+7. STUDENT: short casual reaction, NOT over the top (max 6 words). Keep it chill and natural. "Hmm okay, that's pretty cool." or "Oh nice, makes sense." or "Huh, interesting." NEVER say "insane", "crazy", "no way" — just a calm acknowledgment.
 8. TEACHER: one short closing line about why it matters (max 12 words). Punchy, motivating.
 9. TEACHER: empty (silent CTA screen). Return {"speaker": "teacher", "spoken": "", "code": null}
 
@@ -72,7 +72,7 @@ Vytvor konverzáciu s PRESNE 9 riadkami:
 4. UČITEĽ: vysvetlí to jednoduchým príkladom procesu zo života, ktorý ZODPOVEDÁ tomu čo koncept robí. NEPOUŽÍVAJ kaviareň, post-it, poznámky. Príklad musí opisovať ROVNAKÝ PROCES ako ten koncept. Pre lambda: niečo čo urobíš raz rýchlo bez prípravy (ako keď rýchlo vygooglíš odpoveď namiesto toho aby si išiel do knižnice). (max 35 slov)
 5. ŠTUDENT: pochopil, nadšene to vysvetlí vlastnými slovami (15-20 slov). Musí znieť naozaj nadšene. NIKDY nepoužívaj slovo "bomba". Príklady: "Aha takže je to v podstate rýchla jednorazová funkcia, to je super šikovné!" alebo "Jasné, už to chápem, to je fakt cool!"
 6. UČITEĽ: príklady z reálneho sveta — KTO to používa. Spomeň 2 REÁLNE firmy. Krátko a výstižne. (max 25 slov)
-7. ŠTUDENT: krátka nadšená reakcia (max 8 slov). "Nie, to je fakt šialené!" alebo "No tak to je oveľa zaujímavejšie ako som čakal!"
+7. ŠTUDENT: krátka pokojná reakcia, NIE prehnaná (max 6 slov). Normálna ľudská odpoveď. "Hmm okej, to je fajn." alebo "Aha, zaujímavé." alebo "No dobre, dáva to zmysel." NIKDY nehovor "šialené", "crazy", "no way" — len pokojné uznanie.
 8. UČITEĽ: jedna krátka záverečná veta prečo na tom záleží (max 12 slov). Výstižne, motivujúco.
 9. UČITEĽ: prázdny riadok (tichý CTA screen). Vráť {"speaker": "teacher", "spoken": "", "code": null}
 
