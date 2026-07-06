@@ -2,7 +2,7 @@ name: Daily Instagram Post
 
 on:
   schedule:
-    - cron: '0 7 * * *'  # 07:00 UTC = 09:00 CEST
+    - cron: '0 7 * * 1,3,5'  # Mon, Wed, Fri — 07:00 UTC = 09:00 CEST
   workflow_dispatch:
     inputs:
       lesson_id:
