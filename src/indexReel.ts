@@ -10,6 +10,7 @@ import { renderMedia, selectComposition } from '@remotion/renderer';
 import { createClient } from '@supabase/supabase-js';
 import { generateReelScript } from './reelScript';
 import { generateConversationTTS } from './elevenlabs';
+import { publishStory } from './instagram';
 import type { ReelLineData, WordTiming } from '../remotion/reelComposition';
 
 const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
@@ -251,9 +252,34 @@ async function main() {
   const published = await igPost(`${API}/${userId}/media_publish`, { creation_id: container.id, access_token: token });
   console.log(`🎉 Reel published! Media ID: ${published.id}`);
 
-  // Cleanup
-  const cleanupPaths = [`reels/${lesson.id}/${timestamp}`];
-  // Don't cleanup yet — let it stay for debugging
+  // Publish as Story too
+  console.log('\n=== Publishing Story ===');
+  try {
+    await publishStory({ url: videoUrl, type: 'video' }, userId, token, false);
+  } catch (err) {
+    console.error('⚠️ Story failed (non-fatal):', err);
+  }
+
+  // Save reel info for the app
+  const reelInfo = {
+    lessonId: lesson.id,
+    lessonTitle: lessonTitle,
+    moduleTitle: (lang === 'sk' && mod?.title_sk) ? mod.title_sk : mod?.title,
+    lang,
+    videoUrl,
+    publishedAt: new Date().toISOString(),
+    mediaId: published.id,
+    durationSeconds: Math.round(tts.totalDuration),
+  };
+
+  let reels: any[] = [];
+  try {
+    const { data: existing } = await sb.storage.from(BUCKET).download('tracking/reels.json');
+    if (existing) reels = JSON.parse(await existing.text());
+  } catch {}
+  reels.push(reelInfo);
+  await sb.storage.from(BUCKET).upload('tracking/reels.json', Buffer.from(JSON.stringify(reels, null, 2)), { contentType: 'application/json', upsert: true });
+  console.log(`📋 Saved reel info (${reels.length} total reels tracked)`);
 
   console.log('\n✅ DONE');
 }
