@@ -512,7 +512,7 @@ export const LessonReel: React.FC<ReelProps> = ({
             <ByteMascot size={150} equipment={equipmentTeacher} />
           </div>
           <h2 style={{ fontSize: 38, fontWeight: 800, color: '#fff', textAlign: 'center', lineHeight: 1.3, margin: 0 }}>
-            {lang === 'sk' ? 'Celá lekcia na' : 'Full lesson available on'}
+            {lang === 'sk' ? 'Celá lekcia aj s cvičeniami na' : 'Full lesson with exercises on'}
           </h2>
           <CoduyLogo height={70} />
           <div style={{ display: 'flex', gap: 20, marginTop: 8 }}>
