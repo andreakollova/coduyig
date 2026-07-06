@@ -67,7 +67,7 @@ Dve postavy:
 Vytvor konverzáciu s PRESNE 9 riadkami:
 
 1. ŠTUDENT: neformálny pozdrav + pýta sa na tému. "Čauko, aká je téma dnešnej hodiny?" alebo "Hej, o čom sa dnes učíme?" (max 12 slov)
-2. UČITEĽ: vysvetlí PREČO to existuje, aký problém to rieši, čo to uľahčuje alebo urýchľuje. NIKDY nehovor o príklade z kódu (nehovor "na výpočet štvorca čísla" atď). Hovor o tom čo to UMOŽŇUJE robiť efektívnejšie. (max 35 slov). NIKDY nečítaj kód.
+2. UČITEĽ: vysvetlí PREČO to existuje, aký problém to rieši, čo to uľahčuje alebo urýchľuje. NIKDY nehovor o príklade z kódu. Hovor o tom čo to UMOŽŇUJE robiť efektívnejšie. Použi správnu slovenčinu — "bez pomenovania" nie "bez potreby menovania", "bez toho aby si jej dal meno" nie "bez potreby písať definície". Každá veta musí dávať zmysel sama o sebe. (max 35 slov). NIKDY nečítaj kód.
 3. ŠTUDENT: nadšená zvedavá otázka — NIE zmätený, ale zaujatý a zapálený (max 12 slov). "To je zaujímavé! A kedy sa to reálne používa?" alebo "Počkaj, fakt? A ako to funguje v praxi?"
 4. UČITEĽ: vysvetlí to jednoduchým príkladom procesu zo života, ktorý ZODPOVEDÁ tomu čo koncept robí. NEPOUŽÍVAJ kaviareň, post-it, poznámky. Príklad musí opisovať ROVNAKÝ PROCES ako ten koncept. Pre lambda: niečo čo urobíš raz rýchlo bez prípravy (ako keď rýchlo vygooglíš odpoveď namiesto toho aby si išiel do knižnice). (max 35 slov)
 5. ŠTUDENT: pochopil, nadšene to vysvetlí vlastnými slovami (15-20 slov). Musí znieť naozaj nadšene. NIKDY nepoužívaj slovo "bomba". Príklady: "Aha takže je to v podstate rýchla jednorazová funkcia, to je super šikovné!" alebo "Jasné, už to chápem, to je fakt cool!"
