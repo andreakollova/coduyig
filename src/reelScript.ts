@@ -24,13 +24,13 @@ Two characters:
 Create a conversation with EXACTLY 9 lines:
 
 1. STUDENT: casual greeting + asks about today's topic (max 12 words)
-2. TEACHER: give a short technical definition — what it is and what it's used for. One or two COMPLETE sentences. NEVER end a sentence with "for example" or "like" without finishing it. Every sentence must be complete. NEVER talk about code. (max 30 words)
+2. TEACHER: first ANSWER the student's question (e.g. "Today we're looking at lambda functions.") then give a short technical definition — what it is and what it's for. NEVER start straight with a definition. Every sentence complete. (max 30 words). NEVER read code.
 3. STUDENT: excited follow-up question, not confused — genuinely curious and engaged (max 12 words). Like "Oh that's cool! So when would I actually use that?" or "Wait really? How does that work in practice?"
 4. TEACHER: explain the SAME thing but in SIMPLER WORDS. NO real-life analogies (no shops, cafes, school, pizza). Just say the same concept more simply. For lambda: "Basically, when you need a small function just once, instead of writing the whole thing and giving it a name, you write it quickly in one line and you're done." (max 40 words)
 5. STUDENT: gets it, excited, explains it back enthusiastically in their own words (15-20 words). Sound genuinely pumped, not robotic. Like "Ohhh so it's basically a quick throwaway function you write on the fly, that's sick!"
 6. TEACHER: real-world examples — WHO uses this. Mention 2 REAL companies. Keep it short and punchy. (max 25 words)
-7. STUDENT: short casual reaction, NOT over the top (max 6 words). Keep it chill and natural. "Hmm okay, that's pretty cool." or "Oh nice, makes sense." or "Huh, interesting." NEVER say "insane", "crazy", "no way" — just a calm acknowledgment.
-8. TEACHER: one short closing line about why it matters (max 12 words). Punchy, motivating.
+7. TEACHER: expanded closing thought — explain SPECIFICALLY why this matters in programming, what problem it solves in practice, what would happen without it. Not just "makes code cleaner" but explain HOW and WHY. (max 25 words)
+8. STUDENT: final line of the whole video. Positive, grateful, enthusiastic. "That's awesome, thanks, this really helped!" or "Cool, I get it now, thanks for explaining!" (max 12 words)
 9. TEACHER: empty (silent CTA screen). Return {"speaker": "teacher", "spoken": "", "code": null}
 
 RULES:
@@ -68,13 +68,13 @@ Dve postavy:
 Vytvor konverzáciu s PRESNE 9 riadkami:
 
 1. ŠTUDENT: neformálny pozdrav + pýta sa na tému. "Čauko, aká je téma dnešnej hodiny?" alebo "Hej, o čom sa dnes učíme?" (max 12 slov)
-2. UČITEĽ: povie krátku odbornú poučku — čo to je a na čo to slúži. Jedna alebo dve kompletné vety. NIKDY nekončí vetou na "napríklad" alebo "ako" bez dokončenia. Každá veta musí byť úplná a dávať zmysel. NIKDY nehovor o kóde. (max 30 slov). NIKDY nečítaj kód.
+2. UČITEĽ: najprv ODPOVIE na otázku študenta (napr. "Dnes sa pozrieme na lambda funkcie.") a potom povie krátku odbornú poučku — čo to je a na čo to slúži. NIKDY nezačínaj hneď definíciou. Každá veta musí byť úplná. (max 30 slov). NIKDY nečítaj kód.
 3. ŠTUDENT: nadšená zvedavá otázka — NIE zmätený, ale zaujatý a zapálený (max 12 slov). "To je zaujímavé! A kedy sa to reálne používa?" alebo "Počkaj, fakt? A ako to funguje v praxi?"
 4. UČITEĽ: vysvetlí to JEDNODUCHO ĽUDSKÝMI SLOVAMI. ŽIADNE analógie zo života (žiadny obchod, kaviareň, škola, pizza). Proste povedz tú istú vec jednoduchšie a zrozumiteľnejšie. Pre lambda: "V podstate, keď potrebuješ malú funkciu len na jedno použitie, namiesto toho aby si ju celú vypisoval a dával jej meno, napíšeš ju rýchlo do jedného riadku a hotovo." (max 40 slov)
 5. ŠTUDENT: pochopil, nadšene to vysvetlí vlastnými slovami (15-20 slov). Musí znieť naozaj nadšene. NIKDY nepoužívaj slovo "bomba". Príklady: "Aha takže je to v podstate rýchla jednorazová funkcia, to je super šikovné!" alebo "Jasné, už to chápem, to je fakt cool!"
 6. UČITEĽ: príklady z reálneho sveta — KTO to používa. Spomeň 2 REÁLNE firmy. Krátko a výstižne. (max 25 slov)
-7. ŠTUDENT: krátka pokojná reakcia, NIE prehnaná (max 6 slov). Normálna ľudská odpoveď. "Hmm okej, to je fajn." alebo "Aha, zaujímavé." alebo "No dobre, dáva to zmysel." NIKDY nehovor "šialené", "crazy", "no way" — len pokojné uznanie.
-8. UČITEĽ: jedna krátka záverečná veta prečo na tom záleží (max 12 slov). Výstižne, motivujúco.
+7. UČITEĽ: rozvinutá záverečná myšlienka — prečo je to KONKRÉTNE dôležité pri programovaní, aký problém to rieši v praxi, čo by sa stalo bez toho. Nie len "zjednodušuje kód" ale vysvetli AKO a PREČO. (max 25 slov)
+8. ŠTUDENT: posledná veta celého videa. Pozitívna, vďačná, entuziastická. "Super, ďakujem, toto mi fakt pomohlo!" alebo "To je super, teraz to už chápem, vďaka!" alebo "Dobre, ďakujem za vysvetlenie, toto je fakt užitočné!" (max 12 slov)
 9. UČITEĽ: prázdny riadok (tichý CTA screen). Vráť {"speaker": "teacher", "spoken": "", "code": null}
 
 PRAVIDLÁ:
@@ -84,6 +84,7 @@ PRAVIDLÁ:
 - Použi neformálnu slovenčinu. "Čauko", "super", "fajn", "hm", "aha", "jasné", "pecka", "paráda", "crazy".
 - NIKDY čeština.
 - Správna slovenská gramatika. Pred "ktorý", "ktorá", "ktoré", "kde", "keď", "pretože", "lebo" VŽDY daj čiarku.
+- Dávaj pozor na správne tvary — "efektívne programovať" (príslovka) vs "efektívne riešenie" (prídavné meno). Zmäkčenie na konci závisí od kontextu.
 - Celkovo: 170-220 slov.
 
 Vyber JEDEN kód snippet (MAX 3 riadky) z LEARNING CONTENT. Pridaj ho k riadku 2.
