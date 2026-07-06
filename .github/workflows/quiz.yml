@@ -2,7 +2,7 @@ name: Daily Quiz Post
 
 on:
   schedule:
-    - cron: '0 10 * * *'  # 10:00 UTC = 12:00 CEST
+    - cron: '0 18 * * *'  # 18:00 UTC = 20:00 CEST
   workflow_dispatch:
     inputs:
       dry_run:
