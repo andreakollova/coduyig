@@ -490,13 +490,17 @@ export const LessonReel: React.FC<ReelProps> = ({
             />
           </div>
 
-          {/* Speaker labels — under Bytes, spread wider */}
+          {/* Speaker labels — positioned under each Byte */}
           <div style={{
             position: 'absolute', bottom: 350, left: 0, right: 0,
-            display: 'flex', justifyContent: 'center', gap: 220,
+            display: 'flex', justifyContent: 'center',
           }}>
-            <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#555', letterSpacing: '0.08em' }}>STUDENT</span>
-            <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'teacher' ? '#fb923c' : '#555', letterSpacing: '0.08em' }}>TEACHER</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#555', letterSpacing: '0.08em', marginRight: 260 }}>
+              {lang === 'sk' ? 'ŠTUDENT' : 'STUDENT'}
+            </span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'teacher' ? '#fb923c' : '#555', letterSpacing: '0.08em' }}>
+              {lang === 'sk' ? 'LEKTOR' : 'TEACHER'}
+            </span>
           </div>
         </>
       )}
