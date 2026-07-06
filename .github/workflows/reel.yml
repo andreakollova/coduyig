@@ -2,7 +2,7 @@ name: Daily Instagram Reel
 
 on:
   schedule:
-    - cron: '30 11 * * *'  # 11:30 UTC = 13:30 CEST
+    - cron: '0 15 * * *'  # 15:00 UTC = 17:00 CEST
   workflow_dispatch:
     inputs:
       lesson_id:

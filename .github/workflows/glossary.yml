@@ -2,7 +2,7 @@ name: Daily Glossary Post
 
 on:
   schedule:
-    - cron: '0 15 * * *'  # 15:00 UTC = 17:00 CEST
+    - cron: '0 11 * * *'  # 11:00 UTC = 13:00 CEST
   workflow_dispatch:
     inputs:
       dry_run:
