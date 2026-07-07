@@ -153,20 +153,7 @@ export const SlideLearn: React.FC<{
         ))}
       </div>
 
-      {/* Real-world example — smaller, at bottom */}
-      {example && (
-        <div style={{
-          position: 'absolute', bottom: 80, left: 56, right: 56,
-          padding: '14px 24px', borderRadius: 14,
-          background: '#111', border: '1px solid #222',
-          display: 'flex', alignItems: 'center', gap: 12,
-        }}>
-          <span style={{ fontSize: 22 }}>🌍</span>
-          <span style={{ fontSize: 20, color: '#999', fontWeight: 500, fontStyle: 'italic' }}>{example}</span>
-        </div>
-      )}
-
-      <div style={{ position: 'absolute', bottom: 44, display: example ? 'none' : 'block' }}><CoduyLogo height={20} /></div>
+      <div style={{ position: 'absolute', bottom: 44 }}><CoduyLogo height={20} /></div>
     </AbsoluteFill>
   );
 };

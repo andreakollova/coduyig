@@ -13,8 +13,11 @@ const __dirname = path.dirname(__filename);
 const API_KEY = process.env.ELEVENLABS_API_KEY || '';
 const API = 'https://api.elevenlabs.io/v1';
 
-// SK teacher voice — expressive
-const VOICE_ID = 'DXwrzy2wtKORwDTbsMwk';
+// Voice IDs per language
+const VOICES = {
+  sk: { teacher: 'DXwrzy2wtKORwDTbsMwk', student: '5TUD5nYN251MvBggIfLu' },
+  en: { teacher: '3TStB8f3X3To0Uj5R7RK', student: 's3TPKV1kjDlVtZbl4Ksh' },
+};
 
 interface WordTiming {
   word: string;
@@ -130,19 +133,25 @@ function buildWordMap(text: string): { ttsText: string; originalWords: string[];
   return { ttsText: ttsWords.join(' '), originalWords, phoneticGroups };
 }
 
-async function ttsSegment(text: string, speed = 1.8): Promise<{ audioBuffer: Buffer; wordTimings: WordTiming[]; duration: number }> {
-  const { ttsText, originalWords, phoneticGroups } = buildWordMap(text);
+async function ttsSegment(text: string, voiceId: string, lang: 'sk' | 'en' = 'sk', speed = 1.8): Promise<{ audioBuffer: Buffer; wordTimings: WordTiming[]; duration: number }> {
+  // Only apply phonetics for SK
+  const usePhonetics = lang === 'sk';
+  const { ttsText, originalWords, phoneticGroups } = usePhonetics
+    ? buildWordMap(text)
+    : { ttsText: text, originalWords: text.split(/\s+/).filter(Boolean), phoneticGroups: text.split(/\s+/).filter(Boolean).map((_, i) => i) };
 
-  const res = await fetch(`${API}/text-to-speech/${VOICE_ID}/with-timestamps`, {
+  const model = lang === 'sk' ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5';
+
+  const res = await fetch(`${API}/text-to-speech/${voiceId}/with-timestamps`, {
     method: 'POST',
     headers: { 'xi-api-key': API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       text: ttsText,
-      model_id: 'eleven_multilingual_v2',
+      model_id: model,
       voice_settings: {
-        stability: 0.25,
+        stability: 0.5,
         similarity_boost: 0.75,
-        style: 0.9,
+        style: 0.7,
         use_speaker_boost: true,
       },
       speed,
@@ -185,37 +194,48 @@ export async function generateByteFallVoiceover(
   termFull: string,
   definition: string,
   outputDir: string,
+  lang: 'sk' | 'en' = 'sk',
+  voice: 'teacher' | 'student' = 'student',
 ): Promise<{ audioPath: string; words: WordTiming[]; duration: number }> {
   if (!API_KEY) throw new Error('ELEVENLABS_API_KEY not set');
 
   fs.mkdirSync(outputDir, { recursive: true });
 
-  // Build the script — teacher explains during fall, then repeats excitedly
-  // Start speaking at ~1.5s into the video (after Byte drops in and term appears)
+  const voiceId = VOICES[lang][voice];
   const parts = termFull.split(' ');
-  const secureWord = parts[0] || 'Secure';
-  const shellWord = parts[1] || 'Shell';
+  const word1 = parts[0] || '';
+  const word2 = parts[1] || '';
 
-  const script = [
-    `${term}! ${termFull}.`,
-    `${secureWord}, pretože komunikácia je šifrovaná a chránená.`,
-    `${shellWord}, pretože ovládaš vzdialený počítač cez príkazový riadok.`,
-    `${term}. ${termFull}. ${term}. ${termFull}.`,
-  ];
+  // Build script based on language
+  let script: string[];
+  if (lang === 'sk') {
+    script = [
+      `${term}! ${termFull}.`,
+      `${word1} znamená, že spojenie je bezpečné a šifrované.`,
+      `${word2 || 'To'} znamená, že ovládaš počítač na diaľku cez terminál.`,
+      `${term}. ${termFull}. ${term}. ${termFull}.`,
+    ];
+  } else {
+    script = [
+      `${term}! ${termFull}.`,
+      `${word1} means the connection is encrypted and protected.`,
+      `${word2 || 'It'} means you control a computer remotely through a terminal.`,
+      `${term}. ${termFull}. ${term}. ${termFull}.`,
+    ];
+  }
 
-  console.log(`🎙️ Generating ByteFall voiceover for ${term}...`);
+  console.log(`🎙️ Generating ByteFall voiceover for ${term} (${lang}, ${voice})...`);
 
   const allWords: WordTiming[] = [];
   const audioParts: string[] = [];
-  let cumTime = 1.5; // Start at 1.5s — after Byte enters
+  let cumTime = 1.5;
 
   for (let i = 0; i < script.length; i++) {
     const line = script[i];
     console.log(`  Part ${i + 1}: "${line}"`);
 
-    // Last part (repeating) is more excited = faster
-    const speed = i === script.length - 1 ? 2.0 : 1.8;
-    const { audioBuffer, wordTimings, duration } = await ttsSegment(line, speed);
+    const speed = lang === 'sk' ? (i === script.length - 1 ? 1.3 : 1.1) : (i === script.length - 1 ? 1.5 : 1.3);
+    const { audioBuffer, wordTimings, duration } = await ttsSegment(line, voiceId, lang, speed);
 
     const rawPath = path.join(outputDir, `bytefall_${i}_raw.mp3`);
     const normPath = path.join(outputDir, `bytefall_${i}.mp3`);
@@ -270,11 +290,13 @@ export async function generateByteFallVoiceover(
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('byteFallTTS.ts')) {
-  const term = process.argv[2] || 'SSH';
-  const termFull = process.argv[3] || 'Secure Shell';
-  const definition = process.argv[4] || 'Bezpečný komunikačný protokol na vzdialený prístup k serverom';
+  const lang = (process.argv[2] || 'sk') as 'sk' | 'en';
+  const voice = (process.argv[3] || 'student') as 'teacher' | 'student';
+  const term = process.argv[4] || 'SSH';
+  const termFull = process.argv[5] || 'Secure Shell';
+  const definition = process.argv[6] || 'Bezpečný komunikačný protokol na vzdialený prístup k serverom';
 
-  generateByteFallVoiceover(term, termFull, definition, path.join(__dirname, '../out/bytefall_tts'))
+  generateByteFallVoiceover(term, termFull, definition, path.join(__dirname, '../out/bytefall_tts'), lang, voice)
     .then(result => {
       console.log('Audio:', result.audioPath);
       console.log('Words:', JSON.stringify(result.words, null, 2));
