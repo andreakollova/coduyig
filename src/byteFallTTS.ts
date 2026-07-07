@@ -182,15 +182,69 @@ const SK_PHONETICS: Record<string, string> = {
   'SMTP': 'es em tí pí',
   'IMAP': 'aj mep',
   'POP': 'pop',
+  // New abbreviations
+  'SSL': 'es es el',
+  'TLS': 'tí el es',
+  'URI': 'jú ár aj',
+  'CSV': 'sí es ví',
+  'ORM': 'ou ár em',
+  'BIOS': 'bajos',
+  'UEFI': 'jú í ef aj',
+  'OS': 'ou es',
+  'VM': 'ví em',
+  'VPS': 'ví pí es',
+  'JSX': 'džej es eks',
+  'CSR': 'sí es ár',
+  'SSR': 'es es ár',
+  'SSG': 'es es džé',
+  'ISR': 'aj es ár',
+  'SPA': 'es pí ej',
+  'PWA': 'pí dablju ej',
+  'MVC': 'em ví sí',
+  'MVVM': 'em ví ví em',
+  'FP': 'ef pí',
+  'MCP': 'em sí pí',
+  'LLM': 'el el em',
+  'VLM': 'ví el em',
+  'RAG': 'reg',
+  'A2A': 'ej tú ej',
+  'CoT': 'sí ou tí',
+  'MoE': 'em ou í',
+  'RLHF': 'ár el ejč ef',
+  'TTS': 'tí tí es',
+  'STT': 'es tí tí',
+  'NLP': 'en el pí',
+  'CV': 'sí ví',
+  'ASR': 'ej es ár',
+  'GPT': 'džé pí tí',
+  'LoRA': 'lora',
+  'PEFT': 'peft',
+  'RL': 'ár el',
+  'OCR': 'ou sí ár',
+  'UUID': 'jú jú aj dí',
+  'CI/CD': 'sí aj sí dí',
+  'TS': 'tí es',
+  'AWS': 'ej dablju es',
+  'GraphQL': 'graf kjú el',
 };
 
-// Only abbreviations — skip regular English words like Secure, Shell, try, cache etc.
-const EN_ONLY_ABBREVS = new Set([
-  'SSH', 'API', 'HTTP', 'HTTPS', 'SQL', 'CSS', 'HTML', 'DNS', 'URL', 'IP',
-  'TCP', 'UDP', 'FTP', 'JSON', 'XML', 'GUI', 'CLI', 'IDE', 'OOP', 'RAM',
-  'CPU', 'GPU', 'SSD', 'HDD', 'IoT', 'AI', 'ML', 'VPN', 'CDN', 'SDK',
-  'AJAX', 'CORS', 'JWT', 'OAuth', 'SMTP', 'IMAP', 'POP', 'REST', 'CRUD', 'DOM',
-]);
+// Only abbreviations for EN — skip regular English words
+const EN_ONLY_ABBREVS = new Set(
+  Object.keys(SK_PHONETICS).filter(k => {
+    // Keep abbreviations (mostly uppercase or known mixed-case)
+    const isAbbrev = k === k.toUpperCase() || ['IoT', 'OAuth', 'LoRA', 'CoT', 'MoE', 'GraphQL', 'CI/CD', 'JSX'].includes(k);
+    // Skip regular English words
+    const skipWords = ['Secure', 'Shell', 'try', 'Try', 'except', 'Except', 'print', 'import', 'lambda',
+      'while', 'While', 'break', 'Break', 'continue', 'Continue', 'raise', 'Raise', 'yield', 'Yield',
+      'async', 'Async', 'await', 'Await', 'None', 'True', 'False', 'tuple', 'Tuple', 'cache', 'Cache',
+      'thread', 'Thread', 'scope', 'Scope', 'debug', 'Debug', 'debugger', 'Debugger', 'loop', 'Loop',
+      'boolean', 'Boolean', 'byte', 'Byte', 'float', 'Float', 'string', 'queue', 'Queue', 'stack', 'Stack',
+      'slice', 'Slice', 'range', 'Range', 'finally', 'Finally',
+      'TypeError', 'ValueError', 'KeyError', 'IndexError', 'NameError', 'FileNotFoundError',
+      'ZeroDivisionError', 'AttributeError'];
+    return isAbbrev && !skipWords.includes(k);
+  })
+);
 const EN_PHONETICS: Record<string, string> = Object.fromEntries(
   Object.entries(SK_PHONETICS).filter(([key]) => EN_ONLY_ABBREVS.has(key))
 );
