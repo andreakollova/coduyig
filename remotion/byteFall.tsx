@@ -16,50 +16,47 @@ export const ByteFallAnimation: React.FC<{
   const frame = useCurrentFrame();
   const { fps, height, width } = useVideoConfig();
 
-  const centerY = height * 0.35;
-  const groundY = height * 0.65;
+  const groundY = height * 0.58;
 
-  // === PHASE 1: Spinning in center (0 - 5s) ===
-  const spinEnd = fps * 5;
-
-  // 3D rotation — rotates around Y axis like a coin spinning
-  const rotationY = frame < spinEnd
-    ? (frame / fps) * 360
-    : 0;
-
-  // === PHASE 2: Fall down (5s - 6s) ===
-  const fallStart = spinEnd;
-  const fallEnd = spinEnd + fps * 1;
-
-  const fallProgress = frame >= fallStart && frame < fallEnd
-    ? interpolate(frame, [fallStart, fallEnd], [0, 1], { extrapolateRight: 'clamp' })
-    : frame >= fallEnd ? 1 : 0;
-
-  // Gravity acceleration
-  const fallY = fallProgress * fallProgress * (groundY - centerY);
-
-  // Last rotation while falling
-  const fallRotation = frame >= fallStart && frame < fallEnd
-    ? interpolate(frame, [fallStart, fallEnd], [0, 180], { extrapolateRight: 'clamp' })
-    : 0;
-
-  // === PHASE 3: Bounce (6s - 8s) ===
+  // === Byte starts above screen and falls continuously ===
+  // Total fall time: 4 seconds, starts from way above
+  const fallEnd = fps * 4;
   const landed = frame >= fallEnd;
 
+  // Fall: starts from above screen (-600), accelerates down to ground
+  const fallY = frame < fallEnd
+    ? interpolate(
+        frame, [0, fallEnd], [-600, groundY],
+        { extrapolateRight: 'clamp', easing: (t) => t * t } // gravity
+      )
+    : groundY;
+
+  // 3D spin while falling — rotateY like a coin
+  const rotY = frame < fallEnd
+    ? (frame / fps) * 400 // fast spin
+    : 0;
+
+  // Slight tilt while falling
+  const tilt = frame < fallEnd
+    ? Math.sin(frame / fps * Math.PI * 2) * 8
+    : 0;
+
+  // === Bounce after landing ===
   const bounce = landed
     ? interpolate(
         frame - fallEnd,
-        [0, fps * 0.12, fps * 0.3, fps * 0.5, fps * 0.7, fps * 0.85, fps * 1.0],
-        [0, -100, 0, -35, 0, -10, 0],
+        [0, fps * 0.12, fps * 0.3, fps * 0.5, fps * 0.7, fps * 0.85, fps * 1.0, fps * 1.3],
+        [0, -150, 0, -60, 0, -20, 0, 0],
         { extrapolateRight: 'clamp' }
       )
     : 0;
 
+  // Squash on impact
   const squashX = landed
     ? interpolate(
         frame - fallEnd,
-        [0, fps * 0.06, fps * 0.2, fps * 0.35],
-        [1, 1.35, 0.92, 1],
+        [0, fps * 0.06, fps * 0.18, fps * 0.3, fps * 0.45, fps * 0.6],
+        [1, 1.5, 0.85, 1.2, 0.95, 1],
         { extrapolateRight: 'clamp' }
       )
     : 1;
@@ -67,109 +64,97 @@ export const ByteFallAnimation: React.FC<{
   const squashY = landed
     ? interpolate(
         frame - fallEnd,
-        [0, fps * 0.06, fps * 0.2, fps * 0.35],
-        [1, 0.65, 1.08, 1],
+        [0, fps * 0.06, fps * 0.18, fps * 0.3, fps * 0.45, fps * 0.6],
+        [1, 0.5, 1.15, 0.85, 1.05, 1],
         { extrapolateRight: 'clamp' }
       )
     : 1;
 
-  // === Position ===
-  let y: number;
-  let rot: number;
-
-  let rotY = 0;
-  if (frame < spinEnd) {
-    y = centerY;
-    rot = 0;
-    rotY = rotationY;
-  } else if (frame < fallEnd) {
-    y = centerY + fallY;
-    rot = fallRotation;
-    rotY = 0;
-  } else {
-    y = groundY + bounce;
-    rot = 0;
-    rotY = 0;
-  }
-
-  // === Idle breathing after bounce ===
-  const idleStart = fallEnd + fps * 1.2;
+  // Idle breathing after bounce settles
+  const idleStart = fallEnd + fps * 1.5;
   const breathe = frame > idleStart
     ? interpolate(Math.sin((frame - idleStart) / fps * Math.PI * 0.6), [-1, 1], [0.97, 1.03])
     : 1;
 
-  // === Shadow ===
-  const shadowOpacity = frame < spinEnd ? 0.04
-    : landed ? 0.12
-    : interpolate(fallProgress, [0, 1], [0.04, 0.12]);
+  const finalY = landed ? groundY + bounce : fallY;
 
-  const shadowScale = frame < spinEnd ? 0.4
-    : interpolate(fallProgress, [0, 1], [0.4, 1], { extrapolateRight: 'clamp' });
+  // === Shadow — grows as Byte approaches ground ===
+  const shadowOpacity = frame < fallEnd
+    ? interpolate(frame, [0, fallEnd], [0, 0.15], { extrapolateRight: 'clamp' })
+    : 0.15;
+  const shadowScale = frame < fallEnd
+    ? interpolate(frame, [0, fallEnd], [0.1, 1], { extrapolateRight: 'clamp' })
+    : 1;
 
-  // === Ground line ===
+  // === Ground line — appears on impact ===
   const groundOpacity = landed
-    ? interpolate(frame - fallEnd, [0, fps * 0.1], [0, 0.4], { extrapolateRight: 'clamp' })
+    ? interpolate(frame - fallEnd, [0, fps * 0.08], [0, 0.5], { extrapolateRight: 'clamp' })
     : 0;
 
   // === Impact particles ===
-  const showParticles = landed && frame < fallEnd + fps * 0.7;
+  const showParticles = landed && frame < fallEnd + fps * 0.8;
+
+  // === Screen shake on impact ===
+  const shake = landed && frame < fallEnd + fps * 0.2
+    ? interpolate(frame - fallEnd, [0, fps * 0.05, fps * 0.1, fps * 0.15, fps * 0.2], [0, -8, 6, -3, 0], { extrapolateRight: 'clamp' })
+    : 0;
 
   return (
-    <AbsoluteFill style={{ background: '#0A0A0A', fontFamily }}>
+    <AbsoluteFill style={{ background: '#0A0A0A', fontFamily, transform: `translateY(${shake}px)` }}>
 
-      {/* Shadow */}
+      {/* Shadow on ground */}
       <div style={{
         position: 'absolute',
-        top: groundY + 175,
+        top: groundY + 230,
         left: '50%',
         transform: `translateX(-50%) scaleX(${shadowScale})`,
-        width: 180, height: 16,
+        width: 250, height: 20,
         borderRadius: '50%',
         background: 'rgba(255,255,255,0.08)',
         opacity: shadowOpacity,
-        filter: 'blur(10px)',
+        filter: 'blur(12px)',
       }} />
 
       {/* Byte */}
       <div style={{
         position: 'absolute',
-        top: y,
+        top: finalY,
         left: '50%',
-        transform: `translateX(-50%) perspective(800px) rotateY(${rotY}deg) rotate(${rot}deg) scaleX(${squashX * breathe}) scaleY(${squashY * breathe})`,
+        transform: `translateX(-50%) perspective(800px) rotateY(${rotY}deg) rotate(${tilt}deg) scaleX(${squashX * breathe}) scaleY(${squashY * breathe})`,
         transformOrigin: 'center bottom',
       }}>
-        <ByteMascot size={450} equipment={equipment} />
+        <ByteMascot size={550} equipment={equipment} />
       </div>
 
       {/* Ground line */}
       <div style={{
         position: 'absolute',
-        top: groundY + 180,
+        top: groundY + 235,
         left: '50%',
         transform: 'translateX(-50%)',
-        width: 450, height: 2,
+        width: 550, height: 3,
         background: `rgba(255,255,255,${groundOpacity})`,
-        borderRadius: 1,
+        borderRadius: 2,
       }} />
 
       {/* Impact particles */}
-      {showParticles && Array.from({ length: 14 }, (_, i) => {
-        const angle = (i / 14) * Math.PI * 2;
-        const progress = (frame - fallEnd) / (fps * 0.5);
-        const dist = progress * (70 + (i % 3) * 30);
+      {showParticles && Array.from({ length: 18 }, (_, i) => {
+        const angle = (i / 18) * Math.PI * 2;
+        const progress = (frame - fallEnd) / (fps * 0.6);
+        const dist = progress * (100 + (i % 4) * 35);
         const x = Math.cos(angle) * dist;
-        const py = Math.sin(angle) * dist * 0.3 - progress * 30;
-        const opacity = interpolate(progress, [0, 0.3, 1], [0.8, 0.5, 0], { extrapolateRight: 'clamp' });
-        const size = 3 + (i % 3) * 2;
+        const py = Math.sin(angle) * dist * 0.3 - progress * 50;
+        const opacity = interpolate(progress, [0, 0.2, 1], [1, 0.6, 0], { extrapolateRight: 'clamp' });
+        const size = 4 + (i % 4) * 2;
 
         return (
           <div key={i} style={{
             position: 'absolute',
-            top: groundY + 170 + py,
+            top: groundY + 220 + py,
             left: width / 2 + x,
             width: size, height: size, borderRadius: size,
             background: i % 3 === 0 ? '#4ade80' : i % 3 === 1 ? '#fb923c' : '#fff',
-            opacity: opacity * 0.6,
+            opacity: opacity * 0.7,
           }} />
         );
       })}
