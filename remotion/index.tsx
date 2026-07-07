@@ -67,8 +67,8 @@ export const RemotionRoot: React.FC = () => (
         lessonTitle: 'Example Lesson',
         lessonNumber: 1,
       }} />
-    <Composition id="ByteFall" component={ByteFallAnimation} durationInFrames={8 * FPS} fps={FPS} width={REEL_W} height={REEL_H}
-      defaultProps={{ equipment: {}, durationInFrames: 8 * FPS }} />
+    <Composition id="ByteFall" component={ByteFallAnimation} durationInFrames={10 * FPS} fps={FPS} width={REEL_W} height={REEL_H}
+      defaultProps={{ equipment: {}, durationInFrames: 10 * FPS }} />
   </>
 );
 
