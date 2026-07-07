@@ -22,14 +22,9 @@ export const ByteFallAnimation: React.FC<{
   // === PHASE 1: Spinning in center (0 - 5s) ===
   const spinEnd = fps * 5;
 
-  // Simple continuous 360° rotation
+  // Continuous 360° rotation like a DJ plate — no movement, just spin
   const rotation = frame < spinEnd
-    ? (frame / fps) * 360  // one full rotation per second
-    : 0;
-
-  // Gentle float
-  const floatY = frame < spinEnd
-    ? Math.sin(frame / fps * Math.PI) * 15
+    ? (frame / fps) * 360
     : 0;
 
   // === PHASE 2: Fall down (5s - 6s) ===
@@ -83,7 +78,7 @@ export const ByteFallAnimation: React.FC<{
   let rot: number;
 
   if (frame < spinEnd) {
-    y = centerY + floatY;
+    y = centerY;
     rot = rotation;
   } else if (frame < fallEnd) {
     y = centerY + fallY;
