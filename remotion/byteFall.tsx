@@ -35,9 +35,9 @@ export const ByteFallAnimation: React.FC<{
 
   const enterEnd = fps * 1.5;
   const fallStart = enterEnd;
-  const fallEnd = fps * 11;
+  const fallEnd = fps * 14;
   const impactFrame = fallEnd;
-  const revealStart = fps * 12.5;
+  const revealStart = fps * 15.5;
 
   const startY = -200;
   const floatY = height * 0.3;
@@ -66,25 +66,22 @@ export const ByteFallAnimation: React.FC<{
 
   const fallDistance = (groundY - floatY) * fallEase;
 
-  // Rotation during fall — spins faster as it falls
-  const fallRotation = frame >= fallStart && frame < fallEnd
-    ? interpolate(frame, [fallStart, fallEnd], [0, 1080], { extrapolateRight: 'clamp' })
-    : 0;
+  // No full rotation — just wobble and tilt like tumbling/flailing
 
-  // Wobble side to side while falling — like tumbling
+  // Wobble side to side — flying left and right
   const wobbleX = frame >= fallStart && frame < fallEnd
-    ? Math.sin(frame / fps * Math.PI * 1.5) * interpolate(fallProgress, [0, 0.5, 1], [30, 60, 20], { extrapolateRight: 'clamp' })
+    ? Math.sin(frame / fps * Math.PI * 1.2) * interpolate(fallProgress, [0, 0.3, 0.7, 1], [40, 80, 100, 30], { extrapolateRight: 'clamp' })
     : 0;
 
-  // Scale pulse — gets excited/nervous
-  const scalePulse = frame >= fallStart && frame < fallEnd
-    ? 1 + Math.sin(frame / fps * Math.PI * 4) * interpolate(fallProgress, [0, 0.5, 0.9], [0.02, 0.06, 0.02], { extrapolateRight: 'clamp' })
-    : 1;
-
-  // Tilt — rocks back and forth
+  // Tilt — rocking back and forth, getting more intense
   const tilt = frame >= fallStart && frame < fallEnd
-    ? Math.sin(frame / fps * Math.PI * 2.5) * interpolate(fallProgress, [0, 0.5, 1], [5, 15, 5], { extrapolateRight: 'clamp' })
+    ? Math.sin(frame / fps * Math.PI * 2) * interpolate(fallProgress, [0, 0.3, 0.7, 1], [8, 20, 30, 10], { extrapolateRight: 'clamp' })
     : 0;
+
+  // Scale pulse — breathing/pulsing while falling
+  const scalePulse = frame >= fallStart && frame < fallEnd
+    ? 1 + Math.sin(frame / fps * Math.PI * 3) * interpolate(fallProgress, [0, 0.5, 0.9], [0.02, 0.05, 0.02], { extrapolateRight: 'clamp' })
+    : 1;
 
   // === PHASE 3: Impact ===
   const impactTime = landed ? frame - impactFrame : -1;
@@ -119,7 +116,7 @@ export const ByteFallAnimation: React.FC<{
     byteRot = 0;
   } else if (frame < fallEnd) {
     byteY = floatY + fallDistance;
-    byteRot = fallRotation;
+    byteRot = 0; // no full rotation, just tilt
   } else {
     byteY = groundY + bounce;
     byteRot = 0;
@@ -260,7 +257,7 @@ export const ByteFallAnimation: React.FC<{
 
       {/* Definition — reveals above Byte after landing */}
       <div style={{
-        position: 'absolute', top: 80 + defSlideUp, left: 0, right: 0,
+        position: 'absolute', top: 160 + defSlideUp, left: 0, right: 0,
         textAlign: 'center', opacity: defOp,
         padding: '0 60px',
       }}>
