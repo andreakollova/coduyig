@@ -172,17 +172,23 @@ export async function pickGlossary(): Promise<GlossaryData | null> {
 async function generateSimple(entry: any): Promise<{ en: string; sk: string }> {
   if (!OPENAI_KEY) return { en: 'A key programming concept.', sk: 'Dôležitý programátorský koncept.' };
 
-  const prompt = `You are explaining a programming term in a casual but smart way — like a cool older friend who knows tech, not like a children's book.
+  const prompt = `You are explaining a programming term to someone who is learning to code. Smart but simple — no dumbing down, no weird forced analogies.
 
 Term: ${entry.term} (${entry.short})
 Technical explanation: ${entry.explanation_en}
-Code example: ${entry.example}
 
 Write TWO explanations:
 
-1. "en" — English. Use a relatable analogy that actually matches the process of what this term does. Keep it smart but accessible — like explaining to a friend who's interested but new to coding. 3-4 sentences. Max 350 chars. End with why it matters.
+1. "en" — English. Explain what it DOES in practice, not what it IS. Use a real-world comparison ONLY if it naturally fits and is accurate. If no good analogy exists, just explain it simply without one. 2-3 sentences. Max 300 chars.
 
-2. "sk" — Slovak (NEVER Czech). Same style. Use natural casual Slovak — "predstav si", "v podstate", "funguje to tak že". NOT childish ("kamoš", "tajný tunel"). 3-4 sentences. Max 350 chars.
+2. "sk" — Slovak (NEVER Czech). Same content. Natural Slovak — "v podstate", "funguje to tak, že", "jednoducho povedané". Max 300 chars.
+
+RULES:
+- NO forced/weird analogies (no waiters, no keys, no tunnels, no restaurants)
+- NO childish language ("kamoš", "super vec")
+- Focus on: what problem does it solve? why do developers use it?
+- Be specific — mention real use cases (websites, apps, servers)
+- If you use an analogy it MUST be 1:1 accurate to how the technology actually works
 
 JSON only:
 {"en": "...", "sk": "..."}`;
