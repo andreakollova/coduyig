@@ -15,7 +15,7 @@ const VOICES = {
     student: 's3TPKV1kjDlVtZbl4Ksh',
   },
   sk: {
-    teacher: 'DXwrzy2wtKORwDTbsMwk',
+    teacher: 'Ewvy14akxdhONg4fmNry', // was DXwrzy2wtKORwDTbsMwk
     student: '5TUD5nYN251MvBggIfLu',
   },
 };
@@ -152,7 +152,7 @@ function applyPhonetics(text: string, lang: 'en' | 'sk'): string {
   return result;
 }
 
-async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', speed = 1.3, speaker: 'student' | 'teacher' = 'teacher'): Promise<{ audioBuffer: Buffer; wordTimings: WordTiming[]; duration: number }> {
+async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', speed = 1.3, speaker: 'student' | 'teacher' = 'teacher', enthusiastic = false): Promise<{ audioBuffer: Buffer; wordTimings: WordTiming[]; duration: number }> {
   // Apply phonetic pronunciation for SK TTS only (captions keep original text)
   const ttsText = applyPhonetics(text, lang);
   const originalWords = text.split(/\s+/);
@@ -161,6 +161,13 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
   const isSkStudent = lang === 'sk' && speaker === 'student';
   const isSkTeacher = lang === 'sk' && speaker === 'teacher';
 
+  let stability = isSkStudent ? 0.6 : isSkTeacher ? 0.3 : 0.45;
+  let style = isSkStudent ? 0.3 : isSkTeacher ? 0.8 : 0.5;
+  if (enthusiastic) {
+    stability = 0.35;
+    style = 0.85;
+  }
+
   const res = await fetch(`${API}/text-to-speech/${voiceId}/with-timestamps`, {
     method: 'POST',
     headers: { 'xi-api-key': API_KEY, 'Content-Type': 'application/json' },
@@ -168,9 +175,9 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
       text: ttsText,
       model_id: model,
       voice_settings: {
-        stability: isSkStudent ? 0.6 : isSkTeacher ? 0.3 : 0.45,
+        stability,
         similarity_boost: 0.75,
-        style: isSkStudent ? 0.3 : isSkTeacher ? 0.8 : 0.5,
+        style,
         use_speaker_boost: true,
       },
       speed,
@@ -232,11 +239,11 @@ export async function generateConversationTTS(
     // Last student line (summary) speaks slower for clarity
     const isLastStudentLine = line.speaker === 'student' && i === lines.length - 2;
     let baseSpeed = 1.3;
-    if (lang === 'sk' && line.speaker === 'teacher') baseSpeed = 2.0;
+    if (lang === 'sk' && line.speaker === 'teacher') baseSpeed = 1.5;
     if (lang === 'sk' && line.speaker === 'student') baseSpeed = 1.1; // slower for clearer SK pronunciation
     const lineSpeed = isLastStudentLine ? 0.95 : baseSpeed;
 
-    const { audioBuffer, wordTimings, duration } = await ttsLine(line.spoken, voiceId, lang, lineSpeed, line.speaker);
+    const { audioBuffer, wordTimings, duration } = await ttsLine(line.spoken, voiceId, lang, lineSpeed, line.speaker, isLastStudentLine);
 
     // Save raw audio then normalize volume
     const rawPath = path.join(outputDir, `line_${i}_raw.mp3`);
