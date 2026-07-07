@@ -22,8 +22,8 @@ export const ByteFallAnimation: React.FC<{
   // === PHASE 1: Spinning in center (0 - 5s) ===
   const spinEnd = fps * 5;
 
-  // Continuous 360° rotation like a DJ plate — no movement, just spin
-  const rotation = frame < spinEnd
+  // 3D rotation — rotates around Y axis like a coin spinning
+  const rotationY = frame < spinEnd
     ? (frame / fps) * 360
     : 0;
 
@@ -77,15 +77,19 @@ export const ByteFallAnimation: React.FC<{
   let y: number;
   let rot: number;
 
+  let rotY = 0;
   if (frame < spinEnd) {
     y = centerY;
-    rot = rotation;
+    rot = 0;
+    rotY = rotationY;
   } else if (frame < fallEnd) {
     y = centerY + fallY;
     rot = fallRotation;
+    rotY = 0;
   } else {
     y = groundY + bounce;
     rot = 0;
+    rotY = 0;
   }
 
   // === Idle breathing after bounce ===
@@ -131,10 +135,10 @@ export const ByteFallAnimation: React.FC<{
         position: 'absolute',
         top: y,
         left: '50%',
-        transform: `translateX(-50%) rotate(${rot}deg) scaleX(${squashX * breathe}) scaleY(${squashY * breathe})`,
+        transform: `translateX(-50%) perspective(800px) rotateY(${rotY}deg) rotate(${rot}deg) scaleX(${squashX * breathe}) scaleY(${squashY * breathe})`,
         transformOrigin: 'center bottom',
       }}>
-        <ByteMascot size={350} equipment={equipment} />
+        <ByteMascot size={450} equipment={equipment} />
       </div>
 
       {/* Ground line */}
