@@ -66,9 +66,24 @@ export const ByteFallAnimation: React.FC<{
 
   const fallDistance = (groundY - floatY) * fallEase;
 
-  // Gentle rotation during fall — slow, elegant
+  // Rotation during fall — spins faster as it falls
   const fallRotation = frame >= fallStart && frame < fallEnd
-    ? interpolate(frame, [fallStart, fallEnd], [0, 720], { extrapolateRight: 'clamp' })
+    ? interpolate(frame, [fallStart, fallEnd], [0, 1080], { extrapolateRight: 'clamp' })
+    : 0;
+
+  // Wobble side to side while falling — like tumbling
+  const wobbleX = frame >= fallStart && frame < fallEnd
+    ? Math.sin(frame / fps * Math.PI * 1.5) * interpolate(fallProgress, [0, 0.5, 1], [30, 60, 20], { extrapolateRight: 'clamp' })
+    : 0;
+
+  // Scale pulse — gets excited/nervous
+  const scalePulse = frame >= fallStart && frame < fallEnd
+    ? 1 + Math.sin(frame / fps * Math.PI * 4) * interpolate(fallProgress, [0, 0.5, 0.9], [0.02, 0.06, 0.02], { extrapolateRight: 'clamp' })
+    : 1;
+
+  // Tilt — rocks back and forth
+  const tilt = frame >= fallStart && frame < fallEnd
+    ? Math.sin(frame / fps * Math.PI * 2.5) * interpolate(fallProgress, [0, 0.5, 1], [5, 15, 5], { extrapolateRight: 'clamp' })
     : 0;
 
   // === PHASE 3: Impact ===
@@ -208,7 +223,7 @@ export const ByteFallAnimation: React.FC<{
       {/* Byte */}
       <div style={{
         position: 'absolute', top: byteY, left: '50%',
-        transform: `translateX(-50%) rotate(${byteRot}deg) scaleX(${squashX * breathe}) scaleY(${squashY * breathe})`,
+        transform: `translateX(-50%) translateX(${landed ? 0 : wobbleX}px) rotate(${byteRot + tilt}deg) scaleX(${squashX * breathe * scalePulse}) scaleY(${squashY * breathe * scalePulse})`,
         transformOrigin: 'center bottom',
       }}>
         <ByteMascot size={byteSize} equipment={equipment} />
