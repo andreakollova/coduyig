@@ -69,7 +69,7 @@ export const RemotionRoot: React.FC = () => (
       }} />
     <Composition id="ByteFall" component={ByteFallAnimation} durationInFrames={15 * FPS} fps={FPS} width={REEL_W} height={REEL_H}
       calculateMetadata={({ props }) => ({ durationInFrames: props.durationInFrames || 15 * FPS })}
-      defaultProps={{ equipment: {}, durationInFrames: 15 * FPS, term: 'SSH', termFull: 'Secure Shell', definition: 'Secure communication protocol for remote access' }} />
+      defaultProps={{ equipment: {}, durationInFrames: 15 * FPS, term: 'SSH', termFull: 'Secure Shell', definition: 'Secure communication protocol for remote access', audioUrl: '', words: [] }} />
   </>
 );
 
