@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   AbsoluteFill, useCurrentFrame, interpolate, useVideoConfig,
-  staticFile, Img,
+  staticFile, Img, Audio, Sequence,
 } from 'remotion';
 import { loadFont } from '@remotion/google-fonts/Inter';
 import { ByteMascot } from './Byte';
@@ -12,160 +12,218 @@ const LOGO_SRC = staticFile('logocoduy.png');
 export const ByteFallAnimation: React.FC<{
   equipment?: Record<string, string>;
   durationInFrames: number;
-}> = ({ equipment = {} }) => {
+  term?: string;
+  termFull?: string;
+  definition?: string;
+}> = ({ equipment = {}, term = 'SSH', termFull = 'Secure Shell', definition = 'Bezpečný komunikačný protokol na vzdialený prístup' }) => {
   const frame = useCurrentFrame();
   const { fps, height, width } = useVideoConfig();
 
-  const byteSize = 500;
-  const groundLineY = height * 0.75;
-  const landY = groundLineY - byteSize;
-  const startY = -byteSize - 100;
+  const byteSize = 400;
+  const centerX = width / 2;
 
-  // === TIMING ===
-  const fallDuration = fps * 6; // 6 seconds of smooth falling
-  const landed = frame >= fallDuration;
+  // === SCENE: Byte floats in center, term appears, then Byte drops ===
 
-  // === SMOOTH FALL — ease-in cubic (slow start, smooth acceleration) ===
-  const fallProgress = Math.min(frame / fallDuration, 1);
-  const easedProgress = fallProgress * fallProgress * fallProgress; // cubic ease-in
-  const currentY = landed ? landY : startY + (landY - startY) * easedProgress;
+  // PHASE 1 (0-2s): Byte appears, floats gently
+  // PHASE 2 (2-4s): Term + full name appears with typing effect
+  // PHASE 3 (4-6s): Definition appears below
+  // PHASE 4 (6-7.5s): Everything starts shaking, Byte looks worried
+  // PHASE 5 (7.5-8.5s): Byte drops, everything falls
+  // PHASE 6 (8.5-10s): Bounce, settle, Coduy logo
 
-  // === GENTLE CONTINUOUS ROTATION — smooth, not jerky ===
-  const rotationSpeed = interpolate(fallProgress, [0, 0.5, 1], [0.5, 1, 2], { extrapolateRight: 'clamp' });
-  const rotation = landed ? 0 : frame * rotationSpeed * 3;
+  const phase1End = fps * 2;
+  const phase2End = fps * 4;
+  const phase3End = fps * 6;
+  const phase4End = fps * 7.5;
+  const phase5End = fps * 8.5;
 
-  // === WIND STREAKS — thin lines moving upward (feeling of speed) ===
-  const windOpacity = interpolate(fallProgress, [0, 0.2, 0.8, 1], [0, 0.03, 0.12, 0.2], { extrapolateRight: 'clamp' });
+  // === BYTE POSITION ===
+  const byteRestY = height * 0.25;
+  const groundY = height * 0.65;
 
-  // === AFTER LANDING ===
-  // Bounce
-  const bounceTime = landed ? (frame - fallDuration) / fps : 0;
-  const bounce = landed
-    ? -140 * Math.exp(-bounceTime * 4) * Math.abs(Math.sin(bounceTime * Math.PI * 3))
+  // Gentle float in phases 1-4
+  const floatY = frame < phase4End
+    ? Math.sin(frame / fps * Math.PI * 0.5) * 12
     : 0;
 
-  // Squash — only on first impact
-  const impactTime = landed ? frame - fallDuration : -1;
-  const squashX = impactTime >= 0 && impactTime < fps * 0.4
-    ? interpolate(impactTime, [0, fps * 0.05, fps * 0.15, fps * 0.4], [1, 1.4, 0.9, 1], { extrapolateRight: 'clamp' })
+  // Shake in phase 4
+  const isShaking = frame >= phase3End && frame < phase4End;
+  const shakeX = isShaking ? Math.sin(frame * 1.5) * interpolate(frame, [phase3End, phase4End], [2, 15], { extrapolateRight: 'clamp' }) : 0;
+  const shakeY = isShaking ? Math.cos(frame * 2) * interpolate(frame, [phase3End, phase4End], [1, 8], { extrapolateRight: 'clamp' }) : 0;
+
+  // Fall in phase 5
+  const isFalling = frame >= phase4End && frame < phase5End;
+  const fallProgress = isFalling ? interpolate(frame, [phase4End, phase5End], [0, 1], { extrapolateRight: 'clamp' }) : frame >= phase5End ? 1 : 0;
+  const fallEased = fallProgress * fallProgress;
+  const fallY = fallEased * (groundY - byteRestY);
+
+  // Rotation during fall
+  const fallRotation = isFalling ? fallProgress * 360 : 0;
+
+  // Bounce after landing
+  const hasLanded = frame >= phase5End;
+  const bounceTime = hasLanded ? (frame - phase5End) / fps : 0;
+  const bounce = hasLanded
+    ? -120 * Math.exp(-bounceTime * 5) * Math.abs(Math.sin(bounceTime * Math.PI * 3.5))
+    : 0;
+
+  // Squash
+  const impactT = hasLanded ? frame - phase5End : -1;
+  const squashX = impactT >= 0 && impactT < fps * 0.35
+    ? interpolate(impactT, [0, fps * 0.04, fps * 0.12, fps * 0.35], [1, 1.4, 0.88, 1], { extrapolateRight: 'clamp' })
     : 1;
-  const squashY = impactTime >= 0 && impactTime < fps * 0.4
-    ? interpolate(impactTime, [0, fps * 0.05, fps * 0.15, fps * 0.4], [1, 0.6, 1.1, 1], { extrapolateRight: 'clamp' })
+  const squashY = impactT >= 0 && impactT < fps * 0.35
+    ? interpolate(impactT, [0, fps * 0.04, fps * 0.12, fps * 0.35], [1, 0.55, 1.12, 1], { extrapolateRight: 'clamp' })
     : 1;
 
-  // Idle breathing after settling
-  const settled = landed && bounceTime > 1.5;
-  const breathe = settled
-    ? 1 + Math.sin((frame - fallDuration - fps * 1.5) / fps * Math.PI * 0.6) * 0.02
-    : 1;
+  // Breathing after settle
+  const settled = hasLanded && bounceTime > 1.2;
+  const breathe = settled ? 1 + Math.sin((bounceTime - 1.2) * Math.PI * 0.6) * 0.02 : 1;
 
-  // Screen shake on first impact
-  const shakeX = impactTime >= 0 && impactTime < fps * 0.3
-    ? Math.sin(impactTime * 2.5) * interpolate(impactTime, [0, fps * 0.3], [10, 0], { extrapolateRight: 'clamp' })
+  let byteY: number;
+  if (frame < phase4End) {
+    byteY = byteRestY + floatY;
+  } else if (isFalling) {
+    byteY = byteRestY + fallY;
+  } else {
+    byteY = groundY + bounce;
+  }
+
+  // === TERM TEXT ===
+  // Typing effect for term
+  const termChars = frame >= phase1End
+    ? Math.min(term.length, Math.floor((frame - phase1End) / 3))
     : 0;
-  const shakeY = impactTime >= 0 && impactTime < fps * 0.3
-    ? Math.cos(impactTime * 3) * interpolate(impactTime, [0, fps * 0.3], [8, 0], { extrapolateRight: 'clamp' })
+  const termVisible = term.slice(0, termChars);
+
+  // Full name fade in
+  const fullNameOp = frame >= phase1End + term.length * 3
+    ? interpolate(frame, [phase1End + term.length * 3, phase1End + term.length * 3 + fps * 0.5], [0, 1], { extrapolateRight: 'clamp' })
     : 0;
 
-  // Shadow
-  const shadowScale = interpolate(easedProgress, [0, 1], [0.15, 1], { extrapolateRight: 'clamp' });
-  const shadowOpacity = interpolate(easedProgress, [0, 1], [0.02, 0.12], { extrapolateRight: 'clamp' });
-
-  // Ground line
-  const groundOpacity = landed
-    ? interpolate(impactTime, [0, fps * 0.1], [0, 0.4], { extrapolateRight: 'clamp' })
+  // Definition fade in
+  const defOp = frame >= phase2End
+    ? interpolate(frame, [phase2End, phase2End + fps * 0.8], [0, 1], { extrapolateRight: 'clamp' })
     : 0;
 
-  // Impact dust cloud
-  const showDust = landed && impactTime < fps * 1.0;
-  const dustProgress = impactTime >= 0 ? impactTime / (fps * 0.8) : 0;
+  // Text falls with Byte in phase 5
+  const textFallY = isFalling || hasLanded
+    ? interpolate(frame, [phase4End, phase4End + fps * 0.3], [0, height + 200], { extrapolateRight: 'clamp' })
+    : 0;
 
-  // Impact particles
-  const showParticles = landed && impactTime < fps * 0.6;
-  const particleProgress = impactTime >= 0 ? impactTime / (fps * 0.5) : 0;
+  // Text shake
+  const textShakeX = isShaking ? Math.sin(frame * 1.8) * interpolate(frame, [phase3End, phase4End], [1, 10], { extrapolateRight: 'clamp' }) : 0;
 
-  const finalY = currentY + bounce;
+  // === SCREEN SHAKE on impact ===
+  const screenShake = impactT >= 0 && impactT < fps * 0.25
+    ? Math.sin(impactT * 3) * interpolate(impactT, [0, fps * 0.25], [12, 0], { extrapolateRight: 'clamp' })
+    : 0;
+
+  // === GROUND ===
+  const groundOp = hasLanded ? interpolate(impactT, [0, fps * 0.1], [0, 0.4], { extrapolateRight: 'clamp' }) : 0;
+
+  // === IMPACT PARTICLES ===
+  const showParticles = hasLanded && impactT < fps * 0.7;
+  const pProgress = impactT >= 0 ? impactT / (fps * 0.5) : 0;
+
+  // === SHADOW ===
+  const shadowOp = frame < phase4End ? 0.05
+    : hasLanded ? 0.12
+    : interpolate(fallProgress, [0, 1], [0.05, 0.12]);
+  const shadowScale = frame < phase4End ? 0.6 : interpolate(fallProgress, [0, 1], [0.6, 1], { extrapolateRight: 'clamp' });
+
+  // === BYTE ENTRY ===
+  const byteEntryScale = interpolate(frame, [0, fps * 0.5], [0, 1], { extrapolateRight: 'clamp' });
 
   return (
     <AbsoluteFill style={{
       background: '#0A0A0A', fontFamily,
-      transform: `translate(${shakeX}px, ${shakeY}px)`,
+      transform: `translateY(${screenShake}px)`,
     }}>
 
-      {/* Wind streaks */}
-      {!landed && Array.from({ length: 20 }, (_, i) => {
-        const x = ((i * 53 + 30) % (width - 60)) + 30;
-        const speed = 8 + (i % 5) * 4;
-        const streakY = ((frame * speed + i * 97) % (height + 300)) - 150;
-        const streakH = interpolate(fallProgress, [0, 1], [20, 80 + (i % 3) * 40], { extrapolateRight: 'clamp' });
-        return (
-          <div key={`w-${i}`} style={{
-            position: 'absolute', left: x, top: streakY,
-            width: 1.5, height: streakH, borderRadius: 1,
-            background: `rgba(255,255,255,${windOpacity * (0.5 + (i % 3) * 0.25)})`,
-          }} />
-        );
-      })}
+      {/* Background music */}
+      {(() => { try { return <Audio src={staticFile('bgmusic.mp3')} volume={0.04} loop />; } catch { return null; } })()}
+
+      {/* Term text — floats above Byte */}
+      {termChars > 0 && (
+        <div style={{
+          position: 'absolute',
+          top: byteRestY - 100 + textFallY,
+          left: 0, right: 0,
+          textAlign: 'center',
+          transform: `translateX(${textShakeX}px)`,
+        }}>
+          {/* Big term */}
+          <div style={{
+            fontSize: 90, fontWeight: 900, color: '#fff',
+            letterSpacing: '0.08em',
+            textShadow: '0 0 40px rgba(74,222,128,0.2)',
+          }}>
+            {termVisible}
+            {termChars < term.length && <span style={{ opacity: frame % 10 < 5 ? 1 : 0 }}>|</span>}
+          </div>
+
+          {/* Full name */}
+          <div style={{
+            fontSize: 24, fontWeight: 600, color: '#4ade80',
+            opacity: fullNameOp, marginTop: 8,
+            letterSpacing: '0.06em',
+          }}>
+            {termFull}
+          </div>
+
+          {/* Definition */}
+          <div style={{
+            fontSize: 28, fontWeight: 500, color: '#aaa',
+            opacity: defOp, marginTop: 20,
+            maxWidth: 700, margin: '20px auto 0',
+            lineHeight: 1.4,
+          }}>
+            {definition}
+          </div>
+        </div>
+      )}
 
       {/* Shadow */}
       <div style={{
-        position: 'absolute', top: groundLineY + 2, left: '50%',
-        transform: `translateX(-50%) scaleX(${shadowScale}) scaleY(0.3)`,
-        width: 300, height: 40, borderRadius: '50%',
+        position: 'absolute', top: groundY + byteSize + 5, left: '50%',
+        transform: `translateX(-50%) scaleX(${shadowScale}) scaleY(0.25)`,
+        width: 250, height: 30, borderRadius: '50%',
         background: 'rgba(255,255,255,0.06)',
-        opacity: shadowOpacity, filter: 'blur(15px)',
+        opacity: shadowOp, filter: 'blur(12px)',
       }} />
 
       {/* Byte */}
       <div style={{
-        position: 'absolute', top: finalY, left: '50%',
-        transform: `translateX(-50%) rotate(${rotation}deg) scaleX(${squashX * breathe}) scaleY(${squashY * breathe})`,
+        position: 'absolute', top: byteY, left: '50%',
+        transform: `translateX(${shakeX}px) translateX(-50%) rotate(${fallRotation}deg) scaleX(${squashX * breathe}) scaleY(${squashY * breathe})`,
         transformOrigin: 'center bottom',
+        scale: `${byteEntryScale}`,
       }}>
         <ByteMascot size={byteSize} equipment={equipment} />
       </div>
 
       {/* Ground line */}
       <div style={{
-        position: 'absolute', top: groundLineY + 5, left: '50%',
+        position: 'absolute', top: groundY + byteSize + 5, left: '50%',
         transform: 'translateX(-50%)',
         width: 500, height: 2,
-        background: `rgba(255,255,255,${groundOpacity})`,
+        background: `rgba(255,255,255,${groundOp})`,
         borderRadius: 1,
       }} />
-
-      {/* Dust cloud on impact */}
-      {showDust && Array.from({ length: 6 }, (_, i) => {
-        const side = i < 3 ? -1 : 1;
-        const idx = i % 3;
-        const spread = interpolate(dustProgress, [0, 1], [0, 60 + idx * 40], { extrapolateRight: 'clamp' });
-        const dustOp = interpolate(dustProgress, [0, 0.1, 0.5, 1], [0, 0.15, 0.08, 0], { extrapolateRight: 'clamp' });
-        const dustSize = interpolate(dustProgress, [0, 1], [10, 40 + idx * 15], { extrapolateRight: 'clamp' });
-        const dustY = interpolate(dustProgress, [0, 1], [0, -20 - idx * 10], { extrapolateRight: 'clamp' });
-        return (
-          <div key={`d-${i}`} style={{
-            position: 'absolute',
-            top: groundLineY - dustSize / 2 + dustY,
-            left: width / 2 + side * spread - dustSize / 2,
-            width: dustSize, height: dustSize, borderRadius: '50%',
-            background: 'rgba(255,255,255,0.06)',
-            opacity: dustOp, filter: 'blur(8px)',
-          }} />
-        );
-      })}
 
       {/* Impact particles */}
       {showParticles && Array.from({ length: 16 }, (_, i) => {
         const angle = (i / 16) * Math.PI * 2;
-        const dist = particleProgress * (80 + (i % 4) * 30);
+        const dist = pProgress * (90 + (i % 4) * 25);
         const x = Math.cos(angle) * dist;
-        const py = Math.sin(angle) * dist * 0.25 - particleProgress * 40;
-        const pOp = interpolate(particleProgress, [0, 0.15, 1], [0.9, 0.5, 0], { extrapolateRight: 'clamp' });
+        const py = Math.sin(angle) * dist * 0.25 - pProgress * 35;
+        const pOp = interpolate(pProgress, [0, 0.15, 1], [0.8, 0.4, 0], { extrapolateRight: 'clamp' });
         const size = 3 + (i % 3) * 2;
         return (
           <div key={`p-${i}`} style={{
             position: 'absolute',
-            top: groundLineY - 5 + py,
+            top: groundY + byteSize + py,
             left: width / 2 + x,
             width: size, height: size, borderRadius: size,
             background: i % 3 === 0 ? '#4ade80' : i % 3 === 1 ? '#fb923c' : '#fff',
@@ -174,7 +232,7 @@ export const ByteFallAnimation: React.FC<{
         );
       })}
 
-      {/* Logo */}
+      {/* Logo — always visible */}
       <div style={{
         position: 'absolute', bottom: 60, left: 0, right: 0,
         display: 'flex', justifyContent: 'center',
