@@ -243,9 +243,9 @@ export const ByteFallAnimation: React.FC<{
         );
       })}
 
-      {/* Definition — reveals after landing */}
+      {/* Definition — reveals above Byte after landing */}
       <div style={{
-        position: 'absolute', top: groundLineTop + 40 + defSlideUp, left: 0, right: 0,
+        position: 'absolute', top: 80 + defSlideUp, left: 0, right: 0,
         textAlign: 'center', opacity: defOp,
         padding: '0 60px',
       }}>
