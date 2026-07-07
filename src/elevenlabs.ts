@@ -11,7 +11,7 @@ const API = 'https://api.elevenlabs.io/v1';
 // Voices per language
 const VOICES = {
   en: {
-    teacher: '3TStB8f3X3To0Uj5R7RK',
+    teacher: 'Ewvy14akxdhONg4fmNry', // was 3TStB8f3X3To0Uj5R7RK
     student: 's3TPKV1kjDlVtZbl4Ksh',
   },
   sk: {
@@ -140,13 +140,24 @@ const SK_PHONETICS: Record<string, string> = {
   'AttributeError': 'etribjút eror',
 };
 
+// EN: only apply phonetics to abbreviations (uppercase terms), not regular English words
+const EN_ABBREV_ONLY = new Set(
+  Object.keys(SK_PHONETICS).filter(k => {
+    const isAbbrev = k === k.toUpperCase() || ['IoT', 'OAuth', 'GraphQL'].includes(k);
+    const isRegularWord = /^[a-z]/.test(k) || ['Secure', 'Shell', 'True', 'False', 'None'].includes(k)
+      || k.endsWith('Error') || ['Try', 'Except', 'While', 'Break', 'Continue', 'Raise', 'Yield',
+        'Async', 'Await', 'Tuple', 'Cache', 'Thread', 'Scope', 'Debug', 'Debugger', 'Loop',
+        'Boolean', 'Byte', 'Float', 'Queue', 'Stack', 'Slice', 'Range', 'Finally'].includes(k);
+    return isAbbrev && !isRegularWord;
+  })
+);
+
 function applyPhonetics(text: string, lang: 'en' | 'sk'): string {
-  if (lang !== 'sk') return text;
   let result = text;
-  // Sort by length descending so longer terms match first
   const sorted = Object.entries(SK_PHONETICS).sort((a, b) => b[0].length - a[0].length);
   for (const [en, sk] of sorted) {
-    // Only replace whole words (not inside other words)
+    // For EN: only replace abbreviations, skip regular English words
+    if (lang === 'en' && !EN_ABBREV_ONLY.has(en)) continue;
     result = result.replace(new RegExp(`\\b${en}\\b`, 'g'), sk);
   }
   return result;
@@ -156,8 +167,8 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
   // Apply phonetic pronunciation for SK TTS only (captions keep original text)
   const ttsText = applyPhonetics(text, lang);
   const originalWords = text.split(/\s+/);
-  // Multilingual v2 for Slovak (better pronunciation), turbo for English (faster, smoother)
-  const model = lang === 'sk' ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5';
+  // Multilingual v2 for both — same voice used for EN and SK
+  const model = 'eleven_multilingual_v2';
   const isSkStudent = lang === 'sk' && speaker === 'student';
   const isSkTeacher = lang === 'sk' && speaker === 'teacher';
 
@@ -239,8 +250,7 @@ export async function generateConversationTTS(
     // Last student line (summary) speaks slower for clarity
     const isLastStudentLine = line.speaker === 'student' && i === lines.length - 2;
     let baseSpeed = 1.3;
-    if (lang === 'sk' && line.speaker === 'teacher') baseSpeed = 1.5;
-    if (lang === 'sk' && line.speaker === 'student') baseSpeed = 1.1; // slower for clearer SK pronunciation
+    if (line.speaker === 'student') baseSpeed = 1.1;
     const lineSpeed = isLastStudentLine ? 0.95 : baseSpeed;
 
     const { audioBuffer, wordTimings, duration } = await ttsLine(line.spoken, voiceId, lang, lineSpeed, line.speaker, isLastStudentLine);
