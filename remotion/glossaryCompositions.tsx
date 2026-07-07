@@ -12,8 +12,7 @@ const CoduyLogo: React.FC<{ height?: number }> = ({ height = 28 }) => (
 
 const categoryLabel: Record<string, { en: string; sk: string }> = {
   skratka: { en: 'ABBREVIATION', sk: 'SKRATKA' },
-  koncept: { en: 'CONCEPT', sk: 'KONCEPT' },
-  nastroj: { en: 'TOOL', sk: 'NÁSTROJ' },
+  pojem: { en: 'TERM', sk: 'POJEM' },
 };
 
 /** Animated antenna decoration — just the tip, floating and glowing */
