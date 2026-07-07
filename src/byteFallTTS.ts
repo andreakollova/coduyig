@@ -11,12 +11,91 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const API_KEY = process.env.ELEVENLABS_API_KEY || '';
+const OPENAI_KEY = process.env.OPENAI_API_KEY || '';
 const API = 'https://api.elevenlabs.io/v1';
+
+async function generateWordExplanations(term: string, termFull: string, definition: string, lang: 'sk' | 'en'): Promise<string[]> {
+  if (!OPENAI_KEY) {
+    // Fallback
+    const words = termFull.split(' ');
+    if (lang === 'sk') {
+      return words.map(w => `${w} znamená, že ${definition.toLowerCase()}.`);
+    }
+    return words.map(w => `${w} means ${definition.toLowerCase()}.`);
+  }
+
+  const words = termFull.split(' ');
+  const prompt = lang === 'sk'
+    ? `Skratka: ${term} = ${termFull}
+Definícia: ${definition}
+
+Pre každé slovo z "${termFull}" napíš JEDNU krátku vetu vo formáte:
+"[Slovo] znamená, že [krátke vysvetlenie max 8 slov]."
+
+Pravidlá:
+- Max 8 slov po "znamená, že"
+- Jednoduché, zrozumiteľné
+- Žiadne analógie, žiadne príklady
+- Slovenčina (NIKDY čeština)
+- Vrať LEN JSON pole reťazcov
+
+Príklad pre SSH = Secure Shell:
+["Secure znamená, že spojenie je bezpečné a šifrované.", "Shell znamená, že ovládaš počítač na diaľku cez terminál."]
+
+Vrať JSON objekt: {"lines": ["...", "..."]}
+
+Pre ${termFull}:`
+    : `Abbreviation: ${term} = ${termFull}
+Definition: ${definition}
+
+For each word in "${termFull}" write ONE short sentence in the format:
+"[Word] means [short explanation max 8 words]."
+
+Rules:
+- Max 8 words after "means"
+- Simple, clear
+- No analogies, no examples
+- Return ONLY a JSON array of strings
+
+Example for SSH = Secure Shell:
+["Secure means the connection is safe and encrypted.", "Shell means you control a computer through a terminal."]
+
+Return JSON object: {"lines": ["...", "..."]}
+
+For ${termFull}:`;
+
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${OPENAI_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.3,
+        max_tokens: 300,
+        response_format: { type: 'json_object' },
+      }),
+    });
+    const data = await res.json();
+    const content = data.choices?.[0]?.message?.content?.trim() || '[]';
+    const parsed = JSON.parse(content);
+    const arr = parsed.lines || (Array.isArray(parsed) ? parsed : Object.values(parsed).find(Array.isArray)) || [];
+    if (arr.length >= words.length) return arr.slice(0, words.length);
+  } catch (e) {
+    console.error('GPT explanation generation failed:', e);
+  }
+
+  // Fallback
+  if (lang === 'sk') {
+    return words.map(w => `${w} znamená, že ${definition.toLowerCase()}.`);
+  }
+  return words.map(w => `${w} means ${definition.toLowerCase()}.`);
+}
 
 // Voice IDs per language
 const VOICES = {
-  sk: { teacher: 'DXwrzy2wtKORwDTbsMwk', student: '5TUD5nYN251MvBggIfLu' },
-  en: { teacher: '3TStB8f3X3To0Uj5R7RK', student: 's3TPKV1kjDlVtZbl4Ksh' },
+  sk: { teacher: 'DXwrzy2wtKORwDTbsMwk', student: '5TUD5nYN251MvBggIfLu', bytefall: 'Ewvy14akxdhONg4fmNry' },
+  en: { teacher: '3TStB8f3X3To0Uj5R7RK', student: 's3TPKV1kjDlVtZbl4Ksh', bytefall: 'Ewvy14akxdhONg4fmNry' },
 };
 
 interface WordTiming {
@@ -56,6 +135,8 @@ function charsToWords(chars: ELResponse['alignment']): WordTiming[] {
   }
   return words;
 }
+
+// EN phonetics — only abbreviations (uppercase), no regular English words
 
 // SK phonetics for TTS pronunciation
 const SK_PHONETICS: Record<string, string> = {
@@ -103,13 +184,25 @@ const SK_PHONETICS: Record<string, string> = {
   'POP': 'pop',
 };
 
+// Only abbreviations — skip regular English words like Secure, Shell, try, cache etc.
+const EN_ONLY_ABBREVS = new Set([
+  'SSH', 'API', 'HTTP', 'HTTPS', 'SQL', 'CSS', 'HTML', 'DNS', 'URL', 'IP',
+  'TCP', 'UDP', 'FTP', 'JSON', 'XML', 'GUI', 'CLI', 'IDE', 'OOP', 'RAM',
+  'CPU', 'GPU', 'SSD', 'HDD', 'IoT', 'AI', 'ML', 'VPN', 'CDN', 'SDK',
+  'AJAX', 'CORS', 'JWT', 'OAuth', 'SMTP', 'IMAP', 'POP', 'REST', 'CRUD', 'DOM',
+]);
+const EN_PHONETICS: Record<string, string> = Object.fromEntries(
+  Object.entries(SK_PHONETICS).filter(([key]) => EN_ONLY_ABBREVS.has(key))
+);
+
 // Build a mapping from original words to their phonetic expansions
-function buildWordMap(text: string): { ttsText: string; originalWords: string[]; phoneticGroups: number[] } {
+function buildWordMap(text: string, lang: 'sk' | 'en' = 'sk'): { ttsText: string; originalWords: string[]; phoneticGroups: number[] } {
   const originalWords = text.split(/\s+/).filter(Boolean);
   const ttsWords: string[] = [];
-  const phoneticGroups: number[] = []; // for each tts word, which original word index it belongs to
+  const phoneticGroups: number[] = [];
 
-  const sorted = Object.entries(SK_PHONETICS).sort((a, b) => b[0].length - a[0].length);
+  const phoneticsMap = lang === 'sk' ? SK_PHONETICS : EN_PHONETICS;
+  const sorted = Object.entries(phoneticsMap).sort((a, b) => b[0].length - a[0].length);
 
   for (let oi = 0; oi < originalWords.length; oi++) {
     const raw = originalWords[oi];
@@ -134,13 +227,9 @@ function buildWordMap(text: string): { ttsText: string; originalWords: string[];
 }
 
 async function ttsSegment(text: string, voiceId: string, lang: 'sk' | 'en' = 'sk', speed = 1.8): Promise<{ audioBuffer: Buffer; wordTimings: WordTiming[]; duration: number }> {
-  // Only apply phonetics for SK
-  const usePhonetics = lang === 'sk';
-  const { ttsText, originalWords, phoneticGroups } = usePhonetics
-    ? buildWordMap(text)
-    : { ttsText: text, originalWords: text.split(/\s+/).filter(Boolean), phoneticGroups: text.split(/\s+/).filter(Boolean).map((_, i) => i) };
+  const { ttsText, originalWords, phoneticGroups } = buildWordMap(text, lang);
 
-  const model = lang === 'sk' ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5';
+  const model = 'eleven_multilingual_v2';
 
   const res = await fetch(`${API}/text-to-speech/${voiceId}/with-timestamps`, {
     method: 'POST',
@@ -149,9 +238,9 @@ async function ttsSegment(text: string, voiceId: string, lang: 'sk' | 'en' = 'sk
       text: ttsText,
       model_id: model,
       voice_settings: {
-        stability: 0.5,
-        similarity_boost: 0.75,
-        style: 0.7,
+        stability: 0.6,
+        similarity_boost: 0.8,
+        style: 0.4,
         use_speaker_boost: true,
       },
       speed,
@@ -201,26 +290,27 @@ export async function generateByteFallVoiceover(
 
   fs.mkdirSync(outputDir, { recursive: true });
 
-  const voiceId = VOICES[lang][voice];
+  const voiceId = VOICES[lang].bytefall;
   const parts = termFull.split(' ');
   const word1 = parts[0] || '';
   const word2 = parts[1] || '';
 
   // Build script based on language
+  const explains = await generateWordExplanations(term, termFull, definition, lang);
+
   let script: string[];
   if (lang === 'sk') {
     script = [
       `${term}! ${termFull}.`,
-      `${word1} znamená, že spojenie je bezpečné a šifrované.`,
-      `${word2 || 'To'} znamená, že ovládaš počítač na diaľku cez terminál.`,
-      `${term}. ${termFull}. ${term}. ${termFull}.`,
+      ...explains,
+      `${term}. ${termFull}.`,
     ];
   } else {
     script = [
       `${term}! ${termFull}.`,
-      `${word1} means the connection is encrypted and protected.`,
-      `${word2 || 'It'} means you control a computer remotely through a terminal.`,
-      `${term}. ${termFull}. ${term}. ${termFull}.`,
+      ...explains,
+      `${term}!`,
+      `${termFull}.`,
     ];
   }
 
@@ -228,13 +318,13 @@ export async function generateByteFallVoiceover(
 
   const allWords: WordTiming[] = [];
   const audioParts: string[] = [];
-  let cumTime = 1.5;
+  let cumTime = 1.0; // Start at 1s — 0.5s visible before speaking
 
   for (let i = 0; i < script.length; i++) {
     const line = script[i];
     console.log(`  Part ${i + 1}: "${line}"`);
 
-    const speed = lang === 'sk' ? (i === script.length - 1 ? 1.3 : 1.1) : (i === script.length - 1 ? 1.5 : 1.3);
+    const speed = lang === 'sk' ? (i === script.length - 1 ? 1.3 : 1.1) : (i === script.length - 1 ? 1.1 : 1.2);
     const { audioBuffer, wordTimings, duration } = await ttsSegment(line, voiceId, lang, speed);
 
     const rawPath = path.join(outputDir, `bytefall_${i}_raw.mp3`);
@@ -263,7 +353,7 @@ export async function generateByteFallVoiceover(
   const silencePath = path.join(outputDir, 'silence.mp3');
 
   // Generate 1.5s silence for the intro delay
-  execSync(`ffmpeg -y -f lavfi -i anullsrc=r=44100:cl=mono -t 1.5 "${silencePath}" 2>/dev/null`);
+  execSync(`ffmpeg -y -f lavfi -i anullsrc=r=44100:cl=mono -t 1.0 "${silencePath}" 2>/dev/null`);
 
   // Generate 0.3s gap
   const gapPath = path.join(outputDir, 'gap.mp3');
@@ -288,6 +378,54 @@ export async function generateByteFallVoiceover(
   return { audioPath: finalAudio, words: allWords, duration: totalDuration };
 }
 
+// Random equipment for ByteFall — different every time
+const BYTEFALL_OUTFITS: Record<string, string>[] = [
+  { hat: 'hat-graduation', glasses: 'glasses-cool' },
+  { hat: 'hat-cowboy', glasses: 'glasses-aviator' },
+  { hat: 'hat-pilot', glasses: 'glasses-cool' },
+  { hat: 'hat-samurai', glasses: 'glasses-frost' },
+  { hat: 'hat-fire-crown', glasses: 'glasses-flame' },
+  { hat: 'hat-beanie', glasses: 'glasses-round' },
+  { hat: 'hat-headband' },
+  { hat: 'hat-golden-crown', glasses: 'glasses-golden', accessory: 'acc-wings-gold' },
+  { hat: 'hat-void-crown', glasses: 'glasses-void', accessory: 'acc-cosmic-cape' },
+  { hat: 'hat-galaxy', glasses: 'glasses-laser', accessory: 'acc-diamond' },
+];
+
+export function randomByteFallEquipment(): Record<string, string> {
+  return BYTEFALL_OUTFITS[Math.floor(Math.random() * BYTEFALL_OUTFITS.length)];
+}
+
+export function byteFallCaption(term: string, termFull: string, definition: string, lang: 'sk' | 'en'): string {
+  if (lang === 'sk') {
+    return `🪂 Parachute Glossary: ${term}
+
+${term} = ${termFull}
+
+${definition}
+
+Vedel si to? 🤔💬
+Ulož si to a zdieľaj s niekým, kto sa učí programovať! 🔖
+
+📲 Celý slovník na Coduy app — coduy.sk
+
+#coding #programming #developer #learntocode #coduy #tech #glossary #${term.toLowerCase().replace(/[^a-z]/g, '')}`;
+  }
+
+  return `🪂 Parachute Glossary: ${term}
+
+${term} = ${termFull}
+
+${definition}
+
+Did you know this one? 🤔💬
+Save it & share with someone learning to code! 🔖
+
+📲 Full glossary on Coduy app — coduy.com
+
+#coding #programming #developer #learntocode #coduy #tech #glossary #${term.toLowerCase().replace(/[^a-z]/g, '')}`;
+}
+
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('byteFallTTS.ts')) {
   const lang = (process.argv[2] || 'sk') as 'sk' | 'en';
@@ -296,14 +434,21 @@ if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith
   const termFull = process.argv[5] || 'Secure Shell';
   const definition = process.argv[6] || 'Bezpečný komunikačný protokol na vzdialený prístup k serverom';
 
+  const equipment = randomByteFallEquipment();
+  console.log('🎽 Equipment:', JSON.stringify(equipment));
+
   generateByteFallVoiceover(term, termFull, definition, path.join(__dirname, '../out/bytefall_tts'), lang, voice)
     .then(result => {
       console.log('Audio:', result.audioPath);
       console.log('Words:', JSON.stringify(result.words, null, 2));
-      // Save words for Remotion props
+      // Save words + equipment for Remotion props
       fs.writeFileSync(
         path.join(__dirname, '../out/bytefall_tts/words.json'),
         JSON.stringify(result.words, null, 2),
+      );
+      fs.writeFileSync(
+        path.join(__dirname, '../out/bytefall_tts/equipment.json'),
+        JSON.stringify(equipment, null, 2),
       );
     })
     .catch(err => { console.error(err); process.exit(1); });

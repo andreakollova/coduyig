@@ -37,14 +37,14 @@ export const ByteFallAnimation: React.FC<{
   const byteSize = 380;
 
   // === TIMING ===
-  const enterEnd = fps * 0.5;
-  const fallStart = enterEnd;
+  const enterEnd = 1;
+  const fallStart = 1;
   const fallEnd = fps * 11;
   const impactFrame = fallEnd;
   const revealStart = fps * 12;
 
-  const startY = height * 0.1;
-  const floatY = height * 0.3;
+  const startY = height * 0.35;
+  const floatY = height * 0.35;
   const groundY = height * 0.55;
 
   const landed = frame >= impactFrame;
@@ -259,9 +259,7 @@ export const ByteFallAnimation: React.FC<{
           const chuteDetach = landed && impactTime < fps * 0.6;
           const chuteDetachY = chuteDetach ? -impactTime * 12 : 0;
           const chuteDetachOp = chuteDetach ? interpolate(impactTime, [0, fps * 0.4], [1, 0], { extrapolateRight: 'clamp' }) : 1;
-          const chuteScale = frame < enterEnd
-            ? interpolate(frame, [0, enterEnd], [0.3, 1], { extrapolateRight: 'clamp' })
-            : 1;
+          const chuteScale = 1;
           const chuteSwing = chuteOpen ? Math.sin(frame / fps * Math.PI * 1.5) * 8 : 0;
 
           if (!chuteOpen && !chuteDetach) return null;
