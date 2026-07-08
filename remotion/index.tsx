@@ -73,7 +73,7 @@ export const RemotionRoot: React.FC = () => (
       defaultProps={{ equipment: {}, durationInFrames: 15 * FPS, term: 'SSH', termFull: 'Secure Shell', definition: 'Secure communication protocol for remote access', audioUrl: '', words: [] }} />
     <Composition id="ByteSurf" component={ByteSurfAnimation} durationInFrames={30 * FPS} fps={FPS} width={REEL_W} height={REEL_H}
       calculateMetadata={({ props }) => ({ durationInFrames: props.durationInFrames || 30 * FPS })}
-      defaultProps={{ equipment: {}, durationInFrames: 30 * FPS, question: 'What happens when you type google.com?', audioUrl: '', words: [] }} />
+      defaultProps={{ equipment: {}, durationInFrames: 30 * FPS, question: 'What happens when you type google.com?', audioUrl: '', words: [], questionerDuration: 0 }} />
   </>
 );
 
