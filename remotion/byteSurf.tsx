@@ -47,18 +47,6 @@ const THEMES: Record<string, Theme> = {
     subtitleBorder: 'rgba(${T.waveColor}, 0.1)',
     bgMusic: 'sea.wav',
   },
-  horse: {
-    bg: '#1a1208',
-    gradientTop: 'rgba(140, 90, 30, 0.15)',
-    gradientBottom: 'rgba(100, 70, 25, 0.2)',
-    waveColor: '180, 140, 80',
-    bigWaveColor: '160, 120, 60',
-    items: ['🐴', '🌾', '🐴', '🌻', '🐴', '🦋', '🌳', '🐴', '🍃', '🐄'],
-    vehicleName: 'horse',
-    subtitleBg: 'rgba(18, 10, 4, 0.85)',
-    subtitleBorder: 'rgba(160, 120, 60, 0.15)',
-    bgMusic: 'horse.wav',
-  },
 };
 
 export const ByteSurfAnimation: React.FC<{
@@ -87,13 +75,11 @@ export const ByteSurfAnimation: React.FC<{
   const dodgeX = isSharkPhase ? 0 : Math.sin(time * 1.2) * 55 + Math.sin(time * 2.8) * 20;
   const byteX = width / 2 + dodgeX;
   const normalByteY = height * 0.55;
-  // Horse gallop bounce
-  const gallopBounce = theme === 'horse' ? Math.abs(Math.sin(time * 6)) * 15 : 0;
 
   // Jump off surfboard + swim away
   const jumpY = isSharkPhase ? interpolate(sharkProgress, [0, 0.2, 0.5, 1], [0, -80, 30, height * 0.6], { extrapolateRight: 'clamp' }) : 0;
   const swimX = isSharkPhase ? interpolate(sharkProgress, [0.3, 1], [0, width * 0.7], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' }) : 0;
-  const byteY = normalByteY + jumpY - gallopBounce;
+  const byteY = normalByteY + jumpY;
   const tilt = isSharkPhase
     ? interpolate(sharkProgress, [0, 0.2, 0.5, 1], [0, -25, 15, 30], { extrapolateRight: 'clamp' })
     : Math.sin(time * 1.2) * -7;
@@ -154,9 +140,9 @@ export const ByteSurfAnimation: React.FC<{
         background: `linear-gradient(180deg, transparent 0%, ${T.gradientBottom} 40%, ${T.gradientBottom} 100%)` }} />
 
       {/* Environment lines */}
-      {theme === 'surf' && (
+      {/* Ocean waves */}
+      {(
         <>
-          {/* Ocean waves */}
           <svg style={{ position: 'absolute', top: 0, left: 0 }} width={width} height={height}>
             {Array.from({ length: 15 }, (_, i) => {
               const speed = 1.5 + (i % 3) * 0.3;
@@ -190,37 +176,6 @@ export const ByteSurfAnimation: React.FC<{
           </svg>
         </>
       )}
-      {theme === 'horse' && (
-        <>
-          {/* Ground path lines — rushing towards camera */}
-          {Array.from({ length: 12 }, (_, i) => {
-            const speed = 2 + (i % 3) * 0.4;
-            const rawY = ((time * speed * 80 + i * (height / 6)) % (height + 60)) - 30;
-            const perspective = interpolate(rawY, [0, height], [0.1, 1.6], { extrapolateRight: 'clamp' });
-            const lineW = perspective * width * 0.7;
-            const opacity = interpolate(rawY, [-20, height * 0.15, height * 0.85, height], [0, 0.15, 0.08, 0], { extrapolateRight: 'clamp' });
-            return <div key={`path-${i}`} style={{
-              position: 'absolute', top: rawY, left: '50%', transform: 'translateX(-50%)',
-              width: lineW, height: 2, borderRadius: 1,
-              background: `rgba(${T.waveColor}, ${opacity})`,
-            }} />;
-          })}
-          {/* Fence posts — sides */}
-          {Array.from({ length: 6 }, (_, i) => {
-            const speed = 1.8 + (i % 2) * 0.4;
-            const rawY = ((time * speed * 90 + i * 350) % (height + 300)) - 100;
-            const perspective = interpolate(rawY, [0, height], [0.3, 2], { extrapolateRight: 'clamp' });
-            const opacity = interpolate(rawY, [-50, 80, height - 80, height], [0, 0.3, 0.15, 0], { extrapolateRight: 'clamp' });
-            const side = i % 2 === 0 ? width * 0.08 : width * 0.85;
-            const fenceH = 40 * perspective;
-            return <div key={`fence-${i}`} style={{
-              position: 'absolute', left: side, top: rawY,
-              width: 4 * perspective, height: fenceH, borderRadius: 2,
-              background: `rgba(120, 80, 30, ${opacity})`,
-            }} />;
-          })}
-        </>
-      )}
 
       {/* Sea items — fish, shells, etc. */}
       {Array.from({ length: 7 }, (_, i) => {
@@ -230,12 +185,12 @@ export const ByteSurfAnimation: React.FC<{
         const sx = width * (0.12 + (i * 0.18) % 0.76);
         const opacity = interpolate(rawY, [-50, 80, height - 80, height], [0, 0.7, 0.4, 0], { extrapolateRight: 'clamp' });
         const item = T.items[i % T.items.length];
-        const isMainEmoji = item === '🐴' || item === '🐠';
+        const isMainEmoji = false;
         return <div key={`sea-${i}`} style={{ position: 'absolute', left: sx, top: rawY, fontSize: (isMainEmoji ? 55 : 26) * scale, opacity }}>{item}</div>;
       })}
 
-      {/* Spray (surf only) */}
-      {theme === 'surf' && !isSharkPhase && Array.from({ length: 8 }, (_, i) => {
+      {/* Spray */}
+      {!isSharkPhase && Array.from({ length: 8 }, (_, i) => {
         const angle = (i / 8) * Math.PI * 0.6 + Math.PI * 0.7;
         const dist = (time * 60 + i * 8) % 35;
         return <div key={`sp-${i}`} style={{
@@ -246,32 +201,14 @@ export const ByteSurfAnimation: React.FC<{
         }} />;
       })}
 
-      {/* Dust particles (horse only) */}
-      {theme === 'horse' && Array.from({ length: 10 }, (_, i) => {
-        const dist = (time * 50 + i * 7) % 40;
-        const dx = Math.cos(i * 1.3 + time * 2) * dist;
-        const dy = Math.sin(i * 0.8) * dist * 0.3;
-        return <div key={`dust-${i}`} style={{
-          position: 'absolute', left: byteX + dx - 20, top: byteY + byteSize * 0.7 + dy,
-          width: 3 + (i % 3), height: 3 + (i % 3), borderRadius: 10,
-          background: `rgba(160, 130, 80, ${interpolate(dist, [0, 40], [0.4, 0], { extrapolateRight: 'clamp' })})`,
-        }} />;
-      })}
 
-      {/* Vehicle */}
-      {theme === 'surf' && !isSharkPhase && (
+      {/* Surfboard */}
+      {!isSharkPhase && (
         <svg style={{ position: 'absolute', left: byteX - 100, top: byteY + byteSize * 0.48 }} width={200} height={65} viewBox="0 0 200 65">
           <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#f59e0b" /><stop offset="100%" stopColor="#fb923c" /></linearGradient></defs>
           <ellipse cx="100" cy="25" rx="95" ry="22" fill="url(#sg)" transform={`rotate(${tilt * 0.3} 100 25)`} />
           <path d="M 100 44 L 92 60 L 108 60 Z" fill="#d97706" opacity="0.6" />
         </svg>
-      )}
-      {/* Horse */}
-      {theme === 'horse' && (
-        <div style={{
-          position: 'absolute', left: byteX - 60, top: byteY + byteSize * 0.25,
-          fontSize: 90, transform: `scaleX(-1) rotate(${tilt * 0.2}deg) translateY(${Math.sin(time * 6) * 8}px)`,
-        }}>🐴</div>
       )}
       {/* Abandoned surfboard floating */}
       {isSharkPhase && (
