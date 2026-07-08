@@ -62,15 +62,10 @@ export async function generateBTSVoiceover(
   if (!API_KEY) throw new Error('ELEVENLABS_API_KEY not set');
   fs.mkdirSync(outputDir, { recursive: true });
 
-  // Part 1: Byte intro — "People often ask me"
-  const intro = lang === 'sk'
-    ? 'Ľudia sa ma často pýtajú.'
-    : 'People keep asking me.';
-
-  // Part 2: Questioner — "Bro what happens when X?"
-  const questionText = lang === 'sk'
-    ? `Kámo ale čo sa vlastne stane keď ${question.replace(/^Čo sa stane keď /i, '').replace(/\?$/, '')}?`
-    : `Dude, what actually happens when you ${question.replace(/^What happens when (you )?/i, '').replace(/\?$/, '')}?`;
+  // Part 1+2 combined: Byte intro + questioner question in one line
+  const introAndQuestion = lang === 'sk'
+    ? `Ľudia sa ma často pýtajú, kámo ale čo sa vlastne stane keď ${question.replace(/^Čo sa stane keď /i, '').replace(/\?$/, '')}?`
+    : `People keep asking me, dude what actually happens when you ${question.replace(/^What happens when (you )?/i, '').replace(/\?$/, '')}?`;
 
   // Part 3a: "Nechaj ma" / "Leave me alone"
   const answerPart1 = lang === 'sk'
@@ -91,14 +86,12 @@ export async function generateBTSVoiceover(
   const closing = lang === 'sk' ? 'Takže vlastne, nič zložité, kámo.' : 'So yeah, nothing complicated, bro.';
 
   console.log(`🎙️ Generating BTS voiceover (${lang})...`);
-  console.log(`  Intro: "${intro}"`);
-  console.log(`  Question: "${questionText}"`);
+  console.log(`  Intro+Q: "${introAndQuestion.slice(0, 80)}..."`);
   console.log(`  Answer: "${script.slice(0, 60)}..."`);
 
   // Generate all parts
   // Sequential to avoid rate limits
-  const p1 = await tts(intro, BYTE_VOICE, 1.0, 0.5);
-  const p2 = await tts(questionText, QUESTIONER_VOICE, 0.95, 0.8);
+  const p1 = await tts(introAndQuestion, QUESTIONER_VOICE, 0.95, 0.7);
   const p3a = await tts(answerPart1, BYTE_VOICE, 1.0, 0.5);
   const p3b = await tts(answerPart2, BYTE_VOICE, 1.0, 0.6);
   const p3c = await tts(answerPart3, BYTE_VOICE, 0.95, 0.4);
@@ -106,7 +99,7 @@ export async function generateBTSVoiceover(
   const p5 = await tts(closing, BYTE_VOICE, 0.85, 0.6);
 
   // Save and normalize audio parts
-  const parts = [p1, p2, p3a, p3b, p3c, p4, p5];
+  const parts = [p1, p3a, p3b, p3c, p4, p5];
   const audioPaths: string[] = [];
 
   for (let i = 0; i < parts.length; i++) {
@@ -130,13 +123,11 @@ export async function generateBTSVoiceover(
     const partWords = parts[i].words;
     for (let j = 0; j < partWords.length; j++) {
       let word = partWords[j].word;
-      // Add quotes around questioner's question (part 2, index 1)
-      if (i === 1 && j === 0) word = `"${word}`;
-      if (i === 1 && j === partWords.length - 1) word = `${word}"`;
+      // No separate quote wrapping needed — it's all one line now
       allWords.push({ word, start: partWords[j].start + cumTime, end: partWords[j].end + cumTime });
     }
-    // Longer pause after "surfujem!" (index 3) and after "Ale v pohode" (index 4)
-    const gap = (i === 3 || i === 4) ? longerGap : gapBetween;
+    // Longer pause after "surfujem!" (index 2) and after "Ale v pohode" (index 3)
+    const gap = (i === 2 || i === 3) ? longerGap : gapBetween;
     cumTime += parts[i].duration + gap;
   }
 
