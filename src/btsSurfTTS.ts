@@ -86,28 +86,8 @@ export async function generateBTSVoiceover(
 
   // Part 3b: "veď surfujem!" / "I am surfing!"
   const answerPart2 = lang === 'sk'
-    ? (() => {
-        const spots = [
-          '🏄 Veď práve surfujem na Bali!',
-          '🌊 Veď práve chytám vlny na Havaji!',
-          '🏄 Veď práve surfujem v Portugalsku!',
-          '🌴 Veď práve surfujem v Austrálii!',
-          '🌺 Veď práve surfujem v Kostarike!',
-          '🌞 Veď práve surfujem v Kalifornii!',
-        ];
-        return spots[Math.floor(Math.random() * spots.length)];
-      })()
-    : (() => {
-        const spots = [
-          '🏄 I am surfing in Bali!',
-          '🌊 I am catching waves in Hawaii!',
-          '🏄 I am surfing in Portugal!',
-          '🌴 I am surfing in Australia!',
-          '🌺 I am surfing in Costa Rica!',
-          '🌞 I am surfing in California!',
-        ];
-        return spots[Math.floor(Math.random() * spots.length)];
-      })();
+    ? 'Veď práve surfujem!'
+    : 'I am surfing!';
 
   // Part 3c: "Ale v pohode... funguje to takto." / "But ok... here is how it works."
   const answerPart3 = lang === 'sk'

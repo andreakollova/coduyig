@@ -39,12 +39,12 @@ const THEMES: Record<string, Theme> = {
     bg: '#020612',
     gradientTop: 'rgba(30, 64, 175, 0.2)',
     gradientBottom: 'rgba(30, 64, 175, 0.2)',
-    waveColor: '${T.waveColor}',
-    bigWaveColor: '${T.bigWaveColor}',
+    waveColor: '135, 206, 255',
+    bigWaveColor: '100, 180, 255',
     items: ['🐠', '🐟', '🐡', '🐚', '🦀', '🪸', '🐙', '🦑', '🐳', '🌊'],
     vehicleName: 'surfboard',
     subtitleBg: 'rgba(2, 6, 18, 0.85)',
-    subtitleBorder: 'rgba(${T.waveColor}, 0.1)',
+    subtitleBorder: 'rgba(135, 206, 255, 0.1)',
     bgMusic: 'sea.wav',
   },
 };
@@ -269,7 +269,7 @@ export const ByteSurfAnimation: React.FC<{
           <div style={{
             display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8,
             background: 'rgba(5, 10, 24, 0.9)', borderRadius: 20, padding: '20px 30px',
-            border: '1px solid rgba(${T.waveColor}, 0.2)',
+            border: `1px solid rgba(${T.waveColor}, 0.2)`,
           }}>
             <div style={{ fontSize: 48 }}>🤔</div>
             <div style={{ fontSize: 36, fontWeight: 800, color: '#60a5fa' }}>?</div>
@@ -291,7 +291,7 @@ export const ByteSurfAnimation: React.FC<{
           <div style={{
             display: 'inline-block', fontSize: 38, fontWeight: 600, color: '#94a3b8',
             lineHeight: 1.45, background: 'rgba(2, 6, 18, 0.85)',
-            borderRadius: 12, padding: '10px 26px', border: '1px solid rgba(${T.waveColor}, 0.1)',
+            borderRadius: 12, padding: '10px 26px', border: `1px solid rgba(${T.waveColor}, 0.1)`,
             maxWidth: 500, textAlign: 'center',
           }} dangerouslySetInnerHTML={{ __html: subtitle.replace(/<b>/g, '<b style="color:#fff;font-weight:700;">') }} />
         </div>
