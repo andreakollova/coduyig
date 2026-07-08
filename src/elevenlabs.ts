@@ -372,9 +372,62 @@ function applyPhonetics(text: string, lang: 'en' | 'sk'): string {
   return result;
 }
 
+/**
+ * Auto-generate phonetics for any English words not in the static map.
+ * Uses GPT to convert remaining English words to Slovak phonetic spelling.
+ */
+const OPENAI_KEY_EL = process.env.OPENAI_API_KEY || '';
+async function autoPhonetics(text: string, lang: 'en' | 'sk'): Promise<string> {
+  if (lang !== 'sk' || !OPENAI_KEY_EL) return applyPhonetics(text, lang);
+
+  // First apply static phonetics
+  let result = applyPhonetics(text, lang);
+
+  // Check if there are remaining English words (not Slovak)
+  const remaining = result.match(/\b[A-Za-z][a-z]{2,}\b/g)?.filter(w => {
+    // Skip Slovak words (have diacritics context), Python keywords, common words
+    if (/[áéíóúýžščťďľňŕĺô]/.test(w)) return false;
+    if (['def', 'return', 'class', 'self', 'for', 'while', 'with', 'from', 'import',
+      'print', 'and', 'not', 'are', 'the', 'that', 'this', 'you', 'can', 'will',
+      'just', 'like', 'have', 'has', 'had', 'was', 'were', 'been', 'into', 'when',
+      'also', 'more', 'than', 'each', 'very', 'them', 'then', 'only', 'its',
+      'ako', 'ale', 'pre', 'pri', 'kde', 'tak', 'sem', 'len', 'pod', 'nad'].includes(w.toLowerCase())) return false;
+    return true;
+  }) || [];
+
+  if (remaining.length === 0) return result;
+
+  // Use GPT to generate phonetics for remaining English words
+  try {
+    const unique = [...new Set(remaining)];
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${OPENAI_KEY_EL}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: `Convert these English words to Slovak phonetic spelling (how a Slovak person would write their pronunciation). Return JSON: {"phonetics": {"word": "phonetic"}}
+
+Words: ${unique.join(', ')}
+
+Examples: style→stajl, type→tajp, scope→skóup, cache→keš, thread→tred, queue→kjú, slice→slajs, range→rejndž, yield→jíld, raise→rejz, while→vajl, break→brejk` }],
+        temperature: 0, max_tokens: 500,
+        response_format: { type: 'json_object' },
+      }),
+    });
+    const data = await res.json();
+    const phonetics = JSON.parse(data.choices?.[0]?.message?.content || '{}').phonetics || {};
+
+    for (const [en, sk] of Object.entries(phonetics) as [string, string][]) {
+      result = result.replace(new RegExp(`\\b${en}\\b`, 'g'), sk);
+    }
+  } catch {}
+
+  return result;
+}
+
 async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', speed = 1.3, speaker: 'student' | 'teacher' = 'teacher', enthusiastic = false): Promise<{ audioBuffer: Buffer; wordTimings: WordTiming[]; duration: number }> {
-  // Apply phonetic pronunciation for SK TTS only (captions keep original text)
-  const ttsText = applyPhonetics(text, lang);
+  // Apply phonetic pronunciation — static + auto GPT for SK
+  const ttsText = lang === 'sk' ? await autoPhonetics(text, lang) : applyPhonetics(text, lang);
   const originalWords = text.split(/\s+/);
   // Multilingual v2 for both — same voice used for EN and SK
   const model = 'eleven_multilingual_v2';
