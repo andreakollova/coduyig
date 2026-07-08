@@ -37,10 +37,9 @@ export const ByteSurfAnimation: React.FC<{
 
   const byteSize = 220;
 
-  // === SHARK CHASE — last 4 seconds ===
-  const sharkStart = totalDuration - 4;
-  const isSharkPhase = time > sharkStart;
-  const sharkProgress = isSharkPhase ? interpolate(time, [sharkStart, sharkStart + 4], [0, 1], { extrapolateRight: 'clamp' }) : 0;
+  // No shark
+  const isSharkPhase = false;
+  const sharkProgress = 0;
 
   // === BYTE POSITION ===
   const dodgeX = isSharkPhase ? 0 : Math.sin(time * 1.2) * 55 + Math.sin(time * 2.8) * 20;
@@ -241,11 +240,10 @@ export const ByteSurfAnimation: React.FC<{
 
       {/* Question title — LOWER, two lines */}
       <div style={{
-        position: 'absolute', top: height * 0.12, left: 0, right: 0,
+        position: 'absolute', top: height * 0.18, left: 0, right: 0,
         textAlign: 'center', opacity: questionOp, padding: '0 60px',
       }}>
-        <div style={{ fontSize: 10, fontWeight: 700, color: '#60a5fa', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 10 }}>Behind the Scenes</div>
-        <div style={{ fontSize: 32, fontWeight: 800, color: '#fff', lineHeight: 1.25, letterSpacing: '-0.02em', maxWidth: 700, margin: '0 auto' }}>{question}</div>
+        <div style={{ fontSize: 40, fontWeight: 800, color: '#fff', lineHeight: 1.2, letterSpacing: '-0.02em', maxWidth: 750, margin: '0 auto' }}>{question}</div>
       </div>
 
       {/* Logo */}
