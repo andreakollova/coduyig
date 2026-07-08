@@ -168,10 +168,10 @@ export const ByteSurfAnimation: React.FC<{
 
       {/* Surfboard — stays when Byte jumps off */}
       {!isSharkPhase && (
-        <svg style={{ position: 'absolute', left: byteX - 80, top: byteY + byteSize * 0.5 }} width={160} height={55} viewBox="0 0 160 55">
+        <svg style={{ position: 'absolute', left: byteX - 100, top: byteY + byteSize * 0.48 }} width={200} height={65} viewBox="0 0 200 65">
           <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#f59e0b" /><stop offset="100%" stopColor="#fb923c" /></linearGradient></defs>
-          <ellipse cx="80" cy="22" rx="75" ry="18" fill="url(#sg)" transform={`rotate(${tilt * 0.3} 80 22)`} />
-          <path d="M 80 38 L 74 50 L 86 50 Z" fill="#d97706" opacity="0.6" />
+          <ellipse cx="100" cy="25" rx="95" ry="22" fill="url(#sg)" transform={`rotate(${tilt * 0.3} 100 25)`} />
+          <path d="M 100 44 L 92 60 L 108 60 Z" fill="#d97706" opacity="0.6" />
         </svg>
       )}
       {/* Abandoned surfboard floating */}
@@ -184,11 +184,11 @@ export const ByteSurfAnimation: React.FC<{
 
       {/* Byte's legs — only when on surfboard */}
       {!isSharkPhase && (
-        <svg style={{ position: 'absolute', left: byteX - 35, top: byteY + byteSize * 0.33, transform: `rotate(${tilt}deg)` }} width={70} height={90} viewBox="0 0 70 90">
-          <line x1="20" y1="0" x2={16 + legSwing * 0.3} y2="58" stroke="#333" strokeWidth="7" strokeLinecap="round" />
-          <circle cx={16 + legSwing * 0.3} cy="60" r="7" fill="#444" />
-          <line x1="50" y1="0" x2={54 - legSwing * 0.3} y2="58" stroke="#333" strokeWidth="7" strokeLinecap="round" />
-          <circle cx={54 - legSwing * 0.3} cy="60" r="7" fill="#444" />
+        <svg style={{ position: 'absolute', left: byteX - 40, top: byteY + byteSize * 0.3, transform: `rotate(${tilt}deg)` }} width={80} height={110} viewBox="0 0 80 110">
+          <line x1="22" y1="0" x2={17 + legSwing * 0.4} y2="72" stroke="#333" strokeWidth="8" strokeLinecap="round" />
+          <circle cx={17 + legSwing * 0.4} cy="75" r="9" fill="#444" />
+          <line x1="58" y1="0" x2={63 - legSwing * 0.4} y2="72" stroke="#333" strokeWidth="8" strokeLinecap="round" />
+          <circle cx={63 - legSwing * 0.4} cy="75" r="9" fill="#444" />
         </svg>
       )}
 
@@ -229,7 +229,7 @@ export const ByteSurfAnimation: React.FC<{
 
       {/* Questioner character */}
       {isQuestionerSpeaking && (
-        <div style={{ position: 'absolute', left: '50%', top: byteY - byteSize * 2.0, transform: 'translateX(-50%)', textAlign: 'center' }}>
+        <div style={{ position: 'absolute', left: '50%', top: byteY - byteSize * 1.5, transform: 'translateX(-50%)', textAlign: 'center' }}>
           <div style={{
             display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8,
             background: 'rgba(5, 10, 24, 0.9)', borderRadius: 20, padding: '20px 30px',
