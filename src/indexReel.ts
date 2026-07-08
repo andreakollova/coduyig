@@ -326,6 +326,8 @@ async function main() {
   await sb.storage.from(BUCKET).upload('tracking/reels.json', Buffer.from(JSON.stringify(reels, null, 2)), { contentType: 'application/json', upsert: true });
   console.log(`📋 Saved reel info (${reels.length} total reels tracked)`);
 
+  // Output lesson_id for workflow chaining (EN → SK same lesson)
+  console.log(`lesson_id=${lesson.id}`);
   console.log('\n✅ DONE');
 }
 

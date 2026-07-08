@@ -47,6 +47,7 @@ jobs:
           echo "args=$ARGS" >> $GITHUB_OUTPUT
 
       - name: Publish EN Reel
+        id: en_reel
         env:
           IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
           IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
@@ -56,9 +57,12 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
-        run: npx tsx src/indexReel.ts ${{ steps.args.outputs.args }}
+        run: |
+          npx tsx src/indexReel.ts ${{ steps.args.outputs.args }} | tee /tmp/reel_output.txt
+          LESSON_ID=$(grep -oP 'lesson_id=\K\d+' /tmp/reel_output.txt || echo "")
+          echo "lesson_id=$LESSON_ID" >> $GITHUB_OUTPUT
 
-      - name: Publish SK Reel
+      - name: Publish SK Reel (same lesson)
         env:
           IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
           IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
@@ -68,4 +72,12 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
-        run: npx tsx src/indexReel.ts --lang sk ${{ steps.args.outputs.args }}
+        run: |
+          ARGS="--lang sk"
+          if [ -n "${{ steps.en_reel.outputs.lesson_id }}" ]; then
+            ARGS="$ARGS --lesson-id ${{ steps.en_reel.outputs.lesson_id }}"
+          fi
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          npx tsx src/indexReel.ts $ARGS
