@@ -86,8 +86,8 @@ export async function generateBTSVoiceover(
 
   // Part 3b: "veď surfujem!" / "I am surfing!"
   const answerPart2 = lang === 'sk'
-    ? 'Veď surfujem!'
-    : 'I am surfing!';
+    ? 'Veď práve surfujem!'
+    : 'I am surfing right now!';
 
   // Part 3c: "Ale v pohode... funguje to takto." / "But ok... here is how it works."
   const answerPart3 = lang === 'sk'
