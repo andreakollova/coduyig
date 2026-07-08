@@ -16,8 +16,8 @@ export const btsEntries: BTSEntry[] = [
     id: 'google-com',
     titleEn: 'What happens when you type google.com?',
     titleSk: 'Čo sa stane keď napíšeš google.com?',
-    scriptEn: 'You type google.com. Your browser immediately asks hey, what is the IP address? DNS answers. An encrypted connection opens. Google sends back the whole page. And you see it. In under 200 milliseconds. Crazy fast.',
-    scriptSk: 'Napíšeš google.com. Prehliadač sa hneď spýta hej, aká je IP adresa? DNS odpovie. Otvorí sa šifrované spojenie. Google pošle späť celú stránku. A ty ju vidíš. Za menej ako 200 milisekúnd. Šialene rýchle.',
+    scriptEn: 'You type google.com and press enter. But your computer has no idea what google.com means. So it asks a DNS server, which is like a phone book for the internet. DNS says, oh that is 142.250.80.46. Now your browser knows where to go. It opens a secure tunnel using something called TLS, so nobody can spy on you. Then it sends a request. Google answers with HTML, CSS, and JavaScript. Your browser puts it all together and boom, the page appears. The whole thing? Under 200 milliseconds.',
+    scriptSk: 'Napíšeš google.com a stlačíš enter. Ale tvoj počítač netuší čo google.com znamená. Tak sa spýta DNS servera, čo je vlastne telefónny zoznam internetu. DNS povie, aha to je 142.250.80.46. Teraz prehliadač vie kam ísť. Otvorí bezpečný tunel cez niečo čo sa volá TLS, aby ťa nikto nemohol špehovať. Potom pošle požiadavku. Google odpovie s HTML, CSS a JavaScriptom. Prehliadač to všetko poskladá a bum, stránka sa objaví. Celé to? Menej ako 200 milisekúnd.',
   },
   {
     id: 'sign-in-google',

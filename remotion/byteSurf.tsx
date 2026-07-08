@@ -9,11 +9,7 @@ import { ByteMascot } from './Byte';
 const { fontFamily } = loadFont();
 const LOGO_SRC = staticFile('logocoduy.png');
 
-export interface ByteSurfWord {
-  word: string;
-  start: number;
-  end: number;
-}
+export interface ByteSurfWord { word: string; start: number; end: number; }
 
 export const ByteSurfAnimation: React.FC<{
   equipment?: Record<string, string>;
@@ -21,210 +17,215 @@ export const ByteSurfAnimation: React.FC<{
   question?: string;
   audioUrl?: string;
   words?: ByteSurfWord[];
-}> = ({
-  equipment = {},
-  question = '',
-  audioUrl,
-  words = [],
-}) => {
+}> = ({ equipment = {}, question = '', audioUrl, words = [] }) => {
   const frame = useCurrentFrame();
   const { fps, height, width } = useVideoConfig();
   const time = frame / fps;
 
-  const byteSize = 240;
-
-  // === BYTE POSITION — sways left/right like dodging ===
-  const dodgeX = Math.sin(time * 1.3) * 60 + Math.sin(time * 2.7) * 30;
+  const byteSize = 220;
+  const dodgeX = Math.sin(time * 1.2) * 50 + Math.sin(time * 2.8) * 25;
   const byteX = width / 2 + dodgeX;
-  const byteY = height * 0.52;
-  const tilt = Math.sin(time * 1.3) * -8; // tilts opposite to movement
-  const breathe = 1 + Math.sin(time * Math.PI * 0.9) * 0.015;
+  const byteY = height * 0.48;
+  const tilt = Math.sin(time * 1.2) * -7;
+  const breathe = 1 + Math.sin(time * Math.PI * 0.9) * 0.012;
+  const legSwing = Math.sin(time * 3) * 8;
 
-  // === PERSPECTIVE ROAD LINES — racing towards camera ===
-  const roadLines = Array.from({ length: 12 }, (_, i) => {
-    const speed = 3 + (i % 3) * 0.5;
-    const rawY = ((time * speed * 120 + i * (height / 6)) % (height + 100)) - 50;
-    const scale = interpolate(rawY, [0, height], [0.1, 1.5], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
-    const opacity = interpolate(rawY, [0, height * 0.3, height * 0.8, height], [0, 0.08, 0.06, 0], { extrapolateRight: 'clamp' });
-    const lineWidth = scale * 300;
-    return { y: rawY, scale, opacity, lineWidth, i };
+  // === OCEAN WAVES — blue, coming towards camera ===
+  const waveRows = Array.from({ length: 20 }, (_, i) => {
+    const speed = 2 + (i % 3) * 0.4;
+    const rawY = ((time * speed * 80 + i * (height / 10)) % (height + 60)) - 30;
+    const perspective = interpolate(rawY, [0, height], [0.15, 1.8], { extrapolateRight: 'clamp' });
+    const waveWidth = perspective * width * 0.8;
+    const waveAmplitude = perspective * 12;
+    const opacity = interpolate(rawY, [-20, height * 0.15, height * 0.85, height], [0, 0.25, 0.15, 0], { extrapolateRight: 'clamp' });
+    const xShift = Math.sin(rawY * 0.02 + time * 1.5) * waveAmplitude;
+    return { y: rawY, width: waveWidth, opacity, xShift, i };
   });
 
-  // === OBSTACLES — waves coming from top ===
-  const obstacles = Array.from({ length: 5 }, (_, i) => {
-    const speed = 2.5 + (i % 2) * 0.8;
-    const rawY = ((time * speed * 100 + i * 350) % (height + 200)) - 100;
-    const ox = width * (0.2 + (i * 0.17) % 0.6);
-    const scale = interpolate(rawY, [0, height], [0.3, 1.8], { extrapolateRight: 'clamp' });
-    const opacity = interpolate(rawY, [-50, 100, height - 100, height], [0, 0.5, 0.3, 0], { extrapolateRight: 'clamp' });
-    const size = 50 * scale;
-    return { x: ox, y: rawY, size, opacity, i };
+  // === BIG WAVES — obstacles ===
+  const bigWaves = Array.from({ length: 4 }, (_, i) => {
+    const speed = 1.8 + (i % 2) * 0.6;
+    const rawY = ((time * speed * 90 + i * 380) % (height + 300)) - 150;
+    const perspective = interpolate(rawY, [0, height], [0.2, 2], { extrapolateRight: 'clamp' });
+    const ox = width * (0.15 + (i * 0.25) % 0.7);
+    const wSize = 70 * perspective;
+    const opacity = interpolate(rawY, [-100, 50, height * 0.7, height], [0, 0.6, 0.4, 0], { extrapolateRight: 'clamp' });
+    return { x: ox, y: rawY, size: wSize, opacity, i };
   });
 
-  // === STARS — collectible items racing towards camera ===
-  const stars = Array.from({ length: 6 }, (_, i) => {
-    const speed = 2 + (i % 3) * 0.6;
-    const rawY = ((time * speed * 90 + i * 280 + 150) % (height + 200)) - 100;
-    const sx = width * (0.15 + (i * 0.23) % 0.7);
-    const scale = interpolate(rawY, [0, height], [0.3, 1.5], { extrapolateRight: 'clamp' });
-    const opacity = interpolate(rawY, [-50, 100, height - 100, height], [0, 0.8, 0.6, 0], { extrapolateRight: 'clamp' });
-    return { x: sx, y: rawY, scale, opacity, i };
+  // === STARS ===
+  const stars = Array.from({ length: 5 }, (_, i) => {
+    const speed = 2.2 + (i % 3) * 0.5;
+    const rawY = ((time * speed * 85 + i * 310 + 200) % (height + 200)) - 100;
+    const perspective = interpolate(rawY, [0, height], [0.3, 1.4], { extrapolateRight: 'clamp' });
+    const sx = width * (0.2 + (i * 0.2) % 0.6);
+    const opacity = interpolate(rawY, [-50, 80, height - 80, height], [0, 0.9, 0.5, 0], { extrapolateRight: 'clamp' });
+    return { x: sx, y: rawY, scale: perspective, opacity, i };
   });
 
-  // === PARTICLE SPRAY from surfboard ===
-  const sprayParticles = Array.from({ length: 8 }, (_, i) => {
-    const angle = (i / 8) * Math.PI + Math.PI;
-    const dist = (time * 80 + i * 10) % 40;
-    const px = byteX + Math.cos(angle + time * 3) * dist;
-    const py = byteY + byteSize * 0.4 + Math.sin(angle) * dist * 0.3 + 10;
-    const op = interpolate(dist, [0, 40], [0.4, 0], { extrapolateRight: 'clamp' });
-    return { x: px, y: py, opacity: op, size: 2 + (i % 3), i };
+  // === SPRAY ===
+  const spray = Array.from({ length: 10 }, (_, i) => {
+    const angle = (i / 10) * Math.PI * 0.6 + Math.PI * 0.7;
+    const dist = (time * 60 + i * 8) % 35;
+    return {
+      x: byteX + Math.cos(angle + time * 4) * dist,
+      y: byteY + byteSize * 0.65 + Math.abs(Math.sin(angle)) * dist * 0.4,
+      opacity: interpolate(dist, [0, 35], [0.5, 0], { extrapolateRight: 'clamp' }),
+      size: 2 + (i % 3),
+    };
   });
 
-  // === SUBTITLE ===
+  // === SUBTITLE — above Byte's head ===
   const currentTime = time;
   let subtitle = '';
   if (words.length > 0) {
-    const GROUP_SIZE = 7;
-    const spokenIdx = words.findIndex(w => currentTime >= w.start && currentTime < w.end);
-    const idx = spokenIdx >= 0 ? spokenIdx : words.findIndex(w => currentTime < w.start) - 1;
+    const GROUP = 7;
+    const si = words.findIndex(w => currentTime >= w.start && currentTime < w.end);
+    const idx = si >= 0 ? si : words.findIndex(w => currentTime < w.start) - 1;
     if (idx >= 0) {
-      const groupStart = Math.floor(idx / GROUP_SIZE) * GROUP_SIZE;
-      const groupEnd = Math.min(groupStart + GROUP_SIZE, words.length);
-      const groupWords = words.slice(groupStart, groupEnd);
-      if (currentTime >= groupWords[0].start && currentTime < groupWords[groupEnd - groupStart - 1].end + 0.5) {
-        subtitle = groupWords.map((w, gi) => {
-          const absIdx = groupStart + gi;
-          return absIdx === idx ? `<b>${w.word}</b>` : w.word;
-        }).join(' ');
+      const gs = Math.floor(idx / GROUP) * GROUP;
+      const ge = Math.min(gs + GROUP, words.length);
+      const gw = words.slice(gs, ge);
+      if (currentTime >= gw[0].start && currentTime < gw[ge - gs - 1].end + 0.5) {
+        subtitle = gw.map((w, gi) => (gs + gi === idx ? `<b>${w.word}</b>` : w.word)).join(' ');
       }
     }
   }
 
-  // === QUESTION TITLE ===
   const questionOp = interpolate(frame, [0, fps * 0.4, fps * 2.5, fps * 3], [0, 1, 1, 0], { extrapolateRight: 'clamp' });
 
   return (
-    <AbsoluteFill style={{ background: '#0A0A0A', fontFamily, overflow: 'hidden' }}>
-
-      {/* Audio */}
+    <AbsoluteFill style={{ background: '#050a18', fontFamily, overflow: 'hidden' }}>
       {audioUrl && <Audio src={staticFile(audioUrl)} />}
 
-      {/* Perspective gradient — water rushing towards camera */}
+      {/* Ocean gradient */}
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-        background: 'radial-gradient(ellipse at 50% 20%, rgba(6, 95, 70, 0.12) 0%, transparent 60%)',
+        background: 'radial-gradient(ellipse at 50% 15%, rgba(30, 64, 175, 0.2) 0%, rgba(5, 10, 24, 0) 55%)',
+      }} />
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0, height: '55%',
+        background: 'linear-gradient(180deg, transparent 0%, rgba(14, 47, 115, 0.15) 40%, rgba(30, 64, 175, 0.2) 100%)',
       }} />
 
-      {/* Road/water perspective lines */}
-      {roadLines.map(({ y, opacity, lineWidth, i }) => (
-        <div key={`road-${i}`} style={{
+      {/* Wave rows — blue horizontal lines rushing towards camera */}
+      {waveRows.map(({ y, width: w, opacity, xShift, i }) => (
+        <div key={`wr-${i}`} style={{
           position: 'absolute', top: y, left: '50%',
-          transform: 'translateX(-50%)',
-          width: lineWidth, height: 1,
-          background: `rgba(74, 222, 128, ${opacity})`,
+          transform: `translateX(calc(-50% + ${xShift}px))`,
+          width: w, height: 1.5,
+          background: `rgba(96, 165, 250, ${opacity})`,
           borderRadius: 1,
         }} />
       ))}
 
-      {/* Obstacles — waves coming at camera */}
-      {obstacles.map(({ x, y, size, opacity, i }) => (
-        <div key={`obs-${i}`} style={{
-          position: 'absolute', left: x - size / 2, top: y - size / 2,
-          width: size, height: size * 0.6,
-          borderRadius: '50% 50% 40% 40%',
-          background: `rgba(74, 222, 128, ${opacity * 0.15})`,
-          border: `1px solid rgba(74, 222, 128, ${opacity * 0.2})`,
+      {/* Big waves — blue, coming at you */}
+      {bigWaves.map(({ x, y, size, opacity, i }) => (
+        <div key={`bw-${i}`} style={{
+          position: 'absolute', left: x - size / 2, top: y - size * 0.3,
+          width: size, height: size * 0.5,
+          borderRadius: '50% 50% 35% 35%',
+          background: `rgba(59, 130, 246, ${opacity * 0.2})`,
+          border: `1.5px solid rgba(96, 165, 250, ${opacity * 0.3})`,
+          boxShadow: `0 0 ${size * 0.3}px rgba(59, 130, 246, ${opacity * 0.1})`,
         }} />
       ))}
 
-      {/* Stars racing towards camera */}
+      {/* Stars */}
       {stars.map(({ x, y, scale, opacity, i }) => (
-        <div key={`star-${i}`} style={{
-          position: 'absolute', left: x - 10 * scale, top: y - 10 * scale,
-          fontSize: 18 * scale, opacity,
-        }}>
-          ⭐
-        </div>
+        <div key={`s-${i}`} style={{
+          position: 'absolute', left: x, top: y,
+          fontSize: 16 * scale, opacity,
+          filter: `drop-shadow(0 0 4px rgba(250, 204, 21, ${opacity * 0.5}))`,
+        }}>⭐</div>
       ))}
 
-      {/* Spray particles behind surfboard */}
-      {sprayParticles.map(({ x, y, opacity, size, i }) => (
-        <div key={`spray-${i}`} style={{
+      {/* Spray particles */}
+      {spray.map(({ x, y, opacity, size }, i) => (
+        <div key={`sp-${i}`} style={{
           position: 'absolute', left: x, top: y,
           width: size, height: size, borderRadius: size,
-          background: `rgba(255, 255, 255, ${opacity})`,
+          background: `rgba(147, 197, 253, ${opacity})`,
         }} />
       ))}
 
-      {/* Surfboard — under Byte */}
-      <div style={{
-        position: 'absolute',
-        left: byteX - 70,
-        top: byteY + byteSize * 0.55,
-        width: 140, height: 20,
-        borderRadius: '50%',
-        background: 'linear-gradient(90deg, #f59e0b, #fb923c)',
-        transform: `rotate(${tilt * 0.3}deg)`,
-        boxShadow: '0 6px 25px rgba(251, 146, 60, 0.35)',
-      }} />
+      {/* Surfboard — perspective towards camera */}
+      <svg style={{ position: 'absolute', left: byteX - 65, top: byteY + byteSize * 0.5 }}
+        width={130} height={50} viewBox="0 0 130 50">
+        <defs>
+          <linearGradient id="surfGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#f59e0b" />
+            <stop offset="100%" stopColor="#fb923c" />
+          </linearGradient>
+        </defs>
+        {/* Board shape — wider at front (bottom), narrower at back (top) */}
+        <ellipse cx="65" cy="20" rx="60" ry="16" fill="url(#surfGrad)"
+          transform={`rotate(${tilt * 0.3} 65 20)`} />
+        {/* Fin */}
+        <path d="M 65 34 L 60 44 L 70 44 Z" fill="#d97706" opacity="0.6"
+          transform={`rotate(${tilt * 0.3} 65 20)`} />
+      </svg>
 
-      {/* Byte — facing towards camera */}
+      {/* Byte's LEGS on surfboard */}
+      <svg style={{ position: 'absolute', left: byteX - 30, top: byteY + byteSize * 0.35, transform: `rotate(${tilt}deg)` }}
+        width={60} height={80} viewBox="0 0 60 80">
+        {/* Left leg */}
+        <line x1="18" y1="0" x2={14 + legSwing * 0.3} y2="50" stroke="#333" strokeWidth="6" strokeLinecap="round" />
+        <circle cx={14 + legSwing * 0.3} cy="52" r="6" fill="#444" /> {/* foot */}
+        {/* Right leg */}
+        <line x1="42" y1="0" x2={46 - legSwing * 0.3} y2="50" stroke="#333" strokeWidth="6" strokeLinecap="round" />
+        <circle cx={46 - legSwing * 0.3} cy="52" r="6" fill="#444" /> {/* foot */}
+      </svg>
+
+      {/* Byte character */}
       <div style={{
         position: 'absolute',
         left: byteX - byteSize / 2,
-        top: byteY - byteSize * 0.4,
+        top: byteY - byteSize * 0.35,
         transform: `rotate(${tilt}deg) scale(${breathe})`,
         transformOrigin: 'center bottom',
       }}>
         <ByteMascot size={byteSize} equipment={equipment} />
       </div>
 
-      {/* Question title — big at start */}
-      <div style={{
-        position: 'absolute', top: height * 0.06, left: 0, right: 0,
-        textAlign: 'center', opacity: questionOp,
-        padding: '0 50px',
-      }}>
-        <div style={{
-          fontSize: 10, fontWeight: 700, color: '#4ade80',
-          letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 12,
-        }}>
-          Behind the Scenes
-        </div>
-        <div style={{
-          fontSize: 38, fontWeight: 800, color: '#fff',
-          lineHeight: 1.15, letterSpacing: '-0.02em',
-        }}>
-          {question}
-        </div>
-      </div>
-
-      {/* Subtitle */}
+      {/* Subtitle — ABOVE Byte's head */}
       {subtitle && (
         <div style={{
-          position: 'absolute', bottom: 100, left: 0, right: 0,
-          textAlign: 'center', padding: '0 50px',
+          position: 'absolute',
+          top: byteY - byteSize * 0.55,
+          left: 0, right: 0,
+          textAlign: 'center', padding: '0 40px',
         }}>
           <div
             style={{
               display: 'inline-block',
-              fontSize: 24, fontWeight: 500, color: '#999',
-              lineHeight: 1.6,
-              background: 'rgba(0,0,0,0.75)',
-              borderRadius: 12, padding: '8px 20px',
+              fontSize: 22, fontWeight: 500, color: '#94a3b8',
+              lineHeight: 1.5,
+              background: 'rgba(5, 10, 24, 0.85)',
+              borderRadius: 10, padding: '6px 18px',
+              border: '1px solid rgba(96, 165, 250, 0.1)',
             }}
             dangerouslySetInnerHTML={{ __html: subtitle.replace(/<b>/g, '<b style="color:#fff;font-weight:700;">') }}
           />
         </div>
       )}
 
-      {/* Logo */}
+      {/* Question title */}
       <div style={{
-        position: 'absolute', bottom: 36, left: 0, right: 0,
-        display: 'flex', justifyContent: 'center',
+        position: 'absolute', top: height * 0.05, left: 0, right: 0,
+        textAlign: 'center', opacity: questionOp, padding: '0 50px',
       }}>
-        <Img src={LOGO_SRC} style={{ height: 18, objectFit: 'contain' }} />
+        <div style={{ fontSize: 10, fontWeight: 700, color: '#60a5fa', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 10 }}>
+          Behind the Scenes
+        </div>
+        <div style={{ fontSize: 36, fontWeight: 800, color: '#fff', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+          {question}
+        </div>
+      </div>
+
+      {/* Logo */}
+      <div style={{ position: 'absolute', bottom: 32, left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
+        <Img src={LOGO_SRC} style={{ height: 16, objectFit: 'contain' }} />
       </div>
     </AbsoluteFill>
   );
