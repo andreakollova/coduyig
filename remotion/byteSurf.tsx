@@ -36,7 +36,7 @@ export const ByteSurfAnimation: React.FC<{
   const time = frame / fps;
   const totalDuration = (words.length > 0 ? words[words.length - 1].end + 2 : 20);
 
-  const byteSize = 280;
+  const byteSize = 340;
 
   // No shark
   const isSharkPhase = false;
@@ -45,7 +45,7 @@ export const ByteSurfAnimation: React.FC<{
   // === BYTE POSITION ===
   const dodgeX = isSharkPhase ? 0 : Math.sin(time * 1.2) * 55 + Math.sin(time * 2.8) * 20;
   const byteX = width / 2 + dodgeX;
-  const normalByteY = height * 0.48;
+  const normalByteY = height * 0.55;
 
   // Jump off surfboard + swim away
   const jumpY = isSharkPhase ? interpolate(sharkProgress, [0, 0.2, 0.5, 1], [0, -80, 30, height * 0.6], { extrapolateRight: 'clamp' }) : 0;
