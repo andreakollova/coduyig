@@ -48,12 +48,12 @@ const THEMES: Record<string, Theme> = {
     bgMusic: 'sea.wav',
   },
   horse: {
-    bg: '#120a04',
-    gradientTop: 'rgba(120, 70, 20, 0.15)',
-    gradientBottom: 'rgba(80, 50, 15, 0.25)',
-    waveColor: '160, 120, 60',
-    bigWaveColor: '140, 100, 40',
-    items: ['🐎', '🌾', '🐎', '🌻', '🐎', '🦋', '🌳', '🐎', '🍃', '🐄'],
+    bg: '#1a1208',
+    gradientTop: 'rgba(140, 90, 30, 0.15)',
+    gradientBottom: 'rgba(100, 70, 25, 0.2)',
+    waveColor: '180, 140, 80',
+    bigWaveColor: '160, 120, 60',
+    items: ['🐴', '🌾', '🐴', '🌻', '🐴', '🦋', '🌳', '🐴', '🍃', '🐄'],
     vehicleName: 'horse',
     subtitleBg: 'rgba(18, 10, 4, 0.85)',
     subtitleBorder: 'rgba(160, 120, 60, 0.15)',
@@ -230,8 +230,8 @@ export const ByteSurfAnimation: React.FC<{
         const sx = width * (0.12 + (i * 0.18) % 0.76);
         const opacity = interpolate(rawY, [-50, 80, height - 80, height], [0, 0.7, 0.4, 0], { extrapolateRight: 'clamp' });
         const item = T.items[i % T.items.length];
-        const isMainEmoji = item === '🐎' || item === '🐠';
-        return <div key={`sea-${i}`} style={{ position: 'absolute', left: sx, top: rawY, fontSize: (isMainEmoji ? 40 : 26) * scale, opacity }}>{item}</div>;
+        const isMainEmoji = item === '🐴' || item === '🐠';
+        return <div key={`sea-${i}`} style={{ position: 'absolute', left: sx, top: rawY, fontSize: (isMainEmoji ? 55 : 26) * scale, opacity }}>{item}</div>;
       })}
 
       {/* Spray (surf only) */}
@@ -271,7 +271,7 @@ export const ByteSurfAnimation: React.FC<{
         <div style={{
           position: 'absolute', left: byteX - 60, top: byteY + byteSize * 0.25,
           fontSize: 90, transform: `scaleX(-1) rotate(${tilt * 0.2}deg) translateY(${Math.sin(time * 6) * 8}px)`,
-        }}>🐎</div>
+        }}>🐴</div>
       )}
       {/* Abandoned surfboard floating */}
       {isSharkPhase && (
