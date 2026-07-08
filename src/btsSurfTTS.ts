@@ -78,7 +78,7 @@ export async function generateBTSVoiceover(
     : 'And I tell them: Leave me alone I am surfing!... But ok... here is how it works.';
 
   // Part 5: Closing — "Bro." / "Kámo."
-  const closing = lang === 'sk' ? 'Tak čo, je to ok, kámo?!' : 'There you go, bro!';
+  const closing = lang === 'sk' ? 'Takže vlastne, nič zložité, kámo.' : 'So yeah, nothing complicated, bro.';
 
   console.log(`🎙️ Generating BTS voiceover (${lang})...`);
   console.log(`  Intro: "${intro}"`);
