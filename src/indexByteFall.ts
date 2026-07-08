@@ -246,8 +246,9 @@ async function main() {
       entry.term, entry.termFull, def, ttsDir, lang, 'student'
     );
 
-    // Copy audio to public
-    fs.copyFileSync(audioPath, path.join(process.cwd(), 'public', 'bytefall_voice.mp3'));
+    // Copy audio to bundled serve directory so Remotion can find it
+    const audioFileName = `bytefall_voice_${lang}.mp3`;
+    fs.copyFileSync(audioPath, path.join(serveUrl, audioFileName));
 
     // Render video
     const durationFrames = Math.max(420, Math.ceil((duration + 3) * FPS));
@@ -257,7 +258,7 @@ async function main() {
       term: entry.term,
       termFull: entry.termFull,
       definition: def,
-      audioUrl: 'bytefall_voice.mp3',
+      audioUrl: audioFileName,
       words,
     };
 
