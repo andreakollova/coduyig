@@ -20,7 +20,46 @@ function wavePath(w: number, y: number, amplitude: number, frequency: number, ph
   return pts.join(' ');
 }
 
-const SEA_ITEMS = ['🐠', '🐟', '🐡', '🐚', '🦀', '🪸', '🐙', '🦑', '🐳', '🌊'];
+// === THEMES ===
+interface Theme {
+  bg: string;
+  gradientTop: string;
+  gradientBottom: string;
+  waveColor: string;
+  bigWaveColor: string;
+  items: string[];
+  vehicleName: string;
+  subtitleBg: string;
+  subtitleBorder: string;
+  bgMusic: string;
+}
+
+const THEMES: Record<string, Theme> = {
+  surf: {
+    bg: '#020612',
+    gradientTop: 'rgba(30, 64, 175, 0.2)',
+    gradientBottom: 'rgba(30, 64, 175, 0.2)',
+    waveColor: '${T.waveColor}',
+    bigWaveColor: '${T.bigWaveColor}',
+    items: ['🐠', '🐟', '🐡', '🐚', '🦀', '🪸', '🐙', '🦑', '🐳', '🌊'],
+    vehicleName: 'surfboard',
+    subtitleBg: 'rgba(2, 6, 18, 0.85)',
+    subtitleBorder: 'rgba(${T.waveColor}, 0.1)',
+    bgMusic: 'sea.wav',
+  },
+  horse: {
+    bg: '#0a0f05',
+    gradientTop: 'rgba(34, 80, 20, 0.2)',
+    gradientBottom: 'rgba(34, 80, 20, 0.25)',
+    waveColor: '74, 160, 60',
+    bigWaveColor: '60, 130, 50',
+    items: ['🌾', '🌻', '🌳', '🐄', '🦋', '🐝', '🌿', '🍃', '🐑', '🌼'],
+    vehicleName: 'horse',
+    subtitleBg: 'rgba(5, 10, 3, 0.85)',
+    subtitleBorder: 'rgba(74, 160, 60, 0.1)',
+    bgMusic: 'sea.wav', // TODO: horse gallop sound
+  },
+};
 
 export const ByteSurfAnimation: React.FC<{
   equipment?: Record<string, string>;
@@ -30,7 +69,9 @@ export const ByteSurfAnimation: React.FC<{
   words?: ByteSurfWord[];
   questionerStart?: number;
   questionerEnd?: number;
-}> = ({ equipment = {}, question = '', audioUrl, words = [], questionerStart = 0, questionerEnd = 0 }) => {
+  theme?: string;
+}> = ({ equipment = {}, question = '', audioUrl, words = [], questionerStart = 0, questionerEnd = 0, theme = 'surf' }) => {
+  const T = THEMES[theme] || THEMES.surf;
   const frame = useCurrentFrame();
   const { fps, height, width } = useVideoConfig();
   const time = frame / fps;
@@ -46,11 +87,13 @@ export const ByteSurfAnimation: React.FC<{
   const dodgeX = isSharkPhase ? 0 : Math.sin(time * 1.2) * 55 + Math.sin(time * 2.8) * 20;
   const byteX = width / 2 + dodgeX;
   const normalByteY = height * 0.55;
+  // Horse gallop bounce
+  const gallopBounce = theme === 'horse' ? Math.abs(Math.sin(time * 6)) * 15 : 0;
 
   // Jump off surfboard + swim away
   const jumpY = isSharkPhase ? interpolate(sharkProgress, [0, 0.2, 0.5, 1], [0, -80, 30, height * 0.6], { extrapolateRight: 'clamp' }) : 0;
   const swimX = isSharkPhase ? interpolate(sharkProgress, [0.3, 1], [0, width * 0.7], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' }) : 0;
-  const byteY = normalByteY + jumpY;
+  const byteY = normalByteY + jumpY - gallopBounce;
   const tilt = isSharkPhase
     ? interpolate(sharkProgress, [0, 0.2, 0.5, 1], [0, -25, 15, 30], { extrapolateRight: 'clamp' })
     : Math.sin(time * 1.2) * -7;
@@ -100,15 +143,15 @@ export const ByteSurfAnimation: React.FC<{
   const questionOp = interpolate(frame, [0, fps * 3, fps * 3.5], [1, 1, 0], { extrapolateRight: 'clamp' });
 
   return (
-    <AbsoluteFill style={{ background: '#020612', fontFamily, overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: T.bg, fontFamily, overflow: 'hidden' }}>
       {audioUrl && <Audio src={staticFile(audioUrl)} />}
       <Audio src={staticFile('sea.wav')} volume={0.08} loop />
 
       {/* Ocean gradient */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-        background: 'radial-gradient(ellipse at 50% 15%, rgba(30, 64, 175, 0.2) 0%, transparent 55%)' }} />
+        background: `radial-gradient(ellipse at 50% 15%, ${T.gradientTop} 0%, transparent 55%)` }} />
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '55%',
-        background: 'linear-gradient(180deg, transparent 0%, rgba(14, 47, 115, 0.15) 40%, rgba(30, 64, 175, 0.2) 100%)' }} />
+        background: `linear-gradient(180deg, transparent 0%, ${T.gradientBottom} 40%, ${T.gradientBottom} 100%)` }} />
 
       {/* Wavy waves */}
       <svg style={{ position: 'absolute', top: 0, left: 0 }} width={width} height={height}>
@@ -122,7 +165,7 @@ export const ByteSurfAnimation: React.FC<{
           const waveW = perspective * width * 0.85;
           const offsetX = (width - waveW) / 2;
           return <path key={`w-${i}`} d={wavePath(waveW, rawY, amplitude, freq, time * 2 + i * 0.7)}
-            fill="none" stroke={`rgba(135, 206, 255, ${opacity})`} strokeWidth={1.5}
+            fill="none" stroke={`rgba(${T.waveColor}, ${opacity})`} strokeWidth={1.5}
             transform={`translate(${offsetX}, 0)`} />;
         })}
       </svg>
@@ -139,7 +182,7 @@ export const ByteSurfAnimation: React.FC<{
           const amp = perspective * 18;
           return <path key={`bw-${i}`}
             d={wavePath(wSize, rawY, amp, 2, time * 3 + i * 1.5) + ` L ${wSize} ${rawY + amp * 2} L 0 ${rawY + amp * 2} Z`}
-            fill={`rgba(100, 180, 255, ${opacity * 0.12})`} stroke={`rgba(135, 206, 255, ${opacity * 0.25})`} strokeWidth={1.5}
+            fill={`rgba(${T.bigWaveColor}, ${opacity * 0.12})`} stroke={`rgba(${T.waveColor}, ${opacity * 0.25})`} strokeWidth={1.5}
             transform={`translate(${ox - wSize / 2}, 0)`} />;
         })}
       </svg>
@@ -151,28 +194,47 @@ export const ByteSurfAnimation: React.FC<{
         const scale = interpolate(rawY, [0, height], [0.3, 1.4], { extrapolateRight: 'clamp' });
         const sx = width * (0.12 + (i * 0.18) % 0.76);
         const opacity = interpolate(rawY, [-50, 80, height - 80, height], [0, 0.7, 0.4, 0], { extrapolateRight: 'clamp' });
-        return <div key={`sea-${i}`} style={{ position: 'absolute', left: sx, top: rawY, fontSize: 26 * scale, opacity }}>{SEA_ITEMS[i % SEA_ITEMS.length]}</div>;
+        return <div key={`sea-${i}`} style={{ position: 'absolute', left: sx, top: rawY, fontSize: 26 * scale, opacity }}>{T.items[i % T.items.length]}</div>;
       })}
 
-      {/* Spray */}
-      {!isSharkPhase && Array.from({ length: 8 }, (_, i) => {
+      {/* Spray (surf only) */}
+      {theme === 'surf' && !isSharkPhase && Array.from({ length: 8 }, (_, i) => {
         const angle = (i / 8) * Math.PI * 0.6 + Math.PI * 0.7;
         const dist = (time * 60 + i * 8) % 35;
         return <div key={`sp-${i}`} style={{
           position: 'absolute', left: byteX + Math.cos(angle + time * 4) * dist,
           top: byteY + byteSize * 0.65 + Math.abs(Math.sin(angle)) * dist * 0.4,
           width: 2 + (i % 3), height: 2 + (i % 3), borderRadius: 10,
-          background: `rgba(147, 197, 253, ${interpolate(dist, [0, 35], [0.5, 0], { extrapolateRight: 'clamp' })})`,
+          background: `rgba(${T.waveColor}, ${interpolate(dist, [0, 35], [0.5, 0], { extrapolateRight: 'clamp' })})`,
         }} />;
       })}
 
-      {/* Surfboard — stays when Byte jumps off */}
-      {!isSharkPhase && (
+      {/* Dust particles (horse only) */}
+      {theme === 'horse' && Array.from({ length: 10 }, (_, i) => {
+        const dist = (time * 50 + i * 7) % 40;
+        const dx = Math.cos(i * 1.3 + time * 2) * dist;
+        const dy = Math.sin(i * 0.8) * dist * 0.3;
+        return <div key={`dust-${i}`} style={{
+          position: 'absolute', left: byteX + dx - 20, top: byteY + byteSize * 0.7 + dy,
+          width: 3 + (i % 3), height: 3 + (i % 3), borderRadius: 10,
+          background: `rgba(160, 130, 80, ${interpolate(dist, [0, 40], [0.4, 0], { extrapolateRight: 'clamp' })})`,
+        }} />;
+      })}
+
+      {/* Vehicle */}
+      {theme === 'surf' && !isSharkPhase && (
         <svg style={{ position: 'absolute', left: byteX - 100, top: byteY + byteSize * 0.48 }} width={200} height={65} viewBox="0 0 200 65">
           <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#f59e0b" /><stop offset="100%" stopColor="#fb923c" /></linearGradient></defs>
           <ellipse cx="100" cy="25" rx="95" ry="22" fill="url(#sg)" transform={`rotate(${tilt * 0.3} 100 25)`} />
           <path d="M 100 44 L 92 60 L 108 60 Z" fill="#d97706" opacity="0.6" />
         </svg>
+      )}
+      {/* Horse */}
+      {theme === 'horse' && (
+        <div style={{
+          position: 'absolute', left: byteX - 60, top: byteY + byteSize * 0.25,
+          fontSize: 90, transform: `scaleX(-1) rotate(${tilt * 0.2}deg) translateY(${Math.sin(time * 6) * 8}px)`,
+        }}>🐎</div>
       )}
       {/* Abandoned surfboard floating */}
       {isSharkPhase && (
@@ -184,11 +246,11 @@ export const ByteSurfAnimation: React.FC<{
 
       {/* Byte's legs — only when on surfboard */}
       {!isSharkPhase && (
-        <svg style={{ position: 'absolute', left: byteX - 40, top: byteY + byteSize * 0.3, transform: `rotate(${tilt}deg)` }} width={80} height={110} viewBox="0 0 80 110">
-          <line x1="22" y1="0" x2={17 + legSwing * 0.4} y2="72" stroke="#333" strokeWidth="8" strokeLinecap="round" />
-          <circle cx={17 + legSwing * 0.4} cy="75" r="9" fill="#444" />
-          <line x1="58" y1="0" x2={63 - legSwing * 0.4} y2="72" stroke="#333" strokeWidth="8" strokeLinecap="round" />
-          <circle cx={63 - legSwing * 0.4} cy="75" r="9" fill="#444" />
+        <svg style={{ position: 'absolute', left: byteX - 45, top: byteY + byteSize * 0.28, transform: `rotate(${tilt}deg)` }} width={90} height={130} viewBox="0 0 90 130">
+          <line x1="25" y1="0" x2={18 + legSwing * 0.5} y2="88" stroke="#333" strokeWidth="9" strokeLinecap="round" />
+          <circle cx={18 + legSwing * 0.5} cy="92" r="10" fill="#444" />
+          <line x1="65" y1="0" x2={72 - legSwing * 0.5} y2="88" stroke="#333" strokeWidth="9" strokeLinecap="round" />
+          <circle cx={72 - legSwing * 0.5} cy="92" r="10" fill="#444" />
         </svg>
       )}
 
@@ -233,7 +295,7 @@ export const ByteSurfAnimation: React.FC<{
           <div style={{
             display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8,
             background: 'rgba(5, 10, 24, 0.9)', borderRadius: 20, padding: '20px 30px',
-            border: '1px solid rgba(135, 206, 255, 0.2)',
+            border: '1px solid rgba(${T.waveColor}, 0.2)',
           }}>
             <div style={{ fontSize: 48 }}>🤔</div>
             <div style={{ fontSize: 36, fontWeight: 800, color: '#60a5fa' }}>?</div>
@@ -255,7 +317,7 @@ export const ByteSurfAnimation: React.FC<{
           <div style={{
             display: 'inline-block', fontSize: 38, fontWeight: 600, color: '#94a3b8',
             lineHeight: 1.45, background: 'rgba(2, 6, 18, 0.85)',
-            borderRadius: 12, padding: '10px 26px', border: '1px solid rgba(135, 206, 255, 0.1)',
+            borderRadius: 12, padding: '10px 26px', border: '1px solid rgba(${T.waveColor}, 0.1)',
             maxWidth: 500, textAlign: 'center',
           }} dangerouslySetInnerHTML={{ __html: subtitle.replace(/<b>/g, '<b style="color:#fff;font-weight:700;">') }} />
         </div>
