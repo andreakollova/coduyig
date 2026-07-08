@@ -80,8 +80,8 @@ export async function generateBTSVoiceover(
 
   // Part 3a: "Nechaj ma" / "Leave me alone"
   const answerPart1 = lang === 'sk'
-    ? 'A ja im odpoviem: Nechaj ma.'
-    : 'And I tell them: Leave me alone.';
+    ? 'A ja im odpoviem... Nechaj ma.'
+    : 'And I tell them... Leave me alone.';
 
   // Part 3b: "veď surfujem!" / "I am surfing!"
   const answerPart2 = lang === 'sk'
