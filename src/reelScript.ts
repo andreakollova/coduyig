@@ -23,7 +23,7 @@ Two characters:
 
 Create a conversation with EXACTLY 9 lines:
 
-1. STUDENT: casual greeting + asks about today's topic (max 12 words)
+1. STUDENT: starts with a random casual word like "Dude,", "Bro,", or "Little guy," then asks about today's topic (max 12 words). Examples: "Dude, what are we learning today?" or "Bro, what's today's topic?" or "Little guy, what do you have for me today?"
 2. TEACHER: answer and explain the topic. Connect with commas for natural flow. Example: "Today we're looking at lambda functions, which are small anonymous functions that don't need a name and just have one expression." Every sentence complete. (max 35 words). NEVER read code.
 3. STUDENT: excited follow-up question, not confused — genuinely curious and engaged (max 12 words). Like "Oh that's cool! So when would I actually use that?" or "Wait really? How does that work in practice?"
 4. TEACHER: explain it simply, connect ideas with commas. Just say it plainly. Example: "When you need a function just once, instead of writing the whole thing out and giving it a name, you just write it in one line and you're good to go." NO filler words, NO real-life analogies. (max 45 words)
@@ -67,7 +67,7 @@ Dve postavy:
 
 Vytvor konverzáciu s PRESNE 9 riadkami:
 
-1. ŠTUDENT: neformálny pozdrav + pýta sa na tému. "Čauko, aká je téma dnešnej hodiny?" alebo "Hej, o čom sa dnes učíme?" (max 12 slov)
+1. ŠTUDENT: začne náhodným oslovením ako "Kámo,", "Bráško,", alebo "Kamoško," a potom sa pýta na tému (max 12 slov). Príklady: "Kámo, čo sa dnes budeme učiť?" alebo "Bráško, aká je dnešná téma?" alebo "Kamoško, čo pre mňa máš dnes?"
 2. UČITEĽ: odpovie na otázku a plynulo vysvetlí tému. Spájaj vety čiarkami. Napríklad: "Dnes sa pozrieme na lambda funkcie, čo sú malé anonymné funkcie, ktoré nepotrebujú meno a obsahujú len jeden výraz." NIKDY nekončí vetou bez dokončenia. (max 35 slov). NIKDY nečítaj kód.
 3. ŠTUDENT: nadšená zvedavá otázka — NIE zmätený, ale zaujatý a zapálený (max 12 slov). "To je zaujímavé! A kedy sa to reálne používa?" alebo "Počkaj, fakt? A ako to funguje v praxi?"
 4. UČITEĽ: vysvetlí to jednoducho a plynulo. Spájaj myšlienky čiarkami. NEPOUŽÍVAJ "v podstate", "no tak", "no a". Jednoducho plynulo hovor. Napríklad: "Keď potrebuješ funkciu len na jedno použitie, tak namiesto toho aby si ju celú vypisoval a dával jej meno, jednoducho ju napíšeš do jedného riadku a hotovo." ŽIADNE analógie zo života. (max 45 slov)
