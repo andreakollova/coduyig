@@ -226,6 +226,19 @@ const SK_PHONETICS: Record<string, string> = {
   'TS': 'tí es',
   'AWS': 'ej dablju es',
   'GraphQL': 'graf kjú el',
+  // From lessons
+  'LEGB': 'el í džé bí',
+  'OWASP': 'ou vasp',
+  'TDD': 'tí dí dí',
+  'GIL': 'džé aj el',
+  'PEP': 'pep',
+  'CISC': 'sisk',
+  'RISC': 'risk',
+  'JIT': 'džit',
+  'VS': 'ví es',
+  'OOP': 'ou ou pí',
+  'SMTP': 'es em tí pí',
+  'IMAP': 'aj mep',
 };
 
 // Only abbreviations for EN — skip regular English words
