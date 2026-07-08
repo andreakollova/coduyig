@@ -74,8 +74,8 @@ export async function generateBTSVoiceover(
 
   // Part 3: Byte answer — casual transition
   const answerIntro = lang === 'sk'
-    ? 'A ja im odpoviem, nechaj ma veď surfujem. Ale okej... funguje to takto.'
-    : 'And I tell them, leave me alone I am surfing. But ok... here is how it works.';
+    ? 'A ja im odpoviem: Nechaj ma veď surfujem... Ale okej... funguje to takto.'
+    : 'And I tell them: Leave me alone I am surfing... But ok... here is how it works.';
 
   console.log(`🎙️ Generating BTS voiceover (${lang})...`);
   console.log(`  Intro: "${intro}"`);
