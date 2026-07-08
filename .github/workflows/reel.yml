@@ -1,8 +1,8 @@
 name: Daily Instagram Reel
 
 on:
-  schedule:
-    - cron: '0 15 * * *'  # 15:00 UTC = 17:00 CEST
+  # schedule: # MOVED TO daily.yml
+    # - cron: '0 15 * * *'  # 15:00 UTC = 17:00 CEST
   workflow_dispatch:
     inputs:
       lesson_id:

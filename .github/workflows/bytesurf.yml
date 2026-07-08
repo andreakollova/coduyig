@@ -1,8 +1,8 @@
 name: Daily ByteSurf
 
 on:
-  schedule:
-    - cron: '0 12 * * *'  # 12:00 UTC = 14:00 CEST
+  # schedule: # MOVED TO daily.yml
+    # - cron: '0 12 * * *'  # 12:00 UTC = 14:00 CEST
   workflow_dispatch:
 
 jobs:

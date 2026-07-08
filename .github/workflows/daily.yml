@@ -1,0 +1,199 @@
+name: Daily Content
+
+on:
+  schedule:
+    # Morning reel — 07:00 UTC = 09:00 CEST
+    - cron: '0 7 * * *'
+    # Lunch post — 11:00 UTC = 13:00 CEST
+    - cron: '0 11 * * *'
+    # Evening reel — 17:00 UTC = 19:00 CEST
+    - cron: '0 17 * * *'
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: 'Force slot: morning / lunch / evening'
+        required: false
+      dry_run:
+        description: 'Dry run'
+        type: boolean
+        default: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Ensure Remotion browser
+        run: npx remotion browser ensure
+
+      - name: Determine what to publish
+        id: plan
+        run: |
+          HOUR=$(date -u +%H)
+          DAY=$(date -u +%j)  # day of year 1-366
+
+          # Override with input if provided
+          SLOT="${{ inputs.slot }}"
+          if [ -z "$SLOT" ]; then
+            if [ "$HOUR" -lt 9 ]; then
+              SLOT="morning"
+            elif [ "$HOUR" -lt 14 ]; then
+              SLOT="lunch"
+            else
+              SLOT="evening"
+            fi
+          fi
+
+          # Rotate 3 reel types: 0=rozhovor, 1=bytefall, 2=bytesurf
+          MORNING_TYPE=$(( (DAY % 3) ))
+          EVENING_TYPE=$(( ((DAY + 1) % 3) ))
+
+          # Lunch: alternate quiz (even days) and code challenge (odd days)
+          LUNCH_TYPE=$(( DAY % 2 ))
+
+          echo "slot=$SLOT" >> $GITHUB_OUTPUT
+          echo "morning_type=$MORNING_TYPE" >> $GITHUB_OUTPUT
+          echo "evening_type=$EVENING_TYPE" >> $GITHUB_OUTPUT
+          echo "lunch_type=$LUNCH_TYPE" >> $GITHUB_OUTPUT
+          echo "day=$DAY" >> $GITHUB_OUTPUT
+
+          echo "📅 Day $DAY | Slot: $SLOT"
+          echo "  Morning reel type: $MORNING_TYPE (0=rozhovor, 1=bytefall, 2=bytesurf)"
+          echo "  Evening reel type: $EVENING_TYPE"
+          echo "  Lunch type: $LUNCH_TYPE (0=quiz, 1=code)"
+
+      # === MORNING REEL ===
+      - name: Morning - Dialog Reel
+        if: steps.plan.outputs.slot == 'morning' && steps.plan.outputs.morning_type == '0'
+        env:
+          IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
+          IG_PAGE_TOKEN_SK: ${{ secrets.IG_PAGE_TOKEN_SK }}
+          IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
+          IG_USER_ID_SK: ${{ secrets.IG_USER_ID_SK }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: |
+          ARGS=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="--dry-run"; fi
+          npx tsx src/indexReel.ts $ARGS | tee /tmp/reel.txt
+          LESSON_ID=$(grep -oP 'lesson_id=\K\d+' /tmp/reel.txt || echo "")
+          if [ -n "$LESSON_ID" ]; then
+            npx tsx src/indexReel.ts --lang sk --lesson-id $LESSON_ID $ARGS
+          else
+            npx tsx src/indexReel.ts --lang sk $ARGS
+          fi
+
+      - name: Morning - ByteFall
+        if: steps.plan.outputs.slot == 'morning' && steps.plan.outputs.morning_type == '1'
+        env:
+          IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
+          IG_PAGE_TOKEN_SK: ${{ secrets.IG_PAGE_TOKEN_SK }}
+          IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
+          IG_USER_ID_SK: ${{ secrets.IG_USER_ID_SK }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: npx tsx src/indexByteFall.ts
+
+      - name: Morning - ByteSurf
+        if: steps.plan.outputs.slot == 'morning' && steps.plan.outputs.morning_type == '2'
+        env:
+          IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
+          IG_PAGE_TOKEN_SK: ${{ secrets.IG_PAGE_TOKEN_SK }}
+          IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
+          IG_USER_ID_SK: ${{ secrets.IG_USER_ID_SK }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: npx tsx src/indexByteSurf.ts
+
+      # === LUNCH POST ===
+      - name: Lunch - Quiz
+        if: steps.plan.outputs.slot == 'lunch' && steps.plan.outputs.lunch_type == '0'
+        env:
+          IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
+          IG_PAGE_TOKEN_SK: ${{ secrets.IG_PAGE_TOKEN_SK }}
+          IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
+          IG_USER_ID_SK: ${{ secrets.IG_USER_ID_SK }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: npx tsx src/indexQuiz.ts
+
+      - name: Lunch - Code Challenge
+        if: steps.plan.outputs.slot == 'lunch' && steps.plan.outputs.lunch_type == '1'
+        env:
+          IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
+          IG_PAGE_TOKEN_SK: ${{ secrets.IG_PAGE_TOKEN_SK }}
+          IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
+          IG_USER_ID_SK: ${{ secrets.IG_USER_ID_SK }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: npx tsx src/indexCode.ts
+
+      # === EVENING REEL ===
+      - name: Evening - Dialog Reel
+        if: steps.plan.outputs.slot == 'evening' && steps.plan.outputs.evening_type == '0'
+        env:
+          IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
+          IG_PAGE_TOKEN_SK: ${{ secrets.IG_PAGE_TOKEN_SK }}
+          IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
+          IG_USER_ID_SK: ${{ secrets.IG_USER_ID_SK }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: |
+          ARGS=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="--dry-run"; fi
+          npx tsx src/indexReel.ts $ARGS | tee /tmp/reel.txt
+          LESSON_ID=$(grep -oP 'lesson_id=\K\d+' /tmp/reel.txt || echo "")
+          if [ -n "$LESSON_ID" ]; then
+            npx tsx src/indexReel.ts --lang sk --lesson-id $LESSON_ID $ARGS
+          else
+            npx tsx src/indexReel.ts --lang sk $ARGS
+          fi
+
+      - name: Evening - ByteFall
+        if: steps.plan.outputs.slot == 'evening' && steps.plan.outputs.evening_type == '1'
+        env:
+          IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
+          IG_PAGE_TOKEN_SK: ${{ secrets.IG_PAGE_TOKEN_SK }}
+          IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
+          IG_USER_ID_SK: ${{ secrets.IG_USER_ID_SK }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: npx tsx src/indexByteFall.ts
+
+      - name: Evening - ByteSurf
+        if: steps.plan.outputs.slot == 'evening' && steps.plan.outputs.evening_type == '2'
+        env:
+          IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
+          IG_PAGE_TOKEN_SK: ${{ secrets.IG_PAGE_TOKEN_SK }}
+          IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
+          IG_USER_ID_SK: ${{ secrets.IG_USER_ID_SK }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: npx tsx src/indexByteSurf.ts

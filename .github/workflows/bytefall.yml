@@ -1,8 +1,8 @@
 name: Daily ByteFall
 
 on:
-  schedule:
-    - cron: '0 9 * * *'  # 09:00 UTC = 11:00 CEST
+  # schedule: # MOVED TO daily.yml
+    # - cron: '0 9 * * *'  # 09:00 UTC = 11:00 CEST
   workflow_dispatch:
 
 jobs:
