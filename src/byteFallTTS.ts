@@ -502,18 +502,41 @@ export async function generateByteFallVoiceover(
   const word1 = parts[0] || '';
   const word2 = parts[1] || '';
 
+  // Random exciting intro
+  const skIntros = [
+    'Čaute kamoši!',
+    'Ahojte kamoši!',
+    'Čaute kamoši!',
+    'Ahojte kamoši!',
+  ];
+  const enIntros = [
+    'Yo, guys!',
+    'Hey guys!',
+    'Yo, guys!',
+    'Hey guys!',
+  ];
+  const introGreeting = lang === 'sk'
+    ? skIntros[Math.floor(Math.random() * skIntros.length)]
+    : enIntros[Math.floor(Math.random() * enIntros.length)];
+
+  const introLine = lang === 'sk'
+    ? `${introGreeting} Dnes si vysvetlíme skratku ${term}.`
+    : `${introGreeting} Today we are breaking down the abbreviation ${term}.`;
+
   // Build script based on language
   const explains = await generateWordExplanations(term, termFull, definition, lang);
 
   let script: string[];
   if (lang === 'sk') {
     script = [
+      introLine,
       `${term}! ${termFull}.`,
       ...explains,
       `${term}. ${termFull}.`,
     ];
   } else {
     script = [
+      introLine,
       `${term}! ${termFull}.`,
       ...explains,
       `${term}!`,

@@ -198,6 +198,7 @@ export const ByteFallAnimation: React.FC<{
 
       {/* Audio */}
       {audioUrl && <Audio src={staticFile(audioUrl)} />}
+      <Audio src={staticFile('wind.wav')} volume={0.06} loop />
 
       {/* Space stars */}
       {showStars && Array.from({ length: 30 }, (_, i) => {
@@ -224,7 +225,7 @@ export const ByteFallAnimation: React.FC<{
         transform: `scale(${termEase})`,
       }}>
         <div style={{
-          fontSize: 100, fontWeight: 900, color: '#fff',
+          fontSize: 100, fontWeight: 700, color: '#fff',
           letterSpacing: '0.1em',
         }}>
           {term}
@@ -350,7 +351,7 @@ export const ByteFallAnimation: React.FC<{
         padding: '0 60px',
       }}>
         <div style={{
-          fontSize: 80, fontWeight: 900, color: '#fff',
+          fontSize: 80, fontWeight: 700, color: '#fff',
           letterSpacing: '0.08em', marginBottom: 12,
         }}>
           {term}
