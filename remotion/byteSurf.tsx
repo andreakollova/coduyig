@@ -253,7 +253,7 @@ export const ByteSurfAnimation: React.FC<{
           left: 0, right: 0, textAlign: 'center', padding: '0 40px',
         }}>
           <div style={{
-            display: 'inline-block', fontSize: 32, fontWeight: 500, color: '#94a3b8',
+            display: 'inline-block', fontSize: 38, fontWeight: 600, color: '#94a3b8',
             lineHeight: 1.45, background: 'rgba(2, 6, 18, 0.85)',
             borderRadius: 12, padding: '10px 26px', border: '1px solid rgba(135, 206, 255, 0.1)',
             maxWidth: 500, textAlign: 'center',
