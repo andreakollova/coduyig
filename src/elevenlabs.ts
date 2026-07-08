@@ -243,8 +243,8 @@ const SK_PHONETICS: Record<string, string> = {
   'garbage': 'gárbidž',
   'refactoring': 'refektoring',
   'Refactoring': 'Refektoring',
-  'surfujem': 'surfu jem',
-  'surfuje': 'surfu je',
+  'surfujem': 'surfuuujem',
+  'surfuje': 'surfuje',
   // Common lesson terms that get mispronounced by multilingual voice
   'hash': 'heš',
   'Hash': 'Heš',

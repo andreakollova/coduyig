@@ -75,7 +75,7 @@ export async function generateBTSVoiceover(
   // Part 3: Byte answer — casual transition
   const answerIntro = lang === 'sk'
     ? 'A ja im odpoviem: Nechaj ma veď surfujem!... Ale v pohode... funguje to takto.'
-      .replace('surfujem', 'surfu jem')
+      .replace('surfujem!', 'surfuuujem!')
     : 'And I tell them: Leave me alone I am surfing!... But ok... here is how it works.';
 
   // Part 5: Closing — "Bro." / "Kámo."
