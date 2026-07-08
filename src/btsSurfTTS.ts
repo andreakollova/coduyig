@@ -72,13 +72,22 @@ export async function generateBTSVoiceover(
     ? `Kámo ale čo sa vlastne stane keď ${question.replace(/^Čo sa stane keď /i, '').replace(/\?$/, '')}?`
     : `Dude, what actually happens when ${question.replace(/^What happens when (you )?/i, '').replace(/\?$/, '')}?`;
 
-  // Part 3: Byte answer — casual transition
-  const answerIntro = lang === 'sk'
-    ? 'A ja im odpoviem: Nechaj ma veď surfujem!... Ale v pohode... funguje to takto.'
-      .replace('surfujem!', 'surfuuujem!')
-    : 'And I tell them: Leave me alone I am surfing!... But ok... here is how it works.';
+  // Part 3a: "Nechaj ma" / "Leave me alone"
+  const answerPart1 = lang === 'sk'
+    ? 'A ja im odpoviem: Nechaj ma.'
+    : 'And I tell them: Leave me alone.';
 
-  // Part 5: Closing — "Bro." / "Kámo."
+  // Part 3b: "veď surfujem!" / "I am surfing!"
+  const answerPart2 = lang === 'sk'
+    ? 'Veď surfujem!'
+    : 'I am surfing!';
+
+  // Part 3c: "Ale v pohode... funguje to takto." / "But ok... here is how it works."
+  const answerPart3 = lang === 'sk'
+    ? 'Ale v pohode... funguje to takto.'
+    : 'But ok... here is how it works.';
+
+  // Part 6: Closing
   const closing = lang === 'sk' ? 'Takže vlastne, nič zložité, kámo.' : 'So yeah, nothing complicated, bro.';
 
   console.log(`🎙️ Generating BTS voiceover (${lang})...`);
@@ -88,14 +97,16 @@ export async function generateBTSVoiceover(
 
   // Generate all parts
   // Sequential to avoid rate limits
-  const p1 = await tts(intro, BYTE_VOICE, 1.1, 0.5);
-  const p2 = await tts(questionText, QUESTIONER_VOICE, 1.0, 0.8);
-  const p3 = await tts(answerIntro, BYTE_VOICE, 1.1, 0.4);
-  const p4 = await tts(script, BYTE_VOICE, 1.1, 0.5);
-  const p5 = await tts(closing, BYTE_VOICE, 0.9, 0.6); // slow, chill "Bro."
+  const p1 = await tts(intro, BYTE_VOICE, 1.0, 0.5);
+  const p2 = await tts(questionText, QUESTIONER_VOICE, 0.95, 0.8);
+  const p3a = await tts(answerPart1, BYTE_VOICE, 1.0, 0.5);
+  const p3b = await tts(answerPart2, BYTE_VOICE, 1.0, 0.6);
+  const p3c = await tts(answerPart3, BYTE_VOICE, 0.95, 0.4);
+  const p4 = await tts(script, BYTE_VOICE, 1.0, 0.5);
+  const p5 = await tts(closing, BYTE_VOICE, 0.85, 0.6);
 
   // Save and normalize audio parts
-  const parts = [p1, p2, p3, p4, p5];
+  const parts = [p1, p2, p3a, p3b, p3c, p4, p5];
   const audioPaths: string[] = [];
 
   for (let i = 0; i < parts.length; i++) {
@@ -113,6 +124,7 @@ export async function generateBTSVoiceover(
   const allWords: WordTiming[] = [];
   let cumTime = 0.3; // small initial gap
   const gapBetween = 0.4;
+  const longerGap = 0.8; // longer pause after "surfujem!" before explanation
 
   for (let i = 0; i < parts.length; i++) {
     const partWords = parts[i].words;
@@ -123,7 +135,9 @@ export async function generateBTSVoiceover(
       if (i === 1 && j === partWords.length - 1) word = `${word}"`;
       allWords.push({ word, start: partWords[j].start + cumTime, end: partWords[j].end + cumTime });
     }
-    cumTime += parts[i].duration + gapBetween;
+    // Longer pause after "surfujem!" (index 3) and after "Ale v pohode" (index 4)
+    const gap = (i === 3 || i === 4) ? longerGap : gapBetween;
+    cumTime += parts[i].duration + gap;
   }
 
   // Concatenate with gaps

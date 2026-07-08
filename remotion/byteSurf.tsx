@@ -241,20 +241,28 @@ export const ByteSurfAnimation: React.FC<{
       )}
 
       {/* Subtitle — ALWAYS same style, above Byte */}
-      {subtitle && (
+      {subtitle && (() => {
+        // Intro + questioner: subtitles BELOW Byte. After that: ABOVE Byte.
+        const isIntroPhase = time < (questionerDuration + 3);
+        const subtitleTop = isIntroPhase
+          ? byteY + byteSize * 0.7
+          : byteY - byteSize * 0.8;
+
+        return (
         <div style={{
           position: 'absolute',
-          top: isQuestionerSpeaking ? height * 0.62 : byteY - byteSize * 0.55,
+          top: subtitleTop,
           left: 0, right: 0, textAlign: 'center', padding: '0 40px',
         }}>
           <div style={{
-            display: 'inline-block', fontSize: 22, fontWeight: 500, color: '#94a3b8',
-            lineHeight: 1.5, background: 'rgba(5, 10, 24, 0.85)',
-            borderRadius: 10, padding: '8px 20px', border: '1px solid rgba(135, 206, 255, 0.1)',
-            maxWidth: 420, textAlign: 'center',
+            display: 'inline-block', fontSize: 26, fontWeight: 500, color: '#94a3b8',
+            lineHeight: 1.5, background: 'rgba(2, 6, 18, 0.85)',
+            borderRadius: 10, padding: '8px 22px', border: '1px solid rgba(135, 206, 255, 0.1)',
+            maxWidth: 440, textAlign: 'center',
           }} dangerouslySetInnerHTML={{ __html: subtitle.replace(/<b>/g, '<b style="color:#fff;font-weight:700;">') }} />
         </div>
-      )}
+        );
+      })()}
 
       {/* Question title — LOWER, two lines */}
       <div style={{
