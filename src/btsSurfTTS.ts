@@ -95,7 +95,22 @@ export async function generateBTSVoiceover(
     : 'But ok... here is how it works.';
 
   // Part 6: Closing
-  const closing = lang === 'sk' ? `Takže vlastne, nič zložité, ${greeting}.` : `So yeah, nothing complicated, ${greeting}.`;
+  const skClosings = [
+    `Takže vlastne, nič zložité, ${greeting}.`,
+    `A to je celé, ${greeting}.`,
+    `Vidíš, žiadna veda, ${greeting}.`,
+    `Proste tak to funguje, ${greeting}.`,
+    `Easy, ${greeting}.`,
+  ];
+  const enClosings = [
+    `So yeah, nothing complicated, ${greeting}.`,
+    `And that is basically it, ${greeting}.`,
+    `See, no rocket science, ${greeting}.`,
+    `That is how it works, ${greeting}.`,
+    `Easy, ${greeting}.`,
+  ];
+  const closingIdx = Math.floor(Math.random() * 5);
+  const closing = lang === 'sk' ? skClosings[closingIdx] : enClosings[closingIdx];
 
   console.log(`🎙️ Generating BTS voiceover (${lang})...`);
   console.log(`  Byte: "${intro}"`);
