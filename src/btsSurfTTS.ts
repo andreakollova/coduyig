@@ -62,10 +62,16 @@ export async function generateBTSVoiceover(
   if (!API_KEY) throw new Error('ELEVENLABS_API_KEY not set');
   fs.mkdirSync(outputDir, { recursive: true });
 
+  // Random greeting — varied for each video
+  const skGreetings = ['kámo', 'bráško', 'kámo', 'bráško', 'kámo'];
+  const enGreetings = ['bro', 'dude', 'bro', 'dude', 'rockstar'];
+  const greetIdx = Math.floor(Math.random() * 5);
+  const greeting = lang === 'sk' ? skGreetings[greetIdx] : enGreetings[greetIdx];
+
   // Part 1+2 combined: Byte intro + questioner question in one line
   const introAndQuestion = lang === 'sk'
-    ? `Ľudia sa ma často pýtajú, kámo ale čo sa vlastne stane keď ${question.replace(/^Čo sa stane keď /i, '').replace(/\?$/, '')}?`
-    : `People keep asking me, dude what actually happens when you ${question.replace(/^What happens when (you )?/i, '').replace(/\?$/, '')}?`;
+    ? `Ľudia sa ma často pýtajú, ${greeting} ale čo sa vlastne stane keď ${question.replace(/^Čo sa stane keď /i, '').replace(/\?$/, '')}?`
+    : `People keep asking me, ${greeting} what actually happens when you ${question.replace(/^What happens when (you )?/i, '').replace(/\?$/, '')}?`;
 
   // Part 3a: "Nechaj ma" / "Leave me alone"
   const answerPart1 = lang === 'sk'
@@ -83,7 +89,7 @@ export async function generateBTSVoiceover(
     : 'But ok... here is how it works.';
 
   // Part 6: Closing
-  const closing = lang === 'sk' ? 'Takže vlastne, nič zložité, kámo.' : 'So yeah, nothing complicated, dude.';
+  const closing = lang === 'sk' ? `Takže vlastne, nič zložité, ${greeting}.` : `So yeah, nothing complicated, ${greeting}.`;
 
   console.log(`🎙️ Generating BTS voiceover (${lang})...`);
   console.log(`  Intro+Q: "${introAndQuestion.slice(0, 80)}..."`);
