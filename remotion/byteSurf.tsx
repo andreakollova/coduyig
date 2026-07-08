@@ -63,18 +63,33 @@ export const ByteSurfAnimation: React.FC<{
   // Questioner speaking?
   const isQuestionerSpeaking = questionerDuration > 0 && time > 1 && time < questionerDuration;
 
-  // === SUBTITLE ===
+  // === SUBTITLE — group by sentence (break on . ? ! ...) ===
   let subtitle = '';
-  if (words.length > 0 && !isSharkPhase) {
-    const GROUP = 7;
+  if (words.length > 0) {
+    // Build sentence groups
+    const groups: number[][] = [];
+    let current: number[] = [];
+    for (let wi = 0; wi < words.length; wi++) {
+      current.push(wi);
+      const w = words[wi].word;
+      // Break after punctuation or when group gets too long
+      if (/[.?!]$/.test(w) || w.endsWith('...') || w.endsWith('"') || current.length >= 10) {
+        groups.push([...current]);
+        current = [];
+      }
+    }
+    if (current.length > 0) groups.push(current);
+
     const si = words.findIndex(w => time >= w.start && time < w.end);
     const idx = si >= 0 ? si : words.findIndex(w => time < w.start) - 1;
     if (idx >= 0) {
-      const gs = Math.floor(idx / GROUP) * GROUP;
-      const ge = Math.min(gs + GROUP, words.length);
-      const gw = words.slice(gs, ge);
-      if (time >= gw[0].start && time < gw[ge - gs - 1].end + 0.5) {
-        subtitle = gw.map((w, gi) => (gs + gi === idx ? `<b>${w.word}</b>` : w.word)).join(' ');
+      const group = groups.find(g => g.includes(idx));
+      if (group) {
+        const firstWord = words[group[0]];
+        const lastWord = words[group[group.length - 1]];
+        if (time >= firstWord.start && time < lastWord.end + 0.4) {
+          subtitle = group.map(gi => (gi === idx ? `<b>${words[gi].word}</b>` : words[gi].word)).join(' ');
+        }
       }
     }
   }

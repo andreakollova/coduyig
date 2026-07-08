@@ -77,6 +77,9 @@ export async function generateBTSVoiceover(
     ? 'A ja im odpoviem: Nechaj ma veď surfujem... Ale okej... funguje to takto.'
     : 'And I tell them: Leave me alone I am surfing... But ok... here is how it works.';
 
+  // Part 5: Closing — "Bro." / "Kámo."
+  const closing = lang === 'sk' ? 'Kámo.' : 'Bro.';
+
   console.log(`🎙️ Generating BTS voiceover (${lang})...`);
   console.log(`  Intro: "${intro}"`);
   console.log(`  Question: "${questionText}"`);
@@ -88,9 +91,10 @@ export async function generateBTSVoiceover(
   const p2 = await tts(questionText, QUESTIONER_VOICE, 1.0, 0.8);
   const p3 = await tts(answerIntro, BYTE_VOICE, 1.1, 0.4);
   const p4 = await tts(script, BYTE_VOICE, 1.1, 0.5);
+  const p5 = await tts(closing, BYTE_VOICE, 0.9, 0.6); // slow, chill "Bro."
 
   // Save and normalize audio parts
-  const parts = [p1, p2, p3, p4];
+  const parts = [p1, p2, p3, p4, p5];
   const audioPaths: string[] = [];
 
   for (let i = 0; i < parts.length; i++) {
