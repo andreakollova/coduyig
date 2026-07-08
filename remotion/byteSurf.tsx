@@ -228,7 +228,7 @@ export const ByteSurfAnimation: React.FC<{
 
       {/* Questioner character */}
       {isQuestionerSpeaking && (
-        <div style={{ position: 'absolute', left: '50%', top: height * 0.08, transform: 'translateX(-50%)', textAlign: 'center' }}>
+        <div style={{ position: 'absolute', left: '50%', top: byteY - byteSize * 1.45, transform: 'translateX(-50%)', textAlign: 'center' }}>
           <div style={{
             display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8,
             background: 'rgba(5, 10, 24, 0.9)', borderRadius: 20, padding: '20px 30px',
