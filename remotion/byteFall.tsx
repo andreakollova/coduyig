@@ -198,7 +198,7 @@ export const ByteFallAnimation: React.FC<{
 
       {/* Audio */}
       {audioUrl && <Audio src={staticFile(audioUrl)} />}
-      <Audio src={staticFile('wind.wav')} volume={0.19} loop />
+      <Audio src={staticFile('wind.wav')} volume={interpolate(frame, [0, fallEnd - fps * 1, fallEnd], [0.19, 0.19, 0], { extrapolateRight: 'clamp' })} loop />
 
       {/* Space stars */}
       {showStars && Array.from({ length: 30 }, (_, i) => {
