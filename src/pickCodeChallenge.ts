@@ -120,7 +120,12 @@ export async function pickCodeChallenge(): Promise<CodeChallengeData | null> {
     available = fillExercises;
   }
 
-  const ex = available[Math.floor(Math.random() * available.length)];
+  // Prefer beginner + medium difficulty (80% chance easy, 20% advanced)
+  const easy = available.filter(e => e.difficulty === 'beginner');
+  const hard = available.filter(e => e.difficulty === 'advanced');
+  const useEasy = easy.length > 0 && (hard.length === 0 || Math.random() < 0.8);
+  const pool2 = useEasy ? easy : (hard.length > 0 ? hard : available);
+  const ex = pool2[Math.floor(Math.random() * pool2.length)];
   await markCodePosted(ex.id);
 
   const postNumber = postedIds.length + 1;

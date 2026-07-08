@@ -64,8 +64,23 @@ export async function pickQuiz(): Promise<QuizData | null> {
     return null;
   }
 
-  // Random pick from valid
-  const q = valid[Math.floor(Math.random() * valid.length)];
+  // Prefer easier questions — from lower modules (beginner/intermediate)
+  // Get lesson → module mapping to determine difficulty
+  const lessonIds = valid.map((q: any) => q.lesson_id);
+  const { data: lessons } = await sb.from('cb_lessons').select('id, module_id').in('id', lessonIds);
+  const { data: modules } = await sb.from('cb_modules').select('id, module_number');
+  const modMap = new Map(modules?.map((m: any) => [m.id, m.module_number]) || []);
+  const lessonModMap = new Map(lessons?.map((l: any) => [l.id, modMap.get(l.module_id) || 99]) || []);
+
+  // Sort by module number — lower modules = easier questions
+  // Pick from bottom 60% (easy + medium)
+  const sorted = valid.sort((a: any, b: any) => {
+    const modA = lessonModMap.get(a.lesson_id) || 99;
+    const modB = lessonModMap.get(b.lesson_id) || 99;
+    return modA - modB;
+  });
+  const easyMedium = sorted.slice(0, Math.max(1, Math.floor(sorted.length * 0.6)));
+  const q = easyMedium[Math.floor(Math.random() * easyMedium.length)];
 
   // Get module number for outfit — question → lesson → module
   const { data: lessonData } = await sb.from('cb_lessons').select('module_id').eq('id', q.lesson_id).maybeSingle();
