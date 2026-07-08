@@ -36,7 +36,7 @@ export const ByteSurfAnimation: React.FC<{
   const time = frame / fps;
   const totalDuration = (words.length > 0 ? words[words.length - 1].end + 2 : 20);
 
-  const byteSize = 220;
+  const byteSize = 280;
 
   // No shark
   const isSharkPhase = false;
@@ -151,7 +151,7 @@ export const ByteSurfAnimation: React.FC<{
         const scale = interpolate(rawY, [0, height], [0.3, 1.4], { extrapolateRight: 'clamp' });
         const sx = width * (0.12 + (i * 0.18) % 0.76);
         const opacity = interpolate(rawY, [-50, 80, height - 80, height], [0, 0.7, 0.4, 0], { extrapolateRight: 'clamp' });
-        return <div key={`sea-${i}`} style={{ position: 'absolute', left: sx, top: rawY, fontSize: 18 * scale, opacity }}>{SEA_ITEMS[i % SEA_ITEMS.length]}</div>;
+        return <div key={`sea-${i}`} style={{ position: 'absolute', left: sx, top: rawY, fontSize: 26 * scale, opacity }}>{SEA_ITEMS[i % SEA_ITEMS.length]}</div>;
       })}
 
       {/* Spray */}
@@ -168,10 +168,10 @@ export const ByteSurfAnimation: React.FC<{
 
       {/* Surfboard — stays when Byte jumps off */}
       {!isSharkPhase && (
-        <svg style={{ position: 'absolute', left: byteX - 65, top: byteY + byteSize * 0.5 }} width={130} height={50} viewBox="0 0 130 50">
+        <svg style={{ position: 'absolute', left: byteX - 80, top: byteY + byteSize * 0.5 }} width={160} height={55} viewBox="0 0 160 55">
           <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#f59e0b" /><stop offset="100%" stopColor="#fb923c" /></linearGradient></defs>
-          <ellipse cx="65" cy="20" rx="60" ry="16" fill="url(#sg)" transform={`rotate(${tilt * 0.3} 65 20)`} />
-          <path d="M 65 34 L 60 44 L 70 44 Z" fill="#d97706" opacity="0.6" />
+          <ellipse cx="80" cy="22" rx="75" ry="18" fill="url(#sg)" transform={`rotate(${tilt * 0.3} 80 22)`} />
+          <path d="M 80 38 L 74 50 L 86 50 Z" fill="#d97706" opacity="0.6" />
         </svg>
       )}
       {/* Abandoned surfboard floating */}
@@ -184,11 +184,11 @@ export const ByteSurfAnimation: React.FC<{
 
       {/* Byte's legs — only when on surfboard */}
       {!isSharkPhase && (
-        <svg style={{ position: 'absolute', left: byteX - 30, top: byteY + byteSize * 0.35, transform: `rotate(${tilt}deg)` }} width={60} height={80} viewBox="0 0 60 80">
-          <line x1="18" y1="0" x2={14 + legSwing * 0.3} y2="50" stroke="#333" strokeWidth="6" strokeLinecap="round" />
-          <circle cx={14 + legSwing * 0.3} cy="52" r="6" fill="#444" />
-          <line x1="42" y1="0" x2={46 - legSwing * 0.3} y2="50" stroke="#333" strokeWidth="6" strokeLinecap="round" />
-          <circle cx={46 - legSwing * 0.3} cy="52" r="6" fill="#444" />
+        <svg style={{ position: 'absolute', left: byteX - 35, top: byteY + byteSize * 0.33, transform: `rotate(${tilt}deg)` }} width={70} height={90} viewBox="0 0 70 90">
+          <line x1="20" y1="0" x2={16 + legSwing * 0.3} y2="58" stroke="#333" strokeWidth="7" strokeLinecap="round" />
+          <circle cx={16 + legSwing * 0.3} cy="60" r="7" fill="#444" />
+          <line x1="50" y1="0" x2={54 - legSwing * 0.3} y2="58" stroke="#333" strokeWidth="7" strokeLinecap="round" />
+          <circle cx={54 - legSwing * 0.3} cy="60" r="7" fill="#444" />
         </svg>
       )}
 

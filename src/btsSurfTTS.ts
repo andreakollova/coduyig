@@ -164,19 +164,18 @@ export async function generateBTSVoiceover(
   execSync(`ffmpeg -y -f lavfi -i anullsrc=r=44100:cl=mono -t ${longerGap} "${gapLongPath}" 2>/dev/null`);
 
   const listFile = path.join(outputDir, 'concat.txt');
-  const lines = [`file '${silencePath}'`];
+  const lines = [`file '${path.resolve(silencePath)}'`];
   for (let i = 0; i < audioPaths.length; i++) {
-    lines.push(`file '${audioPaths[i]}'`);
+    lines.push(`file '${path.resolve(audioPaths[i])}'`);
     if (i < audioPaths.length - 1) {
-      // Use same gap logic as word timing offsets
       const useGap = (i === 3 || i === 4) ? gapLongPath : gapShortPath;
-      lines.push(`file '${useGap}'`);
+      lines.push(`file '${path.resolve(useGap)}'`);
     }
   }
   fs.writeFileSync(listFile, lines.join('\n'));
 
   const finalAudio = path.join(outputDir, 'bts_final.mp3');
-  execSync(`ffmpeg -y -f concat -safe 0 -i "${listFile}" -c:a libmp3lame -q:a 2 "${finalAudio}" 2>/dev/null`);
+  execSync(`ffmpeg -y -f concat -safe 0 -i "${path.resolve(listFile)}" -c:a libmp3lame -q:a 2 "${path.resolve(finalAudio)}" 2>/dev/null`);
 
   const durationStr = execSync(`ffprobe -v error -show_entries format=duration -of csv=p=0 "${finalAudio}" 2>/dev/null`).toString().trim();
   const totalDuration = parseFloat(durationStr);
