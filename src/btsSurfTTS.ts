@@ -70,7 +70,7 @@ export async function generateBTSVoiceover(
   // Part 2: Questioner — "Bro what happens when X?"
   const questionText = lang === 'sk'
     ? `Kámo ale čo sa vlastne stane keď ${question.replace(/^Čo sa stane keď /i, '').replace(/\?$/, '')}?`
-    : `Dude, what actually happens when ${question.replace(/^What happens when (you )?/i, '').replace(/\?$/, '')}?`;
+    : `Dude, what actually happens when you ${question.replace(/^What happens when (you )?/i, '').replace(/\?$/, '')}?`;
 
   // Part 3a: "Nechaj ma" / "Leave me alone"
   const answerPart1 = lang === 'sk'
