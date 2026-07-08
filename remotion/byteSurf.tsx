@@ -123,6 +123,10 @@ export const ByteSurfAnimation: React.FC<{
         }
       }
     }
+    // Show first group on frame 0 for IG preview
+    if (frame === 0 && groups.length > 0) {
+      subtitle = groups[0].map(gi => words[gi].word).join(' ');
+    }
   }
 
   // Question visible from frame 0 for IG preview
