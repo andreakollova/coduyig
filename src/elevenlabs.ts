@@ -243,6 +243,8 @@ const SK_PHONETICS: Record<string, string> = {
   'garbage': 'gárbidž',
   'refactoring': 'refektoring',
   'Refactoring': 'Refektoring',
+  'surfujem': 'surfu jem',
+  'surfuje': 'surfu je',
   // Common lesson terms that get mispronounced by multilingual voice
   'hash': 'heš',
   'Hash': 'Heš',
@@ -391,7 +393,8 @@ async function autoPhonetics(text: string, lang: 'en' | 'sk'): Promise<string> {
       'print', 'and', 'not', 'are', 'the', 'that', 'this', 'you', 'can', 'will',
       'just', 'like', 'have', 'has', 'had', 'was', 'were', 'been', 'into', 'when',
       'also', 'more', 'than', 'each', 'very', 'them', 'then', 'only', 'its',
-      'ako', 'ale', 'pre', 'pri', 'kde', 'tak', 'sem', 'len', 'pod', 'nad'].includes(w.toLowerCase())) return false;
+      'ako', 'ale', 'pre', 'pri', 'kde', 'tak', 'sem', 'len', 'pod', 'nad',
+      'surfujem', 'funguje', 'takto', 'vlastne', 'okej', 'odpoviem', 'nechaj'].includes(w.toLowerCase())) return false;
     return true;
   }) || [];
 
