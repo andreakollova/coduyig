@@ -23,7 +23,7 @@ Two characters:
 
 Create a conversation with EXACTLY 9 lines:
 
-1. STUDENT: starts with a random casual word like "Dude,", "Bro,", or "Little guy," then asks about today's topic (max 12 words). Examples: "Dude, what are we learning today?" or "Bro, what's today's topic?" or "Little guy, what do you have for me today?"
+1. STUDENT: starts with a random casual greeting like "Hey dude,", "Hey bro,", or "Hey little bro," then asks about today's topic (max 12 words). Examples: "Hey dude, what are we learning today?" or "Hey bro, what's today's topic?" or "Hey little bro, what do you have for me today?"
 2. TEACHER: answer and explain the topic. Connect with commas for natural flow. Example: "Today we're looking at lambda functions, which are small anonymous functions that don't need a name and just have one expression." Every sentence complete. (max 35 words). NEVER read code.
 3. STUDENT: excited follow-up question, not confused — genuinely curious and engaged (max 12 words). Like "Oh that's cool! So when would I actually use that?" or "Wait really? How does that work in practice?"
 4. TEACHER: explain it simply, connect ideas with commas. Just say it plainly. Example: "When you need a function just once, instead of writing the whole thing out and giving it a name, you just write it in one line and you're good to go." NO filler words, NO real-life analogies. (max 45 words)
