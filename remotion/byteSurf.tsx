@@ -73,8 +73,8 @@ export const ByteSurfAnimation: React.FC<{
       current.push(wi);
       const w = words[wi].word;
       // Break after punctuation or when group gets too long
-      // Break on sentence-ending punctuation, max 8 words
-      if (/[.?!]$/.test(w) || w.endsWith('...') || w.endsWith('"') || current.length >= 8) {
+      // Break on sentence-ending punctuation or quotes, max 6 words for tighter sync
+      if (/[.?!]$/.test(w) || w.endsWith('...') || w.endsWith('"') || current.length >= 6) {
         groups.push([...current]);
         current = [];
       }
@@ -88,7 +88,7 @@ export const ByteSurfAnimation: React.FC<{
       if (group) {
         const firstWord = words[group[0]];
         const lastWord = words[group[group.length - 1]];
-        if (time >= firstWord.start && time < lastWord.end + 0.8) {
+        if (time >= firstWord.start && time < lastWord.end + 0.3) {
           subtitle = group.map(gi => (gi === idx ? `<b>${words[gi].word}</b>` : words[gi].word)).join(' ');
         }
       }
