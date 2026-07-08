@@ -74,8 +74,8 @@ export async function generateBTSVoiceover(
 
   // Part 3: Byte answer — casual transition
   const answerIntro = lang === 'sk'
-    ? 'A ja im odpoviem, nechaj ma veď surfujem. Ale okej. Funguje to takto.'
-    : 'And I tell them, leave me alone I am surfing. But okay. Here is how it works.';
+    ? 'A ja im odpoviem, nechaj ma veď surfujem. Ale okej... funguje to takto.'
+    : 'And I tell them, leave me alone I am surfing. But ok... here is how it works.';
 
   console.log(`🎙️ Generating BTS voiceover (${lang})...`);
   console.log(`  Intro: "${intro}"`);
@@ -110,8 +110,13 @@ export async function generateBTSVoiceover(
   const gapBetween = 0.4;
 
   for (let i = 0; i < parts.length; i++) {
-    for (const w of parts[i].words) {
-      allWords.push({ word: w.word, start: w.start + cumTime, end: w.end + cumTime });
+    const partWords = parts[i].words;
+    for (let j = 0; j < partWords.length; j++) {
+      let word = partWords[j].word;
+      // Add quotes around questioner's question (part 2, index 1)
+      if (i === 1 && j === 0) word = `"${word}`;
+      if (i === 1 && j === partWords.length - 1) word = `${word}"`;
+      allWords.push({ word, start: partWords[j].start + cumTime, end: partWords[j].end + cumTime });
     }
     cumTime += parts[i].duration + gapBetween;
   }
