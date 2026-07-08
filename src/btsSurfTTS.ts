@@ -112,9 +112,10 @@ export async function generateBTSVoiceover(
   const p4 = await tts(script, BYTE_VOICE, 1.0, 0.5);
   const p5 = await tts(closing, BYTE_VOICE, 0.85, 0.6);
 
-  // Save and normalize audio parts
+  // Save and normalize audio parts, measure ACTUAL durations after normalization
   const parts = [p1, p2, p3a, p3b, p3c, p4, p5];
   const audioPaths: string[] = [];
+  const actualDurations: number[] = [];
 
   for (let i = 0; i < parts.length; i++) {
     const rawPath = path.join(outputDir, `bts_${i}_raw.mp3`);
@@ -125,24 +126,33 @@ export async function generateBTSVoiceover(
       fs.unlinkSync(rawPath);
     } catch { fs.renameSync(rawPath, normPath); }
     audioPaths.push(normPath);
+
+    // Measure ACTUAL duration after normalization
+    const durStr = execSync(`ffprobe -v error -show_entries format=duration -of csv=p=0 "${normPath}" 2>/dev/null`).toString().trim();
+    actualDurations.push(parseFloat(durStr));
   }
 
-  // Build word timings with offsets
+  // Build word timings using ACTUAL audio durations (not TTS-reported)
   const allWords: WordTiming[] = [];
-  let cumTime = 0.3; // small initial gap
+  let cumTime = 0.3; // initial silence
   const gapBetween = 0.4;
-  const longerGap = 0.8; // longer pause after "surfujem!" before explanation
+  const longerGap = 0.8;
 
   for (let i = 0; i < parts.length; i++) {
+    // Scale word timings to match actual normalized audio duration
+    const ttsDuration = parts[i].duration;
+    const actualDuration = actualDurations[i];
+    const scale = actualDuration / ttsDuration;
+
     const partWords = parts[i].words;
     for (let j = 0; j < partWords.length; j++) {
       let word = partWords[j].word;
       // No separate quote wrapping needed — it's all one line now
-      allWords.push({ word, start: partWords[j].start + cumTime, end: partWords[j].end + cumTime });
+      allWords.push({ word, start: partWords[j].start * scale + cumTime, end: partWords[j].end * scale + cumTime });
     }
     // Longer pause after "surfujem!" (index 3) and after "Ale v pohode" (index 4)
     const gap = (i === 3 || i === 4) ? longerGap : gapBetween;
-    cumTime += parts[i].duration + gap;
+    cumTime += actualDuration + gap;
   }
 
   // Concatenate with correct gap sizes matching word timing offsets
@@ -171,10 +181,9 @@ export async function generateBTSVoiceover(
   const durationStr = execSync(`ffprobe -v error -show_entries format=duration -of csv=p=0 "${finalAudio}" 2>/dev/null`).toString().trim();
   const totalDuration = parseFloat(durationStr);
 
-  // Calculate questioner timing (part index 1 = p2)
-  // cumTime tracking: part 0 = intro, after it cumTime includes intro + gap
-  let qStart = 0.3 + parts[0].duration + gapBetween; // after intro + gap
-  let qEnd = qStart + parts[1].duration;
+  // Calculate questioner timing using actual durations
+  let qStart = 0.3 + actualDurations[0] + gapBetween;
+  let qEnd = qStart + actualDurations[1];
 
   console.log(`✅ BTS voiceover: ${totalDuration.toFixed(1)}s, ${allWords.length} words, questioner: ${qStart.toFixed(1)}-${qEnd.toFixed(1)}s`);
   return { audioPath: finalAudio, words: allWords, duration: totalDuration, questionerStart: qStart, questionerEnd: qEnd };
