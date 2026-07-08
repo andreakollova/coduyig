@@ -145,17 +145,23 @@ export async function generateBTSVoiceover(
     cumTime += parts[i].duration + gap;
   }
 
-  // Concatenate with gaps
+  // Concatenate with correct gap sizes matching word timing offsets
   const silencePath = path.join(outputDir, 'silence.mp3');
-  const gapPath = path.join(outputDir, 'gap.mp3');
+  const gapShortPath = path.join(outputDir, 'gap_short.mp3');
+  const gapLongPath = path.join(outputDir, 'gap_long.mp3');
   execSync(`ffmpeg -y -f lavfi -i anullsrc=r=44100:cl=mono -t 0.3 "${silencePath}" 2>/dev/null`);
-  execSync(`ffmpeg -y -f lavfi -i anullsrc=r=44100:cl=mono -t ${gapBetween} "${gapPath}" 2>/dev/null`);
+  execSync(`ffmpeg -y -f lavfi -i anullsrc=r=44100:cl=mono -t ${gapBetween} "${gapShortPath}" 2>/dev/null`);
+  execSync(`ffmpeg -y -f lavfi -i anullsrc=r=44100:cl=mono -t ${longerGap} "${gapLongPath}" 2>/dev/null`);
 
   const listFile = path.join(outputDir, 'concat.txt');
   const lines = [`file '${silencePath}'`];
   for (let i = 0; i < audioPaths.length; i++) {
     lines.push(`file '${audioPaths[i]}'`);
-    if (i < audioPaths.length - 1) lines.push(`file '${gapPath}'`);
+    if (i < audioPaths.length - 1) {
+      // Use same gap logic as word timing offsets
+      const useGap = (i === 3 || i === 4) ? gapLongPath : gapShortPath;
+      lines.push(`file '${useGap}'`);
+    }
   }
   fs.writeFileSync(listFile, lines.join('\n'));
 
