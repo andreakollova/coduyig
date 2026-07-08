@@ -28,8 +28,9 @@ export const ByteSurfAnimation: React.FC<{
   question?: string;
   audioUrl?: string;
   words?: ByteSurfWord[];
-  questionerDuration?: number;
-}> = ({ equipment = {}, question = '', audioUrl, words = [], questionerDuration = 0 }) => {
+  questionerStart?: number;
+  questionerEnd?: number;
+}> = ({ equipment = {}, question = '', audioUrl, words = [], questionerStart = 0, questionerEnd = 0 }) => {
   const frame = useCurrentFrame();
   const { fps, height, width } = useVideoConfig();
   const time = frame / fps;
@@ -61,7 +62,7 @@ export const ByteSurfAnimation: React.FC<{
   const armSwing = isSharkPhase && sharkProgress > 0.3 ? Math.sin(time * 12) * 25 : 0;
 
   // Questioner speaking?
-  const isQuestionerSpeaking = questionerDuration > 0 && time > 1 && time < questionerDuration;
+  const isQuestionerSpeaking = questionerEnd > 0 && time >= questionerStart && time < questionerEnd;
 
   // === SUBTITLE — group by sentence (break on . ? ! ...) ===
   let subtitle = '';

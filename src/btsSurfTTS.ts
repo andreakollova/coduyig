@@ -165,8 +165,13 @@ export async function generateBTSVoiceover(
   const durationStr = execSync(`ffprobe -v error -show_entries format=duration -of csv=p=0 "${finalAudio}" 2>/dev/null`).toString().trim();
   const totalDuration = parseFloat(durationStr);
 
-  console.log(`✅ BTS voiceover: ${totalDuration.toFixed(1)}s, ${allWords.length} words`);
-  return { audioPath: finalAudio, words: allWords, duration: totalDuration };
+  // Calculate questioner timing (part index 1 = p2)
+  // cumTime tracking: part 0 = intro, after it cumTime includes intro + gap
+  let qStart = 0.3 + parts[0].duration + gapBetween; // after intro + gap
+  let qEnd = qStart + parts[1].duration;
+
+  console.log(`✅ BTS voiceover: ${totalDuration.toFixed(1)}s, ${allWords.length} words, questioner: ${qStart.toFixed(1)}-${qEnd.toFixed(1)}s`);
+  return { audioPath: finalAudio, words: allWords, duration: totalDuration, questionerStart: qStart, questionerEnd: qEnd };
 }
 
 // CLI
