@@ -94,10 +94,11 @@ export const ByteSurfAnimation: React.FC<{
     }
   }
 
-  const questionOp = interpolate(frame, [0, fps * 0.4, fps * 3, fps * 3.5], [0, 1, 1, 0], { extrapolateRight: 'clamp' });
+  // Question visible from frame 0 for IG preview
+  const questionOp = interpolate(frame, [0, fps * 3, fps * 3.5], [1, 1, 0], { extrapolateRight: 'clamp' });
 
   return (
-    <AbsoluteFill style={{ background: '#050a18', fontFamily, overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: '#020612', fontFamily, overflow: 'hidden' }}>
       {audioUrl && <Audio src={staticFile(audioUrl)} />}
       <Audio src={staticFile('sea.wav')} volume={0.08} loop />
 
@@ -119,7 +120,7 @@ export const ByteSurfAnimation: React.FC<{
           const waveW = perspective * width * 0.85;
           const offsetX = (width - waveW) / 2;
           return <path key={`w-${i}`} d={wavePath(waveW, rawY, amplitude, freq, time * 2 + i * 0.7)}
-            fill="none" stroke={`rgba(96, 165, 250, ${opacity})`} strokeWidth={1.5}
+            fill="none" stroke={`rgba(135, 206, 255, ${opacity})`} strokeWidth={1.5}
             transform={`translate(${offsetX}, 0)`} />;
         })}
       </svg>
@@ -136,7 +137,7 @@ export const ByteSurfAnimation: React.FC<{
           const amp = perspective * 18;
           return <path key={`bw-${i}`}
             d={wavePath(wSize, rawY, amp, 2, time * 3 + i * 1.5) + ` L ${wSize} ${rawY + amp * 2} L 0 ${rawY + amp * 2} Z`}
-            fill={`rgba(59, 130, 246, ${opacity * 0.12})`} stroke={`rgba(96, 165, 250, ${opacity * 0.25})`} strokeWidth={1.5}
+            fill={`rgba(100, 180, 255, ${opacity * 0.12})`} stroke={`rgba(135, 206, 255, ${opacity * 0.25})`} strokeWidth={1.5}
             transform={`translate(${ox - wSize / 2}, 0)`} />;
         })}
       </svg>
@@ -230,7 +231,7 @@ export const ByteSurfAnimation: React.FC<{
           <div style={{
             display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8,
             background: 'rgba(5, 10, 24, 0.9)', borderRadius: 20, padding: '20px 30px',
-            border: '1px solid rgba(96, 165, 250, 0.2)',
+            border: '1px solid rgba(135, 206, 255, 0.2)',
           }}>
             <div style={{ fontSize: 48 }}>🤔</div>
             <div style={{ fontSize: 36, fontWeight: 800, color: '#60a5fa' }}>?</div>
@@ -248,7 +249,7 @@ export const ByteSurfAnimation: React.FC<{
           <div style={{
             display: 'inline-block', fontSize: 22, fontWeight: 500, color: '#94a3b8',
             lineHeight: 1.5, background: 'rgba(5, 10, 24, 0.85)',
-            borderRadius: 10, padding: '6px 18px', border: '1px solid rgba(96, 165, 250, 0.1)',
+            borderRadius: 10, padding: '6px 18px', border: '1px solid rgba(135, 206, 255, 0.1)',
           }} dangerouslySetInnerHTML={{ __html: subtitle.replace(/<b>/g, '<b style="color:#fff;font-weight:700;">') }} />
         </div>
       )}
