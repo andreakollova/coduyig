@@ -73,8 +73,8 @@ export const ByteSurfAnimation: React.FC<{
       current.push(wi);
       const w = words[wi].word;
       // Break after punctuation or when group gets too long
-      // Break on punctuation or comma, max 7 words — each group shows as 2 lines via maxWidth
-      if (/[.?!]$/.test(w) || w.endsWith('...') || w.endsWith('"') || w.endsWith(',') || current.length >= 7) {
+      // Break on sentence-ending punctuation, max 8 words
+      if (/[.?!]$/.test(w) || w.endsWith('...') || w.endsWith('"') || current.length >= 8) {
         groups.push([...current]);
         current = [];
       }
@@ -228,7 +228,7 @@ export const ByteSurfAnimation: React.FC<{
 
       {/* Questioner character */}
       {isQuestionerSpeaking && (
-        <div style={{ position: 'absolute', left: '50%', top: byteY - byteSize * 1.7, transform: 'translateX(-50%)', textAlign: 'center' }}>
+        <div style={{ position: 'absolute', left: '50%', top: byteY - byteSize * 2.0, transform: 'translateX(-50%)', textAlign: 'center' }}>
           <div style={{
             display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8,
             background: 'rgba(5, 10, 24, 0.9)', borderRadius: 20, padding: '20px 30px',
