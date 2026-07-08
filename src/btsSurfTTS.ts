@@ -65,17 +65,17 @@ export async function generateBTSVoiceover(
   // Part 1: Byte intro — "People often ask me"
   const intro = lang === 'sk'
     ? 'Ľudia sa ma často pýtajú.'
-    : 'People often ask me.';
+    : 'People keep asking me.';
 
   // Part 2: Questioner — "Bro what happens when X?"
   const questionText = lang === 'sk'
-    ? `Bro ale čo sa vlastne stane keď ${question.replace(/^Čo sa stane keď /i, '').replace(/\?$/, '')}?`
-    : `Bro but like, what happens when ${question.replace(/^What happens when (you )?/i, '').replace(/\?$/, '')}?`;
+    ? `Kámo ale čo sa vlastne stane keď ${question.replace(/^Čo sa stane keď /i, '').replace(/\?$/, '')}?`
+    : `Dude, what actually happens when ${question.replace(/^What happens when (you )?/i, '').replace(/\?$/, '')}?`;
 
-  // Part 3: Byte answer — "And I just tell them..."
+  // Part 3: Byte answer — casual transition
   const answerIntro = lang === 'sk'
-    ? 'A ja im len poviem.'
-    : 'And I just tell them.';
+    ? 'Nechaj ma, veď surfujem. Ale dobre. Funguje to takto.'
+    : 'Leave me alone, I am surfing. But fine. Here is how it works.';
 
   console.log(`🎙️ Generating BTS voiceover (${lang})...`);
   console.log(`  Intro: "${intro}"`);
