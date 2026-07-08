@@ -228,7 +228,7 @@ export const ByteSurfAnimation: React.FC<{
 
       {/* Questioner character */}
       {isQuestionerSpeaking && (
-        <div style={{ position: 'absolute', left: '50%', top: height * 0.3, transform: 'translateX(-50%)', textAlign: 'center' }}>
+        <div style={{ position: 'absolute', left: '50%', top: height * 0.08, transform: 'translateX(-50%)', textAlign: 'center' }}>
           <div style={{
             display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8,
             background: 'rgba(5, 10, 24, 0.9)', borderRadius: 20, padding: '20px 30px',
@@ -242,11 +242,8 @@ export const ByteSurfAnimation: React.FC<{
 
       {/* Subtitle — ALWAYS same style, above Byte */}
       {subtitle && (() => {
-        // Intro + questioner: subtitles BELOW Byte. After that: ABOVE Byte.
-        const isIntroPhase = time < (questionerDuration + 3);
-        const subtitleTop = isIntroPhase
-          ? byteY + byteSize * 0.9
-          : byteY - byteSize * 1.0;
+        // Subtitles ALWAYS above Byte
+        const subtitleTop = byteY - byteSize * 1.0;
 
         return (
         <div style={{
