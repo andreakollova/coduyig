@@ -84,7 +84,7 @@ export const ByteSurfAnimation: React.FC<{
   return (
     <AbsoluteFill style={{ background: '#050a18', fontFamily, overflow: 'hidden' }}>
       {audioUrl && <Audio src={staticFile(audioUrl)} />}
-      <Audio src={staticFile('sea.mp3')} volume={0.08} loop />
+      <Audio src={staticFile('sea.wav')} volume={0.08} loop />
 
       {/* Ocean gradient */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
