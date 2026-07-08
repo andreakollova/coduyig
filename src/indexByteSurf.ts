@@ -141,16 +141,30 @@ async function main() {
   const serveUrl = await bundle({ entryPoint: path.join(process.cwd(), 'remotion', 'index.tsx') });
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
-  // Blue surf equipment
-  const equipment = { hat: 'hat-ice-crown', glasses: 'glasses-frost' };
+  // Random equipment — always something blue, but different each time
+  const SURF_OUTFITS: Record<string, string>[] = [
+    { hat: 'hat-ice-crown', glasses: 'glasses-frost' },
+    { hat: 'hat-ice-crown', glasses: 'glasses-round' },
+    { hat: 'hat-beanie', glasses: 'glasses-frost' },
+    { hat: 'hat-ice-crown', glasses: 'glasses-aviator' },
+    { hat: 'hat-headband', glasses: 'glasses-frost' },
+    { hat: 'hat-pilot', glasses: 'glasses-frost' },
+    { hat: 'hat-ice-crown', glasses: 'glasses-cool' },
+    { hat: 'hat-galaxy', glasses: 'glasses-frost' },
+  ];
+  const equipment = SURF_OUTFITS[Math.floor(Math.random() * SURF_OUTFITS.length)];
+  console.log(`🎽 Equipment: ${JSON.stringify(equipment)}\n`);
+
+  // Generate BOTH scripts at once — same topic, same quality
+  console.log('✍️ Generating scripts...');
+  const scriptEn = await generateScript(topic.questionEn, 'en');
+  console.log(`  EN: "${scriptEn.slice(0, 80)}..."`);
+  const scriptSk = await generateScript(topic.questionSk, 'sk');
+  console.log(`  SK: "${scriptSk.slice(0, 80)}..."`);
 
   for (const lang of ['sk', 'en'] as const) {
     const question = lang === 'sk' ? topic.questionSk : topic.questionEn;
-
-    // Generate script via GPT
-    console.log(`\n✍️ [${lang}] Generating script...`);
-    const script = await generateScript(question, lang);
-    console.log(`  Script: "${script.slice(0, 80)}..."`);
+    const script = lang === 'sk' ? scriptSk : scriptEn;
 
     // Generate TTS with two voices
     const ttsDir = path.join(OUT_DIR, `bytesurf_tts_${lang}`);
