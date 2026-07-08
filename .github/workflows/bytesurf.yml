@@ -1,0 +1,39 @@
+name: Daily ByteSurf
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # 12:00 UTC = 14:00 CEST
+  workflow_dispatch:
+
+jobs:
+  bytesurf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Ensure Remotion browser
+        run: npx remotion browser ensure
+
+      - name: Run ByteSurf publisher
+        env:
+          IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
+          IG_PAGE_TOKEN_SK: ${{ secrets.IG_PAGE_TOKEN_SK }}
+          IG_USER_ID_EN: ${{ secrets.IG_USER_ID_EN }}
+          IG_USER_ID_SK: ${{ secrets.IG_USER_ID_SK }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: npx tsx src/indexByteSurf.ts
