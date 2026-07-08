@@ -429,8 +429,8 @@ Examples: style→stajl, type→tajp, scope→skóup, cache→keš, thread→tre
 }
 
 async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', speed = 1.3, speaker: 'student' | 'teacher' = 'teacher', enthusiastic = false): Promise<{ audioBuffer: Buffer; wordTimings: WordTiming[]; duration: number }> {
-  // Apply phonetic pronunciation — static + auto GPT for SK
-  const ttsText = lang === 'sk' ? await autoPhonetics(text, lang) : applyPhonetics(text, lang);
+  // Apply static phonetics only — no GPT auto-phonetics (was causing Slovak word mispronunciation)
+  const ttsText = applyPhonetics(text, lang);
   const originalWords = text.split(/\s+/);
   // Multilingual v2 for both — same voice used for EN and SK
   const model = 'eleven_multilingual_v2';
