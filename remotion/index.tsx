@@ -5,6 +5,7 @@ import { SlideGlossaryTerm, SlideGlossarySimple } from './glossaryCompositions';
 import { SlideCodeQuestion, SlideCodeAnswer, SlideCodeExplanation } from './codeCompositions';
 import { LessonReel } from './reelComposition';
 import { ByteFallAnimation } from './byteFall';
+import { ByteSurfAnimation } from './byteSurf';
 
 const W = 1080;
 const H = 1440;
@@ -70,6 +71,9 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="ByteFall" component={ByteFallAnimation} durationInFrames={15 * FPS} fps={FPS} width={REEL_W} height={REEL_H}
       calculateMetadata={({ props }) => ({ durationInFrames: props.durationInFrames || 15 * FPS })}
       defaultProps={{ equipment: {}, durationInFrames: 15 * FPS, term: 'SSH', termFull: 'Secure Shell', definition: 'Secure communication protocol for remote access', audioUrl: '', words: [] }} />
+    <Composition id="ByteSurf" component={ByteSurfAnimation} durationInFrames={30 * FPS} fps={FPS} width={REEL_W} height={REEL_H}
+      calculateMetadata={({ props }) => ({ durationInFrames: props.durationInFrames || 30 * FPS })}
+      defaultProps={{ equipment: {}, durationInFrames: 30 * FPS, question: 'What happens when you type google.com?', audioUrl: '', words: [] }} />
   </>
 );
 
