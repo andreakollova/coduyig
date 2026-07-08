@@ -204,7 +204,7 @@ export const ByteSurfAnimation: React.FC<{
 
       {/* Surfboard */}
       {!isSharkPhase && (
-        <svg style={{ position: 'absolute', left: byteX - 100, top: byteY + byteSize * 0.48 }} width={200} height={65} viewBox="0 0 200 65">
+        <svg style={{ position: 'absolute', left: byteX - 100, top: byteY + byteSize * 0.58 }} width={200} height={65} viewBox="0 0 200 65">
           <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#f59e0b" /><stop offset="100%" stopColor="#fb923c" /></linearGradient></defs>
           <ellipse cx="100" cy="25" rx="95" ry="22" fill="url(#sg)" transform={`rotate(${tilt * 0.3} 100 25)`} />
           <path d="M 100 44 L 92 60 L 108 60 Z" fill="#d97706" opacity="0.6" />
@@ -220,7 +220,7 @@ export const ByteSurfAnimation: React.FC<{
 
       {/* Byte's legs — only when on surfboard */}
       {!isSharkPhase && (
-        <svg style={{ position: 'absolute', left: byteX - 45, top: byteY + byteSize * 0.28, transform: `rotate(${tilt}deg)` }} width={90} height={130} viewBox="0 0 90 130">
+        <svg style={{ position: 'absolute', left: byteX - 45, top: byteY + byteSize * 0.38, transform: `rotate(${tilt}deg)` }} width={90} height={130} viewBox="0 0 90 130">
           <line x1="25" y1="0" x2={18 + legSwing * 0.5} y2="88" stroke="#333" strokeWidth="9" strokeLinecap="round" />
           <circle cx={18 + legSwing * 0.5} cy="92" r="10" fill="#444" />
           <line x1="65" y1="0" x2={72 - legSwing * 0.5} y2="88" stroke="#333" strokeWidth="9" strokeLinecap="round" />
