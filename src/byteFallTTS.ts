@@ -366,6 +366,8 @@ const SK_PHONETICS: Record<string, string> = {
   'Cascading': 'kaskejding',
   'Style': 'stajl',
   'Sheets': 'šíts',
+  'npm': 'en pí em',
+  'Git': 'git',
   // From lessons
   'LEGB': 'el í džé bí',
   'OWASP': 'ou vasp',
