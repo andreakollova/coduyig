@@ -73,7 +73,7 @@ export const ByteSurfAnimation: React.FC<{
       current.push(wi);
       const w = words[wi].word;
       // Break after punctuation or when group gets too long
-      if (/[.?!]$/.test(w) || w.endsWith('...') || w.endsWith('"') || current.length >= 10) {
+      if (/[.?!]$/.test(w) || w.endsWith('...') || w.endsWith('"') || current.length >= 6) {
         groups.push([...current]);
         current = [];
       }
@@ -250,7 +250,7 @@ export const ByteSurfAnimation: React.FC<{
             display: 'inline-block', fontSize: 22, fontWeight: 500, color: '#94a3b8',
             lineHeight: 1.5, background: 'rgba(5, 10, 24, 0.85)',
             borderRadius: 10, padding: '8px 20px', border: '1px solid rgba(135, 206, 255, 0.1)',
-            maxWidth: 500, textAlign: 'center',
+            maxWidth: 380, textAlign: 'center',
           }} dangerouslySetInnerHTML={{ __html: subtitle.replace(/<b>/g, '<b style="color:#fff;font-weight:700;">') }} />
         </div>
       )}
