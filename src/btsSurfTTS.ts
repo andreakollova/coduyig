@@ -83,7 +83,7 @@ export async function generateBTSVoiceover(
     : 'But ok... here is how it works.';
 
   // Part 6: Closing
-  const closing = lang === 'sk' ? 'Takže vlastne, nič zložité, kámo.' : 'So yeah, nothing complicated, bro.';
+  const closing = lang === 'sk' ? 'Takže vlastne, nič zložité, kámo.' : 'So yeah, nothing complicated, dude.';
 
   console.log(`🎙️ Generating BTS voiceover (${lang})...`);
   console.log(`  Intro+Q: "${introAndQuestion.slice(0, 80)}..."`);
