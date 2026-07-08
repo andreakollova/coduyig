@@ -520,8 +520,8 @@ export async function generateByteFallVoiceover(
     : enIntros[Math.floor(Math.random() * enIntros.length)];
 
   const introLine = lang === 'sk'
-    ? `${introGreeting} Dnes si vysvetlíme skratku ${term}.`
-    : `${introGreeting} Today we are breaking down the abbreviation ${term}.`;
+    ? `${introGreeting} Dnes si vysvetlíme ďalšiu skratku!`
+    : `${introGreeting} Today we are breaking down another abbreviation!`;
 
   // Build script based on language
   const explains = await generateWordExplanations(term, termFull, definition, lang);
