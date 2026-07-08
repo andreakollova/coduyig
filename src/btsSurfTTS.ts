@@ -70,13 +70,14 @@ export async function generateBTSVoiceover(
 
   // Part 1: Byte intro (BYTE voice)
   const intro = lang === 'sk'
-    ? 'Ľudia sa ma často pýtajú.'
-    : 'People keep asking me.';
+    ? 'Ľudia sa ma často pýtajú:'
+    : 'People keep asking me:';
 
   // Part 2: Questioner question (QUESTIONER voice)
+  const greetingCap = greeting.charAt(0).toUpperCase() + greeting.slice(1);
   const questionText = lang === 'sk'
-    ? `${greeting}, ale čo sa vlastne stane keď ${question.replace(/^Čo sa stane keď /i, '').replace(/\?$/, '')}?`
-    : `${greeting}, what actually happens when you ${question.replace(/^What happens when (you )?/i, '').replace(/\?$/, '')}?`;
+    ? `${greetingCap}, ale čo sa vlastne stane keď ${question.replace(/^Čo sa stane keď /i, '').replace(/\?$/, '')}?`
+    : `${greetingCap}, what actually happens when you ${question.replace(/^What happens when (you )?/i, '').replace(/\?$/, '')}?`;
 
   // Part 3a: "Nechaj ma" / "Leave me alone"
   const answerPart1 = lang === 'sk'
