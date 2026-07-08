@@ -48,16 +48,16 @@ const THEMES: Record<string, Theme> = {
     bgMusic: 'sea.wav',
   },
   horse: {
-    bg: '#0a0f05',
-    gradientTop: 'rgba(34, 80, 20, 0.2)',
-    gradientBottom: 'rgba(34, 80, 20, 0.25)',
-    waveColor: '74, 160, 60',
-    bigWaveColor: '60, 130, 50',
-    items: ['🌾', '🌻', '🌳', '🐄', '🦋', '🐝', '🌿', '🍃', '🐑', '🌼'],
+    bg: '#120a04',
+    gradientTop: 'rgba(120, 70, 20, 0.15)',
+    gradientBottom: 'rgba(80, 50, 15, 0.25)',
+    waveColor: '160, 120, 60',
+    bigWaveColor: '140, 100, 40',
+    items: ['🐎', '🌾', '🐎', '🌻', '🐎', '🦋', '🌳', '🐎', '🍃', '🐄'],
     vehicleName: 'horse',
-    subtitleBg: 'rgba(5, 10, 3, 0.85)',
-    subtitleBorder: 'rgba(74, 160, 60, 0.1)',
-    bgMusic: 'sea.wav', // TODO: horse gallop sound
+    subtitleBg: 'rgba(18, 10, 4, 0.85)',
+    subtitleBorder: 'rgba(160, 120, 60, 0.15)',
+    bgMusic: 'horse.wav',
   },
 };
 
@@ -145,7 +145,7 @@ export const ByteSurfAnimation: React.FC<{
   return (
     <AbsoluteFill style={{ background: T.bg, fontFamily, overflow: 'hidden' }}>
       {audioUrl && <Audio src={staticFile(audioUrl)} />}
-      <Audio src={staticFile('sea.wav')} volume={0.08} loop />
+      <Audio src={staticFile(T.bgMusic)} volume={0.08} loop />
 
       {/* Ocean gradient */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
@@ -153,39 +153,74 @@ export const ByteSurfAnimation: React.FC<{
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '55%',
         background: `linear-gradient(180deg, transparent 0%, ${T.gradientBottom} 40%, ${T.gradientBottom} 100%)` }} />
 
-      {/* Wavy waves */}
-      <svg style={{ position: 'absolute', top: 0, left: 0 }} width={width} height={height}>
-        {Array.from({ length: 15 }, (_, i) => {
-          const speed = 1.5 + (i % 3) * 0.3;
-          const rawY = ((time * speed * 70 + i * (height / 8)) % (height + 60)) - 30;
-          const perspective = interpolate(rawY, [0, height], [0.15, 1.8], { extrapolateRight: 'clamp' });
-          const amplitude = perspective * 15;
-          const freq = 3 + (i % 2);
-          const opacity = interpolate(rawY, [-20, height * 0.12, height * 0.85, height], [0, 0.3, 0.12, 0], { extrapolateRight: 'clamp' });
-          const waveW = perspective * width * 0.85;
-          const offsetX = (width - waveW) / 2;
-          return <path key={`w-${i}`} d={wavePath(waveW, rawY, amplitude, freq, time * 2 + i * 0.7)}
-            fill="none" stroke={`rgba(${T.waveColor}, ${opacity})`} strokeWidth={1.5}
-            transform={`translate(${offsetX}, 0)`} />;
-        })}
-      </svg>
-
-      {/* Big wavy obstacles */}
-      <svg style={{ position: 'absolute', top: 0, left: 0 }} width={width} height={height}>
-        {Array.from({ length: 4 }, (_, i) => {
-          const speed = 1.5 + (i % 2) * 0.5;
-          const rawY = ((time * speed * 85 + i * 380) % (height + 300)) - 150;
-          const perspective = interpolate(rawY, [0, height], [0.2, 2], { extrapolateRight: 'clamp' });
-          const wSize = 120 * perspective;
-          const ox = width * (0.15 + (i * 0.25) % 0.7);
-          const opacity = interpolate(rawY, [-100, 50, height * 0.7, height], [0, 0.5, 0.3, 0], { extrapolateRight: 'clamp' });
-          const amp = perspective * 18;
-          return <path key={`bw-${i}`}
-            d={wavePath(wSize, rawY, amp, 2, time * 3 + i * 1.5) + ` L ${wSize} ${rawY + amp * 2} L 0 ${rawY + amp * 2} Z`}
-            fill={`rgba(${T.bigWaveColor}, ${opacity * 0.12})`} stroke={`rgba(${T.waveColor}, ${opacity * 0.25})`} strokeWidth={1.5}
-            transform={`translate(${ox - wSize / 2}, 0)`} />;
-        })}
-      </svg>
+      {/* Environment lines */}
+      {theme === 'surf' && (
+        <>
+          {/* Ocean waves */}
+          <svg style={{ position: 'absolute', top: 0, left: 0 }} width={width} height={height}>
+            {Array.from({ length: 15 }, (_, i) => {
+              const speed = 1.5 + (i % 3) * 0.3;
+              const rawY = ((time * speed * 70 + i * (height / 8)) % (height + 60)) - 30;
+              const perspective = interpolate(rawY, [0, height], [0.15, 1.8], { extrapolateRight: 'clamp' });
+              const amplitude = perspective * 15;
+              const freq = 3 + (i % 2);
+              const opacity = interpolate(rawY, [-20, height * 0.12, height * 0.85, height], [0, 0.3, 0.12, 0], { extrapolateRight: 'clamp' });
+              const waveW = perspective * width * 0.85;
+              const offsetX = (width - waveW) / 2;
+              return <path key={`w-${i}`} d={wavePath(waveW, rawY, amplitude, freq, time * 2 + i * 0.7)}
+                fill="none" stroke={`rgba(${T.waveColor}, ${opacity})`} strokeWidth={1.5}
+                transform={`translate(${offsetX}, 0)`} />;
+            })}
+          </svg>
+          {/* Big waves */}
+          <svg style={{ position: 'absolute', top: 0, left: 0 }} width={width} height={height}>
+            {Array.from({ length: 4 }, (_, i) => {
+              const speed = 1.5 + (i % 2) * 0.5;
+              const rawY = ((time * speed * 85 + i * 380) % (height + 300)) - 150;
+              const perspective = interpolate(rawY, [0, height], [0.2, 2], { extrapolateRight: 'clamp' });
+              const wSize = 120 * perspective;
+              const ox = width * (0.15 + (i * 0.25) % 0.7);
+              const opacity = interpolate(rawY, [-100, 50, height * 0.7, height], [0, 0.5, 0.3, 0], { extrapolateRight: 'clamp' });
+              const amp = perspective * 18;
+              return <path key={`bw-${i}`}
+                d={wavePath(wSize, rawY, amp, 2, time * 3 + i * 1.5) + ` L ${wSize} ${rawY + amp * 2} L 0 ${rawY + amp * 2} Z`}
+                fill={`rgba(${T.bigWaveColor}, ${opacity * 0.12})`} stroke={`rgba(${T.waveColor}, ${opacity * 0.25})`} strokeWidth={1.5}
+                transform={`translate(${ox - wSize / 2}, 0)`} />;
+            })}
+          </svg>
+        </>
+      )}
+      {theme === 'horse' && (
+        <>
+          {/* Ground path lines — rushing towards camera */}
+          {Array.from({ length: 12 }, (_, i) => {
+            const speed = 2 + (i % 3) * 0.4;
+            const rawY = ((time * speed * 80 + i * (height / 6)) % (height + 60)) - 30;
+            const perspective = interpolate(rawY, [0, height], [0.1, 1.6], { extrapolateRight: 'clamp' });
+            const lineW = perspective * width * 0.7;
+            const opacity = interpolate(rawY, [-20, height * 0.15, height * 0.85, height], [0, 0.15, 0.08, 0], { extrapolateRight: 'clamp' });
+            return <div key={`path-${i}`} style={{
+              position: 'absolute', top: rawY, left: '50%', transform: 'translateX(-50%)',
+              width: lineW, height: 2, borderRadius: 1,
+              background: `rgba(${T.waveColor}, ${opacity})`,
+            }} />;
+          })}
+          {/* Fence posts — sides */}
+          {Array.from({ length: 6 }, (_, i) => {
+            const speed = 1.8 + (i % 2) * 0.4;
+            const rawY = ((time * speed * 90 + i * 350) % (height + 300)) - 100;
+            const perspective = interpolate(rawY, [0, height], [0.3, 2], { extrapolateRight: 'clamp' });
+            const opacity = interpolate(rawY, [-50, 80, height - 80, height], [0, 0.3, 0.15, 0], { extrapolateRight: 'clamp' });
+            const side = i % 2 === 0 ? width * 0.08 : width * 0.85;
+            const fenceH = 40 * perspective;
+            return <div key={`fence-${i}`} style={{
+              position: 'absolute', left: side, top: rawY,
+              width: 4 * perspective, height: fenceH, borderRadius: 2,
+              background: `rgba(120, 80, 30, ${opacity})`,
+            }} />;
+          })}
+        </>
+      )}
 
       {/* Sea items — fish, shells, etc. */}
       {Array.from({ length: 7 }, (_, i) => {
@@ -194,7 +229,9 @@ export const ByteSurfAnimation: React.FC<{
         const scale = interpolate(rawY, [0, height], [0.3, 1.4], { extrapolateRight: 'clamp' });
         const sx = width * (0.12 + (i * 0.18) % 0.76);
         const opacity = interpolate(rawY, [-50, 80, height - 80, height], [0, 0.7, 0.4, 0], { extrapolateRight: 'clamp' });
-        return <div key={`sea-${i}`} style={{ position: 'absolute', left: sx, top: rawY, fontSize: 26 * scale, opacity }}>{T.items[i % T.items.length]}</div>;
+        const item = T.items[i % T.items.length];
+        const isMainEmoji = item === '🐎' || item === '🐠';
+        return <div key={`sea-${i}`} style={{ position: 'absolute', left: sx, top: rawY, fontSize: (isMainEmoji ? 40 : 26) * scale, opacity }}>{item}</div>;
       })}
 
       {/* Spray (surf only) */}
