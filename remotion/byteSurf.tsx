@@ -88,7 +88,7 @@ export const ByteSurfAnimation: React.FC<{
       if (group) {
         const firstWord = words[group[0]];
         const lastWord = words[group[group.length - 1]];
-        if (time >= firstWord.start && time < lastWord.end + 0.4) {
+        if (time >= firstWord.start && time < lastWord.end + 0.8) {
           subtitle = group.map(gi => (gi === idx ? `<b>${words[gi].word}</b>` : words[gi].word)).join(' ');
         }
       }
@@ -245,8 +245,8 @@ export const ByteSurfAnimation: React.FC<{
         // Intro + questioner: subtitles BELOW Byte. After that: ABOVE Byte.
         const isIntroPhase = time < (questionerDuration + 3);
         const subtitleTop = isIntroPhase
-          ? byteY + byteSize * 0.7
-          : byteY - byteSize * 0.8;
+          ? byteY + byteSize * 0.9
+          : byteY - byteSize * 1.0;
 
         return (
         <div style={{
