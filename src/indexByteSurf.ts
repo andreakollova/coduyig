@@ -90,6 +90,7 @@ Pravidlá:
 - Použi prirovnania k bežnému životu ak to pomôže
 - Nesmie tam byť žiadna skratka bez vysvetlenia
 - Na konci spomeň niečo prekvapivé alebo zaujímavé
+- NIKDY nezačínaj opakovaním otázky! Otázku už položil niekto iný. Ty len odpovedáš. Začni rovno vysvetlením.
 - Max 100 slov
 - Slovenčina (NIKDY čeština)
 - Vrať LEN text vysvetlenia, nič iné`
@@ -103,6 +104,7 @@ Rules:
 - Use real-life comparisons if they help
 - No abbreviation without explanation
 - Mention something surprising or interesting at the end
+- NEVER start by repeating the question! Someone else already asked it. Just go straight to the answer.
 - Max 100 words
 - Return ONLY the explanation text, nothing else`;
 
