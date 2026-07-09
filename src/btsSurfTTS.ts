@@ -71,19 +71,15 @@ export async function generateBTSVoiceover(
   // Part 1: Byte intro (BYTE voice) — random variations
   const skIntros = [
     'Ľudia sa ma často pýtajú:',
-    'Ľudia za mnou niekedy dobehnu a pýtajú sa:',
     'Ľudia mi stále píšu:',
     'Včera sa ma niekto opýtal:',
-    'Ľudia sa ma neustále pýtajú:',
-    'Jeden človek sa ma nedávno opýtal:',
+    'Niekedy za mnou niekto príde a pýta sa:',
   ];
   const enIntros = [
     'People keep asking me:',
-    'Someone ran up to me and asked:',
     'I keep getting this question:',
     'Someone asked me yesterday:',
-    'People always ask me:',
-    'I just got this question again:',
+    'Sometimes someone comes up to me and asks:',
   ];
   const intro = lang === 'sk'
     ? skIntros[Math.floor(Math.random() * skIntros.length)]
