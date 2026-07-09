@@ -612,17 +612,20 @@ export async function generateByteFallVoiceover(
 }
 
 // Random equipment for ByteFall — different every time
+// Every outfit has something colorful (blue/purple/orange/gold/fire/frost)
 const BYTEFALL_OUTFITS: Record<string, string>[] = [
-  { hat: 'hat-graduation', glasses: 'glasses-cool' },
-  { hat: 'hat-cowboy', glasses: 'glasses-aviator' },
-  { hat: 'hat-pilot', glasses: 'glasses-cool' },
-  { hat: 'hat-samurai', glasses: 'glasses-frost' },
-  { hat: 'hat-fire-crown', glasses: 'glasses-flame' },
-  { hat: 'hat-beanie', glasses: 'glasses-round' },
-  { hat: 'hat-headband', glasses: 'glasses-round' },
-  { hat: 'hat-golden-crown', glasses: 'glasses-golden', accessory: 'acc-wings-gold' },
-  { hat: 'hat-void-crown', glasses: 'glasses-void', accessory: 'acc-cosmic-cape' },
-  { hat: 'hat-galaxy', glasses: 'glasses-laser', accessory: 'acc-diamond' },
+  { hat: 'hat-graduation', glasses: 'glasses-cool' },           // blue sunglasses
+  { hat: 'hat-cowboy', glasses: 'glasses-aviator' },             // brown hat
+  { hat: 'hat-pilot', glasses: 'glasses-frost' },                // blue frost glasses
+  { hat: 'hat-samurai', glasses: 'glasses-frost' },              // blue frost
+  { hat: 'hat-fire-crown', glasses: 'glasses-flame' },           // orange fire
+  { hat: 'hat-ice-crown', glasses: 'glasses-frost' },            // blue ice
+  { hat: 'hat-ice-crown', glasses: 'glasses-cool' },             // blue mix
+  { hat: 'hat-golden-crown', glasses: 'glasses-golden', accessory: 'acc-wings-gold' },  // gold
+  { hat: 'hat-void-crown', glasses: 'glasses-void', accessory: 'acc-cosmic-cape' },     // purple
+  { hat: 'hat-galaxy', glasses: 'glasses-laser', accessory: 'acc-diamond' },            // galaxy purple
+  { hat: 'hat-fire-crown', glasses: 'glasses-aviator' },         // orange + brown
+  { hat: 'hat-samurai', glasses: 'glasses-flame' },              // red samurai
 ];
 
 export function randomByteFallEquipment(): Record<string, string> {
