@@ -29,7 +29,8 @@ export const ByteMascot: React.FC<ByteProps> = ({ size = 400, equipment = {}, bo
   const isGalaxy = hatId?.includes('galaxy');
 
   const hatStroke = isGolden ? '#f5a623' : isFire ? '#ff6030' : isIce ? '#80d0ff' : isVoid ? '#ff3366' : isGalaxy ? '#a855f7' : 'white';
-  const hatFill = isGolden ? '#1a1200' : isFire ? '#1a0800' : isIce ? '#001020' : isVoid ? '#0a0010' : isGalaxy ? '#0a0020' : '#111';
+  const defaultHatFill = bodyColor === '#0A0A0A' ? '#111' : bodyColor;
+  const hatFill = isGolden ? '#1a1200' : isFire ? '#1a0800' : isIce ? '#001020' : isVoid ? '#0a0010' : isGalaxy ? '#0a0020' : defaultHatFill;
 
   return (
     <div style={{ transform: `translateY(${floatY}px)`, display: 'flex', justifyContent: 'center' }}>
@@ -57,8 +58,8 @@ export const ByteMascot: React.FC<ByteProps> = ({ size = 400, equipment = {}, bo
         )}
         {hatId && !hatId.includes('crown') && !hatId.includes('void') && !hatId.includes('fire') && !hatId.includes('ice') && !hatId.includes('galaxy') && (
           <g>
-            <ellipse cx="60" cy="40" rx="30" ry="16" fill="#111" stroke="white" strokeWidth="1.5" />
-            <rect x="30" y="50" width="60" height="7" rx="3.5" fill="#1a1a1a" stroke="white" strokeWidth="1" />
+            <ellipse cx="60" cy="40" rx="30" ry="16" fill={defaultHatFill} stroke="white" strokeWidth="1.5" />
+            <rect x="30" y="50" width="60" height="7" rx="3.5" fill={defaultHatFill} stroke="white" strokeWidth="1" />
           </g>
         )}
 
