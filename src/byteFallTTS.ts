@@ -619,7 +619,7 @@ const BYTEFALL_OUTFITS: Record<string, string>[] = [
   { hat: 'hat-samurai', glasses: 'glasses-frost' },
   { hat: 'hat-fire-crown', glasses: 'glasses-flame' },
   { hat: 'hat-beanie', glasses: 'glasses-round' },
-  { hat: 'hat-headband' },
+  { hat: 'hat-headband', glasses: 'glasses-round' },
   { hat: 'hat-golden-crown', glasses: 'glasses-golden', accessory: 'acc-wings-gold' },
   { hat: 'hat-void-crown', glasses: 'glasses-void', accessory: 'acc-cosmic-cape' },
   { hat: 'hat-galaxy', glasses: 'glasses-laser', accessory: 'acc-diamond' },

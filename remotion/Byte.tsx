@@ -62,7 +62,7 @@ export const ByteMascot: React.FC<ByteProps> = ({ size = 400, equipment = {} }) 
         )}
 
         {/* Head */}
-        <ellipse cx="60" cy="75" rx="40" ry="36" fill="#0A0A0A" stroke="white" strokeWidth="2" />
+        <ellipse cx="60" cy="75" rx="40" ry="36" fill="#0d1b2a" stroke="white" strokeWidth="2" />
 
         {/* Glasses */}
         {equipment?.glasses && (
