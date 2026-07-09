@@ -1,60 +1,10 @@
 services:
   - type: cron
-    name: coduyig-morning
+    name: coduyig
     runtime: docker
     dockerfilePath: ./Dockerfile
-    dockerCommand: npx tsx src/cron.ts --slot morning
-    schedule: "0 7 * * *"    # 07:00 UTC = 09:00 CEST
-    region: frankfurt
-    plan: starter
-    envVars:
-      - key: IG_PAGE_TOKEN_EN
-        sync: false
-      - key: IG_PAGE_TOKEN_SK
-        sync: false
-      - key: IG_USER_ID_EN
-        sync: false
-      - key: IG_USER_ID_SK
-        sync: false
-      - key: SUPABASE_URL
-        sync: false
-      - key: SUPABASE_SERVICE_ROLE_KEY
-        sync: false
-      - key: OPENAI_API_KEY
-        sync: false
-      - key: ELEVENLABS_API_KEY
-        sync: false
-
-  - type: cron
-    name: coduyig-lunch
-    runtime: docker
-    dockerfilePath: ./Dockerfile
-    dockerCommand: npx tsx src/cron.ts --slot lunch
-    schedule: "0 11 * * *"   # 11:00 UTC = 13:00 CEST
-    region: frankfurt
-    plan: starter
-    envVars:
-      - key: IG_PAGE_TOKEN_EN
-        sync: false
-      - key: IG_PAGE_TOKEN_SK
-        sync: false
-      - key: IG_USER_ID_EN
-        sync: false
-      - key: IG_USER_ID_SK
-        sync: false
-      - key: SUPABASE_URL
-        sync: false
-      - key: SUPABASE_SERVICE_ROLE_KEY
-        sync: false
-      - key: OPENAI_API_KEY
-        sync: false
-
-  - type: cron
-    name: coduyig-evening
-    runtime: docker
-    dockerfilePath: ./Dockerfile
-    dockerCommand: npx tsx src/cron.ts --slot evening
-    schedule: "0 17 * * *"   # 17:00 UTC = 19:00 CEST
+    dockerCommand: npx tsx src/cron.ts
+    schedule: "0 7,11,17 * * *"
     region: frankfurt
     plan: starter
     envVars:
