@@ -72,10 +72,14 @@ export async function generateBTSVoiceover(
   const skIntros = [
     'Ľudia sa ma často pýtajú:',
     'Niekedy za mnou niekto príde a pýta sa:',
+    'Ľudia mi niekedy napíšu že:',
+    'Včera za mnou prišiel týpek a pýta sa ma že:',
   ];
   const enIntros = [
     'People keep asking me:',
     'Sometimes someone comes up to me and asks:',
+    'People sometimes message me:',
+    'Yesterday some dude came up to me and asked:',
   ];
   const intro = lang === 'sk'
     ? skIntros[Math.floor(Math.random() * skIntros.length)]
