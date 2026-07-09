@@ -15,6 +15,8 @@ import { publishStory } from './instagram.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const chromiumOptions = process.env.REMOTION_CHROME_EXECUTABLE_PATH ? { executablePath: process.env.REMOTION_CHROME_EXECUTABLE_PATH, args: ['--no-sandbox', '--disable-setuid-sandbox'] } : {};
+
 const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 const OUT_DIR = path.join(process.cwd(), 'out');
 const FPS = 30;
@@ -269,9 +271,9 @@ async function main() {
     };
 
     console.log(`\n🎬 [${lang}] Rendering ByteFall (${durationFrames} frames)...`);
-    const composition = await selectComposition({ serveUrl, id: 'ByteFall', inputProps: props });
+    const composition = await selectComposition({ serveUrl, chromiumOptions, id: 'ByteFall', inputProps: props });
     const outPath = path.join(OUT_DIR, `bytefall_${lang}.mp4`);
-    await renderMedia({ composition, serveUrl, codec: 'h264', outputLocation: outPath, inputProps: props });
+    await renderMedia({ composition, serveUrl, chromiumOptions, codec: 'h264', outputLocation: outPath, inputProps: props });
 
     // Upload to Supabase
     const storagePath = `bytefall/${lang}_${entry.id}_${Date.now()}.mp4`;

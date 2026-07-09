@@ -31,7 +31,14 @@ const day = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).ge
 
 function run(cmd: string) {
   console.log(`> ${cmd}`);
-  execSync(cmd, { stdio: 'inherit', timeout: 20 * 60 * 1000 });
+  try {
+    execSync(cmd, { stdio: 'inherit', timeout: 20 * 60 * 1000 });
+  } catch (err: any) {
+    console.error(`\nCommand failed: ${cmd}`);
+    if (err.stdout) console.error('STDOUT:', err.stdout.toString());
+    if (err.stderr) console.error('STDERR:', err.stderr.toString());
+    throw err;
+  }
 }
 
 console.log(`Slot: ${slot} | UTC hour: ${hour} | Day: ${day}`);
