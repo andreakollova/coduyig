@@ -81,9 +81,9 @@ export async function generateBTSVoiceover(
     'People sometimes message me:',
     'Yesterday some guy came up to me and asked:',
   ];
-  const intro = lang === 'sk'
-    ? skIntros[Math.floor(Math.random() * skIntros.length)]
-    : enIntros[Math.floor(Math.random() * enIntros.length)];
+  const introIdx = Math.floor(Math.random() * skIntros.length);
+  const intro = lang === 'sk' ? skIntros[introIdx] : enIntros[introIdx];
+  const isPastTense = introIdx === 3; // "Včera..." / "Yesterday..."
 
   // Part 2: Questioner question (QUESTIONER voice)
   const greetingCap = greeting.charAt(0).toUpperCase() + greeting.slice(1);
@@ -92,8 +92,8 @@ export async function generateBTSVoiceover(
 
   // Part 3a: "Nechaj ma" / "Leave me alone"
   const answerPart1 = lang === 'sk'
-    ? 'A ja im odpoviem... Nechaj ma...'
-    : 'And I tell them... Leave me alone...';
+    ? (isPastTense ? 'A ja som mu odpovedal... Nechaj ma...' : 'A ja im odpoviem... Nechaj ma...')
+    : (isPastTense ? 'And I told him... Leave me alone...' : 'And I tell them... Leave me alone...');
 
   // Part 3b: "veď surfujem!" / "I am surfing!"
   const answerPart2 = lang === 'sk'
