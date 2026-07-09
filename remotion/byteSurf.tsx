@@ -58,7 +58,9 @@ export const ByteSurfAnimation: React.FC<{
   questionerStart?: number;
   questionerEnd?: number;
   theme?: string;
-}> = ({ equipment = {}, question = '', audioUrl, words = [], questionerStart = 0, questionerEnd = 0, theme = 'surf' }) => {
+  surfColor1?: string;
+  surfColor2?: string;
+}> = ({ equipment = {}, question = '', audioUrl, words = [], questionerStart = 0, questionerEnd = 0, theme = 'surf', surfColor1 = '#f59e0b', surfColor2 = '#fb923c' }) => {
   const T = THEMES[theme] || THEMES.surf;
   const frame = useCurrentFrame();
   const { fps, height, width } = useVideoConfig();
@@ -209,7 +211,7 @@ export const ByteSurfAnimation: React.FC<{
       {/* Surfboard */}
       {!isSharkPhase && (
         <svg style={{ position: 'absolute', left: byteX - 100, top: byteY + byteSize * 0.58 }} width={200} height={65} viewBox="0 0 200 65">
-          <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#f59e0b" /><stop offset="100%" stopColor="#fb923c" /></linearGradient></defs>
+          <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor={surfColor1} /><stop offset="100%" stopColor={surfColor2} /></linearGradient></defs>
           <ellipse cx="100" cy="25" rx="95" ry="22" fill="url(#sg)" transform={`rotate(${tilt * 0.3} 100 25)`} />
           <path d="M 100 44 L 92 60 L 108 60 Z" fill="#d97706" opacity="0.6" />
         </svg>

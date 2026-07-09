@@ -175,6 +175,10 @@ const GLOSSARY = [
   // === Package managers & tools ===
   { id: 'npm', term: 'npm', termFull: 'Node Package Manager',
     defSk: 'Správca balíkov pre JavaScript.', defEn: 'A package manager for JavaScript.' },
+  { id: 'tdd', term: 'TDD', termFull: 'Test Driven Development',
+    defSk: 'Vývoj riadený testami.', defEn: 'Test-driven development methodology.' },
+  { id: 'gil', term: 'GIL', termFull: 'Global Interpreter Lock',
+    defSk: 'Zámok, ktorý obmedzuje Python na jedno vlákno.', defEn: 'A lock that limits Python to one thread at a time.' },
   { id: 'git', term: 'Git', termFull: 'Version Control System',
     defSk: 'Systém na správu verzií zdrojového kódu.', defEn: 'A version control system for source code.' },
 ];

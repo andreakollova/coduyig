@@ -159,18 +159,21 @@ async function main() {
   const serveUrl = await bundle({ entryPoint: path.join(process.cwd(), 'remotion', 'index.tsx') });
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
-  // Random equipment — always something blue, but different each time
-  const SURF_OUTFITS: Record<string, string>[] = [
-    { hat: 'hat-ice-crown', glasses: 'glasses-frost' },
-    { hat: 'hat-ice-crown', glasses: 'glasses-round' },
-    { hat: 'hat-beanie', glasses: 'glasses-frost' },
-    { hat: 'hat-ice-crown', glasses: 'glasses-aviator' },
-    { hat: 'hat-headband', glasses: 'glasses-frost' },
-    { hat: 'hat-pilot', glasses: 'glasses-frost' },
-    { hat: 'hat-ice-crown', glasses: 'glasses-cool' },
-    { hat: 'hat-galaxy', glasses: 'glasses-frost' },
+  // Random equipment — different every video, any color
+  const equipment = randomByteFallEquipment();
+
+  // Random surfboard color
+  const SURF_COLORS = [
+    ['#f59e0b', '#fb923c'], // orange
+    ['#3b82f6', '#60a5fa'], // blue
+    ['#ef4444', '#f87171'], // red
+    ['#8b5cf6', '#a78bfa'], // purple
+    ['#10b981', '#34d399'], // green
+    ['#ec4899', '#f472b6'], // pink
+    ['#f97316', '#fdba74'], // amber
+    ['#06b6d4', '#22d3ee'], // cyan
   ];
-  const equipment = SURF_OUTFITS[Math.floor(Math.random() * SURF_OUTFITS.length)];
+  const surfColorPick = SURF_COLORS[Math.floor(Math.random() * SURF_COLORS.length)];
   console.log(`🎽 Equipment: ${JSON.stringify(equipment)}\n`);
 
   // Generate BOTH scripts at once — same topic, same quality
@@ -209,6 +212,7 @@ async function main() {
       equipment, durationInFrames: durationFrames, question,
       audioUrl: audioFileName, words,
       questionerStart, questionerEnd,
+      surfColor1: surfColorPick[0], surfColor2: surfColorPick[1],
     };
 
     console.log(`🎬 [${lang}] Rendering (${durationFrames} frames, ${(durationFrames / FPS).toFixed(1)}s)...`);

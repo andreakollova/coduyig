@@ -68,10 +68,26 @@ export async function generateBTSVoiceover(
   const greetIdx = Math.floor(Math.random() * 5);
   const greeting = lang === 'sk' ? skGreetings[greetIdx] : enGreetings[greetIdx];
 
-  // Part 1: Byte intro (BYTE voice)
+  // Part 1: Byte intro (BYTE voice) — random variations
+  const skIntros = [
+    'Ľudia sa ma často pýtajú:',
+    'Ľudia za mnou niekedy dobehnu a pýtajú sa:',
+    'Ľudia mi stále píšu:',
+    'Včera sa ma niekto opýtal:',
+    'Ľudia sa ma neustále pýtajú:',
+    'Jeden človek sa ma nedávno opýtal:',
+  ];
+  const enIntros = [
+    'People keep asking me:',
+    'Someone ran up to me and asked:',
+    'I keep getting this question:',
+    'Someone asked me yesterday:',
+    'People always ask me:',
+    'I just got this question again:',
+  ];
   const intro = lang === 'sk'
-    ? 'Ľudia sa ma často pýtajú:'
-    : 'People keep asking me:';
+    ? skIntros[Math.floor(Math.random() * skIntros.length)]
+    : enIntros[Math.floor(Math.random() * enIntros.length)];
 
   // Part 2: Questioner question (QUESTIONER voice)
   const greetingCap = greeting.charAt(0).toUpperCase() + greeting.slice(1);
