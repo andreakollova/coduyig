@@ -153,20 +153,59 @@ async function main() {
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
-  // 1. Fetch lesson
+  // 1. Fetch lesson — use priority topic list with no-repeat tracking
   const skFields = lang === 'sk' ? ', title_sk, introduction_sk, learning_content_sk, key_takeaways_sk' : '';
-  let query = sb.from('cb_lessons')
-    .select(`id, title, introduction, learning_content, key_takeaways, module_id, lesson_number${skFields}`);
+
+  let lesson: any;
 
   if (lessonId) {
-    query = query.eq('id', lessonId);
+    const { data } = await sb.from('cb_lessons')
+      .select(`id, title, introduction, learning_content, key_takeaways, module_id, lesson_number${skFields}`)
+      .eq('id', lessonId);
+    if (!data?.length) { console.log('❌ Lesson not found'); process.exit(0); }
+    lesson = data[0];
   } else {
-    query = query.ilike('learning_content', '%def %').limit(50);
-  }
+    // Get posted reel lesson IDs
+    let postedLessonIds: number[] = [];
+    try {
+      const { data: trackData } = await sb.storage.from(BUCKET).download('tracking/reels.json');
+      if (trackData) {
+        const reels = JSON.parse(await trackData.text());
+        postedLessonIds = reels.map((r: any) => r.lessonId).filter(Boolean);
+      }
+    } catch {}
 
-  const { data: lessons, error } = await query;
-  if (error || !lessons?.length) { console.log('❌ No lesson found'); process.exit(0); }
-  const lesson = lessonId ? lessons[0] : lessons[Math.floor(Math.random() * lessons.length)];
+    // Try priority topics first
+    const { PRIORITY_TOPICS } = await import('./reelTopics.js');
+    const { data: allLessons } = await sb.from('cb_lessons')
+      .select(`id, title, introduction, learning_content, key_takeaways, module_id, lesson_number${skFields}`)
+      .order('id');
+
+    if (allLessons) {
+      // Find unposted priority topics
+      const priorityLessons = PRIORITY_TOPICS
+        .map(title => allLessons.find(l => l.title === title))
+        .filter(l => l && !postedLessonIds.includes(l.id));
+
+      if (priorityLessons.length > 0) {
+        // Random from unposted priority
+        lesson = priorityLessons[Math.floor(Math.random() * priorityLessons.length)];
+        console.log(`📋 Priority topic (${priorityLessons.length} remaining)`);
+      } else {
+        // All priority done — pick any unposted lesson
+        const unposted = allLessons.filter(l => !postedLessonIds.includes(l.id) && l.learning_content);
+        if (unposted.length > 0) {
+          lesson = unposted[Math.floor(Math.random() * unposted.length)];
+          console.log(`🔄 Fallback topic (${unposted.length} remaining)`);
+        } else {
+          lesson = allLessons[Math.floor(Math.random() * allLessons.length)];
+          console.log('🔄 All topics posted — random pick');
+        }
+      }
+    }
+
+    if (!lesson) { console.log('❌ No lesson found'); process.exit(0); }
+  }
 
   const { data: mod } = await sb.from('cb_modules').select('module_number, title, title_sk').eq('id', lesson.module_id).single();
   const moduleNumber = mod?.module_number || 1;

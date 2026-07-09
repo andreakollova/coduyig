@@ -272,6 +272,7 @@ const SK_PHONETICS: Record<string, string> = {
   'Amazon': 'amazon',
   'Microsoft': 'majkrosoft',
   'Apple': 'epl',
+  'PyPI': 'paj pí aj',
   'surfujem': 'surfujem',
   'surfuje': 'surfuje',
   // Common lesson terms that get mispronounced by multilingual voice
