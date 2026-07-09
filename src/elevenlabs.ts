@@ -159,6 +159,7 @@ const SK_PHONETICS: Record<string, string> = {
   'SSD': 'es es dí',
   'HDD': 'ejč dí dí',
   'AI': 'ej aj',
+  'ID': 'aj dí',
   'VS': 'ví es',
   // Python tools & modules
   'asyncio': 'ejsink aj ou',
@@ -399,8 +400,8 @@ const SK_PHONETICS: Record<string, string> = {
   'Inheritance': 'Inheritens',
   'polymorphism': 'polimorfizm',
   'Polymorphism': 'Polimorfizm',
-  'encapsulation': 'enkapsulејšn',
-  'Encapsulation': 'Enkapsulејšn',
+  'encapsulation': 'enkapsulejšn',
+  'Encapsulation': 'Enkapsulejšn',
   'abstraction': 'ebstrekšn',
   'Abstraction': 'Ebstrekšn',
   'composition': 'kompozíšn',
