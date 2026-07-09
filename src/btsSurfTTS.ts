@@ -79,7 +79,7 @@ export async function generateBTSVoiceover(
     'People keep asking me:',
     'Sometimes someone comes up to me and asks:',
     'People sometimes message me:',
-    'Yesterday some dude came up to me and asked:',
+    'Yesterday some guy came up to me and asked:',
   ];
   const intro = lang === 'sk'
     ? skIntros[Math.floor(Math.random() * skIntros.length)]
@@ -87,9 +87,8 @@ export async function generateBTSVoiceover(
 
   // Part 2: Questioner question (QUESTIONER voice)
   const greetingCap = greeting.charAt(0).toUpperCase() + greeting.slice(1);
-  const questionText = lang === 'sk'
-    ? `"${greetingCap}, ale čo sa vlastne stane keď ${question.replace(/^Čo sa stane keď /i, '').replace(/\?$/, '')}?"`
-    : `"${greetingCap}, what actually happens when you ${question.replace(/^What happens when (you )?/i, '').replace(/\?$/, '')}?"`;
+  // Questioner just asks the question directly with greeting
+  const questionText = `"${greetingCap}, ${question.charAt(0).toLowerCase()}${question.slice(1)}"`;
 
   // Part 3a: "Nechaj ma" / "Leave me alone"
   const answerPart1 = lang === 'sk'
