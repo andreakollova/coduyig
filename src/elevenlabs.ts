@@ -273,6 +273,7 @@ const SK_PHONETICS: Record<string, string> = {
   'Microsoft': 'majkrosoft',
   'Apple': 'epl',
   'PyPI': 'paj pí aj',
+  'QR': 'kjú ár',
   // Common programming terms
   'library': 'lajbreri',
   'Library': 'Lajbreri',
