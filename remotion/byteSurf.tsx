@@ -252,7 +252,7 @@ export const ByteSurfAnimation: React.FC<{
         opacity: isQuestionerSpeaking ? 0.3 : byteOpacity,
         transition: isQuestionerSpeaking ? 'opacity 0.5s' : 'none',
       }}>
-        <ByteMascot size={byteSize} equipment={equipment} />
+        <ByteMascot size={byteSize} equipment={equipment} bodyColor="#0d1b2a" />
       </div>
 
       {/* === SHARK === */}

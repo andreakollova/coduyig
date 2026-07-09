@@ -4,9 +4,10 @@ import { useCurrentFrame, interpolate, spring, useVideoConfig } from 'remotion';
 interface ByteProps {
   size?: number;
   equipment?: Record<string, string>;
+  bodyColor?: string;
 }
 
-export const ByteMascot: React.FC<ByteProps> = ({ size = 400, equipment = {} }) => {
+export const ByteMascot: React.FC<ByteProps> = ({ size = 400, equipment = {}, bodyColor = '#0A0A0A' }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -62,7 +63,7 @@ export const ByteMascot: React.FC<ByteProps> = ({ size = 400, equipment = {} }) 
         )}
 
         {/* Head */}
-        <ellipse cx="60" cy="75" rx="40" ry="36" fill="#0A0A0A" stroke="white" strokeWidth="2" />
+        <ellipse cx="60" cy="75" rx="40" ry="36" fill={bodyColor} stroke="white" strokeWidth="2" />
 
         {/* Glasses */}
         {equipment?.glasses && (
