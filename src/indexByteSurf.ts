@@ -43,7 +43,6 @@ const TOPICS = [
   { id: 'touch-id', questionEn: 'How does Touch ID work?', questionSk: 'Ako funguje Touch ID?' },
   { id: 'gps', questionEn: 'How does GPS work in your phone?', questionSk: 'Ako funguje GPS v mobile?' },
   { id: 'push-notif', questionEn: 'How do push notifications work?', questionSk: 'Ako fungujú push notifikácie?' },
-  { id: 'bluetooth', questionEn: 'How does Bluetooth work between devices?', questionSk: 'Ako funguje Bluetooth medzi zariadeniami?' },
   { id: 'nfc', questionEn: 'How does NFC work when paying?', questionSk: 'Ako funguje NFC pri platení?' },
   { id: 'airdrop', questionEn: 'How does AirDrop work between iPhones?', questionSk: 'Ako funguje AirDrop medzi iPhonmi?' },
   { id: 'password', questionEn: 'How does a password work when logging in?', questionSk: 'Ako funguje heslo pri prihlasovaní?' },
