@@ -17,6 +17,9 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm install --production
 
+# Pre-download Remotion browser so it doesn't download on every cron run
+RUN npx remotion browser ensure
+
 COPY . .
 
 ENTRYPOINT ["npx", "tsx", "src/cron.ts"]
