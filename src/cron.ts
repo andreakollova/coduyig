@@ -43,9 +43,6 @@ function run(cmd: string) {
 
 console.log(`Slot: ${slot} | UTC hour: ${hour} | Day: ${day}`);
 
-// Ensure Remotion browser
-run('npx remotion browser ensure');
-
 if (slot === 'morning' || slot === 'evening') {
   // Rotate 3 reel types: 0=rozhovor, 1=bytefall, 2=bytesurf
   const offset = slot === 'evening' ? 1 : 0;

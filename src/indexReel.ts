@@ -13,7 +13,6 @@ import { generateConversationTTS } from './elevenlabs';
 import { publishStory } from './instagram';
 import type { ReelLineData, WordTiming } from '../remotion/reelComposition';
 
-const chromiumOptions = process.env.REMOTION_CHROME_EXECUTABLE_PATH ? { executablePath: process.env.REMOTION_CHROME_EXECUTABLE_PATH, args: ['--no-sandbox', '--disable-setuid-sandbox'] } : {};
 
 const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 const OUT_DIR = path.join(process.cwd(), 'out');
@@ -304,9 +303,9 @@ async function main() {
     ...pickIntroGreeting(lang),
   };
 
-  const comp = await selectComposition({ serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, id: 'LessonReel', inputProps: reelProps });
+  const comp = await selectComposition({ serveUrl, timeoutInMilliseconds: 120000, id: 'LessonReel', inputProps: reelProps });
   const videoPath = path.join(OUT_DIR, 'reel.mp4');
-  await renderMedia({ composition: comp, serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, codec: 'h264', outputLocation: videoPath, inputProps: reelProps });
+  await renderMedia({ composition: comp, serveUrl, timeoutInMilliseconds: 120000, codec: 'h264', outputLocation: videoPath, inputProps: reelProps });
   console.log(`🎬 Video rendered: ${videoPath} (${(durationInFrames / FPS).toFixed(1)}s)`);
 
   // 6. Upload video

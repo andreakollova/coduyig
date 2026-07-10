@@ -20,7 +20,6 @@ const OUT_DIR = path.join(process.cwd(), 'out');
 const FPS = 30;
 const API = 'https://graph.facebook.com/v25.0';
 
-const chromiumOptions = process.env.REMOTION_CHROME_EXECUTABLE_PATH ? { executablePath: process.env.REMOTION_CHROME_EXECUTABLE_PATH, args: ['--no-sandbox', '--disable-setuid-sandbox'] } : {};
 
 // === TOPICS ===
 const TOPICS = [
@@ -219,9 +218,9 @@ async function main() {
     };
 
     console.log(`🎬 [${lang}] Rendering (${durationFrames} frames, ${(durationFrames / FPS).toFixed(1)}s)...`);
-    const composition = await selectComposition({ serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, id: 'ByteSurf', inputProps: props });
+    const composition = await selectComposition({ serveUrl, timeoutInMilliseconds: 120000, id: 'ByteSurf', inputProps: props });
     const outPath = path.join(OUT_DIR, `bytesurf_${lang}.mp4`);
-    await renderMedia({ composition, serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, codec: 'h264', outputLocation: outPath, inputProps: props });
+    await renderMedia({ composition, serveUrl, timeoutInMilliseconds: 120000, codec: 'h264', outputLocation: outPath, inputProps: props });
 
     // Upload
     const storagePath = `bytesurf/${lang}_${topic.id}_${Date.now()}.mp4`;
