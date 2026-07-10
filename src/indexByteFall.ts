@@ -271,9 +271,9 @@ async function main() {
     };
 
     console.log(`\n🎬 [${lang}] Rendering ByteFall (${durationFrames} frames)...`);
-    const composition = await selectComposition({ serveUrl, chromiumOptions, id: 'ByteFall', inputProps: props });
+    const composition = await selectComposition({ serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, id: 'ByteFall', inputProps: props });
     const outPath = path.join(OUT_DIR, `bytefall_${lang}.mp4`);
-    await renderMedia({ composition, serveUrl, chromiumOptions, codec: 'h264', outputLocation: outPath, inputProps: props });
+    await renderMedia({ composition, serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, codec: 'h264', outputLocation: outPath, inputProps: props });
 
     // Upload to Supabase
     const storagePath = `bytefall/${lang}_${entry.id}_${Date.now()}.mp4`;

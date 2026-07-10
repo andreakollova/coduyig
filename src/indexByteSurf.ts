@@ -219,9 +219,9 @@ async function main() {
     };
 
     console.log(`🎬 [${lang}] Rendering (${durationFrames} frames, ${(durationFrames / FPS).toFixed(1)}s)...`);
-    const composition = await selectComposition({ serveUrl, chromiumOptions, id: 'ByteSurf', inputProps: props });
+    const composition = await selectComposition({ serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, id: 'ByteSurf', inputProps: props });
     const outPath = path.join(OUT_DIR, `bytesurf_${lang}.mp4`);
-    await renderMedia({ composition, serveUrl, chromiumOptions, codec: 'h264', outputLocation: outPath, inputProps: props });
+    await renderMedia({ composition, serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, codec: 'h264', outputLocation: outPath, inputProps: props });
 
     // Upload
     const storagePath = `bytesurf/${lang}_${topic.id}_${Date.now()}.mp4`;

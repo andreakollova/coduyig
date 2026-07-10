@@ -7,6 +7,7 @@ import { pickQuiz, markQuizPosted } from './pickQuiz';
 import { uploadSlides } from './upload';
 import { publishCarousel } from './instagram';
 
+const chromiumOptions = process.env.REMOTION_CHROME_EXECUTABLE_PATH ? { executablePath: process.env.REMOTION_CHROME_EXECUTABLE_PATH, args: ['--no-sandbox', '--disable-setuid-sandbox'] } : {};
 const OUT_DIR = path.join(process.cwd(), 'out');
 const W = 1080;
 const H = 1440;
@@ -27,7 +28,7 @@ async function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
   async function comp(id: string, props: Record<string, any>) {
-    return selectComposition({ serveUrl, id, inputProps: props });
+    return selectComposition({ serveUrl, chromiumOptions, id, inputProps: props, timeoutInMilliseconds: 120000 });
   }
 
   // Render for both languages
@@ -49,25 +50,25 @@ async function main() {
     console.log(`🎬 [${lang}] Question video`);
     const q1 = await comp('SlideQuestion', baseProps);
     const p1 = path.join(OUT_DIR, `${lang}_quiz1.mp4`);
-    await renderMedia({ composition: q1, serveUrl, codec: 'h264', outputLocation: p1, inputProps: baseProps });
+    await renderMedia({ composition: q1, serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, codec: 'h264', outputLocation: p1, inputProps: baseProps });
 
     // Slide 2: Answer — VIDEO (celebrating Byte)
     console.log(`🎬 [${lang}] Answer video`);
     const q2 = await comp('SlideAnswer', baseProps);
     const p2 = path.join(OUT_DIR, `${lang}_quiz2.mp4`);
-    await renderMedia({ composition: q2, serveUrl, codec: 'h264', outputLocation: p2, inputProps: baseProps });
+    await renderMedia({ composition: q2, serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, codec: 'h264', outputLocation: p2, inputProps: baseProps });
 
     // Slide 3: Explanation
     console.log(`🖼️ [${lang}] Explanation slide`);
     const q3 = await comp('SlideExplanation', { ...baseProps, explanation });
     const p3 = path.join(OUT_DIR, `${lang}_quiz3.png`);
-    await renderStill({ composition: q3, serveUrl, output: p3, inputProps: { ...baseProps, explanation } });
+    await renderStill({  composition: q3, serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, output: p3, inputProps: { ...baseProps, explanation } });
 
     // Slide 4: CTA
     console.log(`🖼️ [${lang}] CTA slide`);
     const q4 = await comp('SlideCTA', { lang, equipment: {} });
     const p4 = path.join(OUT_DIR, `${lang}_quiz4.png`);
-    await renderStill({ composition: q4, serveUrl, output: p4, inputProps: { lang, equipment: {} } });
+    await renderStill({  composition: q4, serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, output: p4, inputProps: { lang, equipment: {} } });
 
     console.log(`✅ ${lang.toUpperCase()} quiz slides rendered`);
   }

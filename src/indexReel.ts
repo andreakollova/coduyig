@@ -304,9 +304,9 @@ async function main() {
     ...pickIntroGreeting(lang),
   };
 
-  const comp = await selectComposition({ serveUrl, chromiumOptions, id: 'LessonReel', inputProps: reelProps });
+  const comp = await selectComposition({ serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, id: 'LessonReel', inputProps: reelProps });
   const videoPath = path.join(OUT_DIR, 'reel.mp4');
-  await renderMedia({ composition: comp, serveUrl, chromiumOptions, codec: 'h264', outputLocation: videoPath, inputProps: reelProps });
+  await renderMedia({ composition: comp, serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, codec: 'h264', outputLocation: videoPath, inputProps: reelProps });
   console.log(`🎬 Video rendered: ${videoPath} (${(durationInFrames / FPS).toFixed(1)}s)`);
 
   // 6. Upload video

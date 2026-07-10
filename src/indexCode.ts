@@ -7,6 +7,7 @@ import { pickCodeChallenge } from './pickCodeChallenge';
 import { uploadSlides } from './upload';
 import { publishCarousel } from './instagram';
 
+const chromiumOptions = process.env.REMOTION_CHROME_EXECUTABLE_PATH ? { executablePath: process.env.REMOTION_CHROME_EXECUTABLE_PATH, args: ['--no-sandbox', '--disable-setuid-sandbox'] } : {};
 const OUT_DIR = path.join(process.cwd(), 'out');
 const dryRun = process.argv.includes('--dry-run');
 
@@ -22,7 +23,7 @@ async function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
   async function comp(id: string, props: Record<string, any>) {
-    return selectComposition({ serveUrl, id, inputProps: props });
+    return selectComposition({ serveUrl, chromiumOptions, id, inputProps: props, timeoutInMilliseconds: 120000 });
   }
 
   for (const lang of ['en', 'sk'] as const) {
@@ -33,14 +34,14 @@ async function main() {
     console.log(`🎬 [${lang}] Code question video`);
     const c1 = await comp('SlideCodeQuestion', s1Props);
     const p1 = path.join(OUT_DIR, `${lang}_code1.mp4`);
-    await renderMedia({ composition: c1, serveUrl, codec: 'h264', outputLocation: p1, inputProps: s1Props });
+    await renderMedia({ composition: c1, serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, codec: 'h264', outputLocation: p1, inputProps: s1Props });
 
     // Slide 2: Answer — VIDEO
     const s2Props = { prompt, codeAnswer: challenge.codeAnswer, correct: challenge.correct, options: challenge.options, equipment: challenge.equipment, lang };
     console.log(`🎬 [${lang}] Code answer video`);
     const c2 = await comp('SlideCodeAnswer', s2Props);
     const p2 = path.join(OUT_DIR, `${lang}_code2.mp4`);
-    await renderMedia({ composition: c2, serveUrl, codec: 'h264', outputLocation: p2, inputProps: s2Props });
+    await renderMedia({ composition: c2, serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, codec: 'h264', outputLocation: p2, inputProps: s2Props });
 
     // Slide 3: Explanation
     const explanation = lang === 'sk' ? challenge.explanation.sk : challenge.explanation.en;
@@ -48,14 +49,14 @@ async function main() {
     console.log(`🖼️ [${lang}] Explanation`);
     const c3 = await comp('SlideCodeExplanation', s3Props);
     const p3 = path.join(OUT_DIR, `${lang}_code3.png`);
-    await renderStill({ composition: c3, serveUrl, output: p3, inputProps: s3Props });
+    await renderStill({  composition: c3, serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, output: p3, inputProps: s3Props });
 
     // Slide 4: CTA
     const s4Props = { lang, equipment: {} };
     console.log(`🖼️ [${lang}] CTA`);
     const c4 = await comp('SlideCTA', s4Props);
     const p4 = path.join(OUT_DIR, `${lang}_code4.png`);
-    await renderStill({ composition: c4, serveUrl, output: p4, inputProps: s4Props });
+    await renderStill({  composition: c4, serveUrl, chromiumOptions, timeoutInMilliseconds: 120000, output: p4, inputProps: s4Props });
 
     console.log(`✅ ${lang.toUpperCase()} code challenge slides rendered`);
   }
