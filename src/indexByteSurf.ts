@@ -194,11 +194,11 @@ async function main() {
   const surfColorPick = SURF_COLORS[Math.floor(Math.random() * SURF_COLORS.length)];
   console.log(`🎽 Equipment: ${JSON.stringify(equipment)}\n`);
 
-  // Generate EN first, then translate to SK for consistency
+  // Generate both scripts independently
   console.log('✍️ Generating scripts...');
   const scriptEn = await generateScript(topic.questionEn, 'en');
   console.log(`  EN: "${scriptEn.slice(0, 80)}..."`);
-  const scriptSk = await translateScript(scriptEn);
+  const scriptSk = await generateScript(topic.questionSk, 'sk');
   console.log(`  SK: "${scriptSk.slice(0, 80)}..."`);
 
   for (const lang of ['sk', 'en'] as const) {
