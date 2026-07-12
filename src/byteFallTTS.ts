@@ -633,8 +633,39 @@ export function randomByteFallEquipment(): Record<string, string> {
   return BYTEFALL_OUTFITS[Math.floor(Math.random() * BYTEFALL_OUTFITS.length)];
 }
 
-export function byteFallCaption(term: string, termFull: string, definition: string, lang: 'sk' | 'en', termNumber?: number): string {
+export async function generateCaptionExplanation(term: string, termFull: string, definition: string, lang: 'sk' | 'en'): Promise<string> {
+  const OPENAI_KEY = process.env.OPENAI_API_KEY || '';
+  if (!OPENAI_KEY) return '';
+
+  const prompt = lang === 'sk'
+    ? `Napíš 2 krátke odstavce (každý 2-3 vety) vysvetľujúce čo je ${term} (${termFull}) a prečo je to dôležité v programovaní. Píš jednoducho, pre začiatočníkov. Slovensky. Bez nadpisov, bez odrážok, len čistý text.`
+    : `Write 2 short paragraphs (2-3 sentences each) explaining what ${term} (${termFull}) is and why it matters in programming. Write simply, for beginners. No headings, no bullet points, just plain text.`;
+
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${OPENAI_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 400,
+      }),
+    });
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content?.trim() || '';
+    if (text) console.log(`📝 [${lang}] Caption explanation generated (${text.split(/\s+/).length} words)`);
+    return text;
+  } catch (err) {
+    console.error('⚠️ Caption explanation failed:', err);
+    return '';
+  }
+}
+
+export async function byteFallCaption(term: string, termFull: string, definition: string, lang: 'sk' | 'en', termNumber?: number): Promise<string> {
   const counter = termNumber ? ` #${termNumber}` : '';
+  const explanation = await generateCaptionExplanation(term, termFull, definition, lang);
+  const explBlock = explanation ? `\n\n${explanation}` : '';
 
   if (lang === 'sk') {
     return `🪂 Parachute Glossary${counter}: ${term}
@@ -643,7 +674,7 @@ Daj si parachute glossary so mnou! 🪂
 
 ${term} = ${termFull}
 
-${definition}
+${definition}${explBlock}
 
 Vedel si to? 🤔💬
 Ulož si to a zdieľaj s niekým, kto sa učí programovať! 🔖
@@ -659,7 +690,7 @@ Join me for a parachute glossary! 🪂
 
 ${term} = ${termFull}
 
-${definition}
+${definition}${explBlock}
 
 Did you know this one? 🤔💬
 Save it & share with someone learning to code! 🔖
