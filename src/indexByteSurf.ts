@@ -88,7 +88,7 @@ Pravidlá:
 - Vysvetli krok za krokom čo sa deje, aby tomu rozumel aj úplný laik
 - Použi "ty" formu — "napíšeš", "vidíš", "tvoj telefón"
 - Použi prirovnania k bežnému životu ak to pomôže
-- Nesmie tam byť žiadna skratka bez vysvetlenia
+- NIKDY nepoužívaj skratky okrem: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL. Ak potrebuješ inú skratku, použi celý názov
 - Na konci spomeň niečo prekvapivé alebo zaujímavé
 - NIKDY nezačínaj opakovaním otázky! Otázku už položil niekto iný. Ty len odpovedáš. Začni rovno vysvetlením.
 - Max 100 slov
@@ -102,7 +102,7 @@ Rules:
 - Explain step by step what happens so a complete beginner understands
 - Use "you" form — "you type", "you see", "your phone"
 - Use real-life comparisons if they help
-- No abbreviation without explanation
+- NEVER use abbreviations except: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL. For any other abbreviation, spell out the full name
 - Mention something surprising or interesting at the end
 - NEVER start by repeating the question! Someone else already asked it. Just go straight to the answer.
 - Max 100 words

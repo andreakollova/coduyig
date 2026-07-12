@@ -161,6 +161,7 @@ const SK_PHONETICS: Record<string, string> = {
   'AI': 'ej aj',
   'ID': 'aj dí',
   'VS': 'ví es',
+  'README': 'ríd mí',
   // Python tools & modules
   'asyncio': 'ejsink aj ou',
   'pytest': 'paj test',
