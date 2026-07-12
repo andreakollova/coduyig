@@ -120,6 +120,22 @@ Rules:
   return data.choices?.[0]?.message?.content?.trim() || '';
 }
 
+async function translateScript(enScript: string): Promise<string> {
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${OPENAI_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'gpt-4o', temperature: 0.3, max_tokens: 500,
+      messages: [{ role: 'user', content: `Prelož tento anglický text do slovenčiny. Zachovaj rovnaký obsah, fakty a štruktúru. Neprekladaj technické názvy (API, CPU, RAM atď.). Použi neformálnu slovenčinu, "ty" formu. NIKDY čeština. Max 100 slov. Vráť LEN preklad, nič iné.
+
+Text:
+${enScript}` }],
+    }),
+  });
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content?.trim() || enScript;
+}
+
 // === IG HELPERS ===
 async function igPost(url: string, params: Record<string, string>) {
   const res = await fetch(url, { method: 'POST', body: new URLSearchParams(params) });
@@ -178,11 +194,11 @@ async function main() {
   const surfColorPick = SURF_COLORS[Math.floor(Math.random() * SURF_COLORS.length)];
   console.log(`🎽 Equipment: ${JSON.stringify(equipment)}\n`);
 
-  // Generate BOTH scripts at once — same topic, same quality
+  // Generate EN first, then translate to SK for consistency
   console.log('✍️ Generating scripts...');
   const scriptEn = await generateScript(topic.questionEn, 'en');
   console.log(`  EN: "${scriptEn.slice(0, 80)}..."`);
-  const scriptSk = await generateScript(topic.questionSk, 'sk');
+  const scriptSk = await translateScript(scriptEn);
   console.log(`  SK: "${scriptSk.slice(0, 80)}..."`);
 
   for (const lang of ['sk', 'en'] as const) {
