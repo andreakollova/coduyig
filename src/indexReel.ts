@@ -345,7 +345,29 @@ async function main() {
     console.error('⚠️ Story failed (non-fatal):', err);
   }
 
-  // Save reel info for the app
+  // Delete old reels on same topic (keep only the latest)
+  let reels: any[] = [];
+  try {
+    const { data: existing } = await sb.storage.from(BUCKET).download('tracking/reels.json');
+    if (existing) reels = JSON.parse(await existing.text());
+  } catch {}
+
+  const oldReels = reels.filter(r => r.lessonId === lesson.id && r.lang === lang && r.mediaId);
+  for (const old of oldReels) {
+    try {
+      const delRes = await fetch(`${API}/${old.mediaId}?access_token=${token}`, { method: 'DELETE' });
+      if (delRes.ok) {
+        console.log(`🗑️ Deleted old reel ${old.mediaId} (${old.lessonTitle})`);
+      } else {
+        console.log(`⚠️ Could not delete old reel ${old.mediaId}: ${delRes.status}`);
+      }
+    } catch (err) {
+      console.log(`⚠️ Delete failed for ${old.mediaId}:`, err);
+    }
+  }
+
+  // Remove old entries for this topic+lang, add new one
+  reels = reels.filter(r => !(r.lessonId === lesson.id && r.lang === lang));
   const reelInfo = {
     lessonId: lesson.id,
     lessonTitle: lessonTitle,
@@ -356,12 +378,6 @@ async function main() {
     mediaId: published.id,
     durationSeconds: Math.round(tts.totalDuration),
   };
-
-  let reels: any[] = [];
-  try {
-    const { data: existing } = await sb.storage.from(BUCKET).download('tracking/reels.json');
-    if (existing) reels = JSON.parse(await existing.text());
-  } catch {}
   reels.push(reelInfo);
   await sb.storage.from(BUCKET).upload('tracking/reels.json', Buffer.from(JSON.stringify(reels, null, 2)), { contentType: 'application/json', upsert: true });
   console.log(`📋 Saved reel info (${reels.length} total reels tracked)`);
