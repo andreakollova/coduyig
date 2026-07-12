@@ -75,8 +75,8 @@ function charsToWords(chars: ELResponse['alignment']): WordTiming[] {
 
 /** Map English programming terms to phonetic Slovak pronunciation for TTS */
 const SK_PHONETICS: Record<string, string> = {
-  'dnes': 'dnés',
-  'Dnes': 'Dnés',
+  'dnes': 'dňes',
+  'Dnes': 'Dňes',
   'try': 'traj',
   'Try': 'Traj',
   'except': 'eksept',
