@@ -69,12 +69,12 @@ Dve postavy:
 Vytvor konverzáciu s PRESNE 9 riadkami:
 
 1. ŠTUDENT: začne náhodným oslovením ako "Kámo,", "Bráško,", alebo "Kamoško," a potom sa pýta na tému (max 12 slov). Príklady: "Kámo, čo sa dnes budeme učiť?" alebo "Bráško, aká je dnešná téma?" alebo "Kamoško, čo pre mňa máš dnes?"
-2. UČITEĽ: odpovie a vysvetlí tému JEDNODUCHO, ako keby to vysvetľoval 14-ročnému kamarátovi. ŽIADNE zložité slová za sebou. Ak použiješ odborný výraz, hneď ho vysvetli. Napríklad: "Dnes sa pozrieme na lambda funkcie, čo sú vlastne také malé skratky, namiesto toho aby si písal celú funkciu s menom, napíšeš ju rýchlo do jedného riadku." (max 35 slov). NIKDY nečítaj kód.
+2. UČITEĽ: odpovie a vysvetlí tému JEDNODUCHO, ako keby to vysvetľoval 14-ročnému kamarátovi. ŽIADNE zložité slová za sebou. Ak použiješ odborný výraz, hneď ho vysvetli. Napríklad: "Dnes sa pozrieme na lambda funkcie, čo sú vlastne také malé skratky, namiesto toho aby si písal celú funkciu s menom, napíšeš ju rýchlo do jedného riadku." (max 45 slov). NIKDY nečítaj kód.
 3. ŠTUDENT: nadšená zvedavá otázka — NIE zmätený, ale zaujatý a zapálený (max 12 slov). "To je zaujímavé! A kedy sa to reálne používa?" alebo "Počkaj, fakt? A ako to funguje v praxi?"
-4. UČITEĽ: vysvetlí to ešte jednoduchšie, ako keby rozprával mladšiemu súrodencovi. Použi "vlastne", "proste", "predstav si". Krátke jednoduché slová, žiadny žargón. Napríklad: "Vlastne keď niečo potrebuješ iba raz, tak namiesto toho aby si staval celú veľkú vec, proste napíšeš jeden rýchly riadok a hotovo." ŽIADNE komplikované slovíčka. (max 45 slov)
+4. UČITEĽ: vysvetlí to ešte jednoduchšie a viac do hĺbky, ako keby rozprával mladšiemu súrodencovi. Použi "vlastne", "proste", "predstav si". Krátke jednoduché slová, žiadny žargón. Vysvetli AKO to funguje krok za krokom. Napríklad: "Vlastne keď niečo potrebuješ iba raz, tak namiesto toho aby si staval celú veľkú vec, proste napíšeš jeden rýchly riadok a hotovo. A keď to zavoláš, Python ho spustí, vráti výsledok a zahodí ho." ŽIADNE komplikované slovíčka. (max 55 slov)
 5. ŠTUDENT: pochopil, nadšene to vysvetlí vlastnými slovami (15-20 slov). Musí znieť naozaj nadšene. NIKDY nepoužívaj slovo "bomba". VŽDY iná reakcia — nikdy neopakuj rovnakú frázu. Príklady: "Aha takže je to v podstate rýchla jednorazová funkcia, to je super šikovné!" alebo "Počkaj, to dáva totálny zmysel, mám to!" alebo "No to je geniálne, takže proste preskočíš celý ten setup!" alebo "Ty jo, to je fakt elegantné riešenie, páči sa mi to!"
-6. UČITEĽ: vysvetli reálne použitie v praxi. Spomeň konkrétnu firmu IBA ak to naozaj dáva zmysel a je to zaujímavé (napr. "Spotify to používa na spracovanie miliónov skladieb"). NENÚŤ "firmy ako X" keď je téma príliš všeobecná (napr. dokumentácia, premenné, cykly). V tých prípadoch daj praktický scenár, napríklad "predstav si že sa vrátiš k svojmu kódu po 3 mesiacoch a netušíš čo to robí, preto je toto dôležité." Musí znieť prirodzene, nie nútene. (max 30 slov)
-7. UČITEĽ: záverečná myšlienka plynulo — prečo je to dôležité. Jednoducho povedz prečo. Napríklad: "Bez tohto by si musel písať oveľa viac kódu, takže ti to reálne šetrí čas a robí kód prehľadnejší." (max 25 slov)
+6. UČITEĽ: vysvetli reálne použitie v praxi. Spomeň konkrétnu firmu IBA ak to naozaj dáva zmysel a je to zaujímavé (napr. "Spotify to používa na spracovanie miliónov skladieb"). NENÚŤ "firmy ako X" keď je téma príliš všeobecná (napr. dokumentácia, premenné, cykly). V tých prípadoch daj praktický scenár, napríklad "predstav si že sa vrátiš k svojmu kódu po 3 mesiacoch a netušíš čo to robí, preto je toto dôležité." Musí znieť prirodzene, nie nútene. (max 35 slov)
+7. UČITEĽ: záverečná myšlienka plynulo — prečo je to dôležité. Vysvetli ešte jeden detail alebo dôvod navyše. Napríklad: "Bez tohto by si musel písať oveľa viac kódu, takže ti to reálne šetrí čas a robí kód prehľadnejší." (max 30 slov)
 8. ŠTUDENT: posledná veta celého videa. Pozitívna, vďačná, entuziastická. VŽDY iná — nikdy rovnaký záver. Veta MUSÍ končiť slovom "ďakujem", "vďaka" alebo "dík" — vždy posledné slovo. Príklady: "Super, toto mi fakt pomohlo, ďakujem!" alebo "Ty jo, to bolo super jasné, vďaka!" alebo "Páči sa mi to, určite to vyskúšam, dík!" alebo "To je pecka, teraz sa na to teším, ďakujem!" alebo "Jasné, cítim sa oveľa istejšie, vďaka!" (max 12 slov)
 9. UČITEĽ: prázdny riadok (tichý CTA screen). Vráť {"speaker": "teacher", "spoken": "", "code": null}
 
@@ -87,7 +87,7 @@ PRAVIDLÁ:
 - NIKDY čeština.
 - Správna slovenská gramatika. Pred "ktorý", "ktorá", "ktoré", "kde", "keď", "pretože", "lebo" VŽDY daj čiarku.
 - Dávaj pozor na správne tvary — "efektívne programovať" (príslovka) vs "efektívne riešenie" (prídavné meno). Zmäkčenie na konci závisí od kontextu.
-- Celkovo: 170-220 slov.
+- Celkovo: 200-260 slov.
 
 Vyber JEDEN kód snippet (MAX 3 riadky) z LEARNING CONTENT. Pridaj ho k riadku 2.
 
