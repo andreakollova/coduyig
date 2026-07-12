@@ -633,8 +633,8 @@ export function randomByteFallEquipment(): Record<string, string> {
   return BYTEFALL_OUTFITS[Math.floor(Math.random() * BYTEFALL_OUTFITS.length)];
 }
 
-export function byteFallCaption(term: string, termFull: string, definition: string, lang: 'sk' | 'en', termNumber?: number, totalTerms?: number): string {
-  const counter = termNumber && totalTerms ? ` (${termNumber}/${totalTerms})` : '';
+export function byteFallCaption(term: string, termFull: string, definition: string, lang: 'sk' | 'en', termNumber?: number): string {
+  const counter = termNumber ? ` #${termNumber}` : '';
 
   if (lang === 'sk') {
     return `🪂 Parachute Glossary${counter}: ${term}
