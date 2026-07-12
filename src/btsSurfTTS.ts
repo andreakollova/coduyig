@@ -90,10 +90,14 @@ export async function generateBTSVoiceover(
   // Questioner just asks the question directly with greeting
   const questionText = `"${greetingCap}, ${question.charAt(0).toLowerCase()}${question.slice(1)}"`;
 
-  // Part 3a: "Nechaj ma" / "Leave me alone"
+  // Part 3a: "Nechaj ma" / "Leave me alone" / "Give me a break"
+  const dismissVariants = lang === 'sk'
+    ? ['Nechaj ma...', 'Daj mi pokoj...']
+    : ['Leave me alone...', 'Give me a break...'];
+  const dismiss = dismissVariants[Math.floor(Math.random() * dismissVariants.length)];
   const answerPart1 = lang === 'sk'
-    ? (isPastTense ? 'A ja som mu odpovedal... Nechaj ma...' : 'A ja im odpoviem... Nechaj ma...')
-    : (isPastTense ? 'And I told him... Leave me alone...' : 'And I tell them... Leave me alone...');
+    ? (isPastTense ? `A ja som mu odpovedal... ${dismiss}` : `A ja im odpoviem... ${dismiss}`)
+    : (isPastTense ? `And I told him... ${dismiss}` : `And I tell them... ${dismiss}`);
 
   // Part 3b: "veď surfujem!" / "I am surfing!"
   const answerPart2 = lang === 'sk'
