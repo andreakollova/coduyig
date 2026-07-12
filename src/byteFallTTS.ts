@@ -537,6 +537,15 @@ export async function generateByteFallVoiceover(
       `${term}! ${termFull}.`,
       ...explains,
       `${term}. ${termFull}.`,
+      (() => {
+        const sk = [
+          'Ak chceš vedieť viac, celé vysvetlenie nájdeš v popise pod videom.',
+          'Kompletnejšie vysvetlenie tejto skratky nájdeš v popise.',
+          'Viac detailov nájdeš v popise, určite si to prečítaj.',
+          'Celé vysvetlenie som ti napísal do popisu pod videom.',
+        ];
+        return sk[Math.floor(Math.random() * sk.length)];
+      })(),
     ];
   } else {
     script = [
@@ -545,6 +554,15 @@ export async function generateByteFallVoiceover(
       ...explains,
       `${term}!`,
       `${termFull}.`,
+      (() => {
+        const en = [
+          'If you want to know more, the full explanation is in the description below.',
+          'Check the description for a more complete breakdown of this one.',
+          'I wrote a full explanation in the caption, make sure to check it out.',
+          'More details are in the description below the video.',
+        ];
+        return en[Math.floor(Math.random() * en.length)];
+      })(),
     ];
   }
 

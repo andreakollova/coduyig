@@ -370,6 +370,24 @@ export const ByteFallAnimation: React.FC<{
         </div>
       </div>
 
+      {/* Caption hint */}
+      {defOp > 0 && (
+        <div style={{
+          position: 'absolute', bottom: 110, left: 0, right: 0,
+          textAlign: 'center',
+          opacity: frame >= revealStart + fps * 2
+            ? interpolate(frame, [revealStart + fps * 2, revealStart + fps * 3], [0, 1], { extrapolateRight: 'clamp' })
+            : 0,
+        }}>
+          <div style={{
+            fontSize: 18, fontWeight: 500, color: '#888',
+            letterSpacing: '0.02em',
+          }}>
+            kompletnejšie vysvetlenie tejto skratky nájdeš v popise
+          </div>
+        </div>
+      )}
+
       {/* Logo */}
       <div style={{
         position: 'absolute', bottom: 60, left: 0, right: 0,
