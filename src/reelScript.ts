@@ -43,13 +43,13 @@ RULES:
 - Maximum 2-3 sentences per teacher line, but LONG and flowing.
 - Total spoken text: 160-220 words. Keep it engaging and informative.
 
-Also pick ONE code snippet (MAX 3 lines) from the LEARNING CONTENT. Attach to line 2.
+Also pick ONE code snippet (MAX 3 lines) from the LEARNING CONTENT provided below. The code MUST be relevant to the lesson topic. NEVER use example code from this prompt. Attach to line 2.
 
 Return VALID JSON:
 {
   "lines": [
     {"speaker": "student", "spoken": "...", "code": null},
-    {"speaker": "teacher", "spoken": "...", "code": "square = lambda x: x ** 2"},
+    {"speaker": "teacher", "spoken": "...", "code": "PICK FROM LESSON CONTENT"},
     {"speaker": "student", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "student", "spoken": "...", "code": null},
@@ -89,13 +89,13 @@ PRAVIDLÁ:
 - Dávaj pozor na správne tvary — "efektívne programovať" (príslovka) vs "efektívne riešenie" (prídavné meno). Zmäkčenie na konci závisí od kontextu.
 - Celkovo: 200-260 slov.
 
-Vyber JEDEN kód snippet (MAX 3 riadky) z LEARNING CONTENT. Pridaj ho k riadku 2.
+Vyber JEDEN kód snippet (MAX 3 riadky) z LEARNING CONTENT nižšie. Kód MUSÍ byť relevantný k téme lekcie. NIKDY nepoužívaj príkladový kód z tohto promptu. Pridaj ho k riadku 2.
 
 Vráť VALID JSON:
 {
   "lines": [
     {"speaker": "student", "spoken": "...", "code": null},
-    {"speaker": "teacher", "spoken": "...", "code": "square = lambda x: x ** 2"},
+    {"speaker": "teacher", "spoken": "...", "code": "VYBER Z LEARNING CONTENT"},
     {"speaker": "student", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "student", "spoken": "...", "code": null},
