@@ -249,8 +249,8 @@ async function main() {
     const token = lang === 'sk' ? process.env.IG_PAGE_TOKEN_SK! : process.env.IG_PAGE_TOKEN_EN!;
     const userId = lang === 'sk' ? process.env.IG_USER_ID_SK! : process.env.IG_USER_ID_EN!;
     const caption = lang === 'sk'
-      ? `🏄 People often ask me...\n\n\n\n${question}\n\n📲 coduy.sk\n\n#coding #programming #tech #coduy #learntocode #developer`
-      : `🏄 People often ask me...\n\n\n\n${question}\n\n📲 coduy.com\n\n#coding #programming #tech #coduy #learntocode #developer`;
+      ? `🏄 Ľudia sa ma často pýtajú...\n\n${question}\n\n📲 coduy.sk\n\n#coding #programming #tech #coduy #learntocode #developer`
+      : `🏄 People often ask me...\n\n${question}\n\n📲 coduy.com\n\n#coding #programming #tech #coduy #learntocode #developer`;
 
     console.log(`📱 [${lang}] Publishing Reel...`);
     const container = await igPost(`${API}/${userId}/media`, {

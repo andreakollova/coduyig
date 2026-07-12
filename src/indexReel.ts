@@ -1,5 +1,5 @@
 /**
- * Coduy Instagram Reels Publisher — Conversational format
+ * Coduy Instagram Reels Publisher - Conversational format
  * Two Bytes talking: Student asks, Teacher explains
  */
 import 'dotenv/config';
@@ -317,8 +317,8 @@ async function main() {
   const videoUrl = videoUrlData.publicUrl;
 
   const caption = lang === 'sk'
-    ? `CODUY Lekcia — ${lessonTitle}\n\nViac lekcií a cvičení nájdeš v aplikácii CODUY.\n📲 coduy.sk | Zadarmo na App Store a Google Play\n\n#coding #programming #learntocode #coduy #developer #tech #python #reels`
-    : `CODUY Lesson — ${lessonTitle}\n\nFor more lessons and exercises download the CODUY app.\n📲 coduy.com | Free on App Store & Google Play\n\n#coding #programming #learntocode #coduy #developer #tech #python #reels`;
+    ? `CODUY Lekcia - ${lessonTitle}\n\nViac lekcií a cvičení nájdeš v aplikácii CODUY.\n📲 coduy.sk | Zadarmo na App Store a Google Play\n\n#coding #programming #learntocode #coduy #developer #tech #python #reels`
+    : `CODUY Lesson - ${lessonTitle}\n\nFor more lessons and exercises download the CODUY app.\n📲 coduy.com | Free on App Store & Google Play\n\n#coding #programming #learntocode #coduy #developer #tech #python #reels`;
 
   if (dryRun) {
     console.log(`\n🏁 DRY RUN — video at ${videoPath}`);

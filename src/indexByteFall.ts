@@ -285,7 +285,8 @@ async function main() {
     // Publish Reel
     const token = lang === 'sk' ? process.env.IG_PAGE_TOKEN_SK! : process.env.IG_PAGE_TOKEN_EN!;
     const userId = lang === 'sk' ? process.env.IG_USER_ID_SK! : process.env.IG_USER_ID_EN!;
-    const caption = byteFallCaption(entry.term, entry.termFull, def, lang);
+    const termNumber = postedIds.length + 1;
+    const caption = byteFallCaption(entry.term, entry.termFull, def, lang, termNumber, GLOSSARY.length);
 
     console.log(`\n📱 [${lang}] Publishing Reel...`);
     const container = await igPost(`${API}/${userId}/media`, {

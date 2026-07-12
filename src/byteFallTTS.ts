@@ -633,9 +633,13 @@ export function randomByteFallEquipment(): Record<string, string> {
   return BYTEFALL_OUTFITS[Math.floor(Math.random() * BYTEFALL_OUTFITS.length)];
 }
 
-export function byteFallCaption(term: string, termFull: string, definition: string, lang: 'sk' | 'en'): string {
+export function byteFallCaption(term: string, termFull: string, definition: string, lang: 'sk' | 'en', termNumber?: number, totalTerms?: number): string {
+  const counter = termNumber && totalTerms ? ` (${termNumber}/${totalTerms})` : '';
+
   if (lang === 'sk') {
-    return `🪂 Parachute Glossary: ${term}
+    return `🪂 Parachute Glossary${counter}: ${term}
+
+Daj si parachute glossary so mnou! 🪂
 
 ${term} = ${termFull}
 
@@ -644,12 +648,14 @@ ${definition}
 Vedel si to? 🤔💬
 Ulož si to a zdieľaj s niekým, kto sa učí programovať! 🔖
 
-📲 Celý slovník na Coduy app — coduy.sk
+📲 Celý slovník na Coduy app - coduy.sk
 
 #coding #programming #developer #learntocode #coduy #tech #glossary #${term.toLowerCase().replace(/[^a-z]/g, '')}`;
   }
 
-  return `🪂 Parachute Glossary: ${term}
+  return `🪂 Parachute Glossary${counter}: ${term}
+
+Join me for a parachute glossary! 🪂
 
 ${term} = ${termFull}
 
@@ -658,7 +664,7 @@ ${definition}
 Did you know this one? 🤔💬
 Save it & share with someone learning to code! 🔖
 
-📲 Full glossary on Coduy app — coduy.com
+📲 Full glossary on Coduy app - coduy.com
 
 #coding #programming #developer #learntocode #coduy #tech #glossary #${term.toLowerCase().replace(/[^a-z]/g, '')}`;
 }
