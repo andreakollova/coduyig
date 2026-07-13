@@ -8,6 +8,17 @@ import { ByteMascot } from './Byte';
 
 const { fontFamily } = loadFont();
 const BG = '#0A0A0A';
+
+// Teacher color context - avoids prop drilling
+const TeacherColorCtx = React.createContext('#fb923c');
+const useTeacherColor = () => React.useContext(TeacherColorCtx);
+
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
 const LOGO_SRC = staticFile('logocoduy.png');
 const CoduyLogo: React.FC<{ height?: number }> = ({ height = 22 }) => (
   <Img src={LOGO_SRC} style={{ height, objectFit: 'contain' }} />
@@ -36,6 +47,7 @@ export interface ReelProps {
   bgMusicUrl?: string;
   equipmentStudent: Record<string, string>;
   equipmentTeacher: Record<string, string>;
+  teacherColor?: string;
   durationInFrames: number;
   lessonTitle?: string;
   lessonNumber?: number;
@@ -98,7 +110,8 @@ const ConversationCaptions: React.FC<{
 
   // Current speaker determines color
   const currentSpeaker = allWords[currentWordIdx]?.speaker || 'teacher';
-  const activeColor = currentSpeaker === 'student' ? '#FFFFFF' : '#fb923c'; // white vs orange
+  const tColor = useTeacherColor();
+  const activeColor = currentSpeaker === 'student' ? '#FFFFFF' : tColor;
 
   // Window of words (same speaker chunk)
   const windowSize = 6;
@@ -111,8 +124,8 @@ const ConversationCaptions: React.FC<{
     const globalIdx = windowStart + i;
     const isActive = globalIdx === currentWordIdx;
     const isPast = globalIdx < currentWordIdx;
-    const wordColor = w.speaker === 'student' ? '#FFFFFF' : '#fb923c';
-    const dimColor = w.speaker === 'student' ? 'rgba(255,255,255,0.25)' : 'rgba(251,146,60,0.25)';
+    const wordColor = w.speaker === 'student' ? '#FFFFFF' : tColor;
+    const dimColor = w.speaker === 'student' ? 'rgba(255,255,255,0.25)' : hexToRgba(tColor, 0.25);
 
     if (i > 0) parts.push(' ');
     parts.push(
@@ -121,7 +134,7 @@ const ConversationCaptions: React.FC<{
         transform: isActive ? 'scale(1.1)' : 'scale(1)',
         display: 'inline',
         textShadow: isActive
-          ? `0 0 20px ${w.speaker === 'student' ? 'rgba(255,255,255,0.4)' : 'rgba(251,146,60,0.4)'}, 0 2px 8px rgba(0,0,0,0.8)`
+          ? `0 0 20px ${w.speaker === 'student' ? 'rgba(255,255,255,0.4)' : hexToRgba(tColor, 0.4)}, 0 2px 8px rgba(0,0,0,0.8)`
           : '0 2px 4px rgba(0,0,0,0.5)',
       }}>
         {w.word}
@@ -154,6 +167,7 @@ const ConversationCaptionsInline: React.FC<{
 }> = ({ allWords, titleCardFrames }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const tColor = useTeacherColor();
   const currentTime = (frame - titleCardFrames) / fps;
 
   if (allWords.length === 0) return null;
@@ -245,9 +259,9 @@ const ConversationCaptionsInline: React.FC<{
         const globalIdx = groupStartIdx + i;
         const isActive = globalIdx === currentWordIdx;
         const isPast = globalIdx < currentWordIdx;
-        const activeColor = w.speaker === 'student' ? '#FFFFFF' : '#fb923c';
-        const pastColor = w.speaker === 'student' ? 'rgba(255,255,255,0.45)' : 'rgba(251,146,60,0.45)';
-        const futureColor = w.speaker === 'student' ? 'rgba(255,255,255,0.2)' : 'rgba(251,146,60,0.2)';
+        const activeColor = w.speaker === 'student' ? '#FFFFFF' : tColor;
+        const pastColor = w.speaker === 'student' ? 'rgba(255,255,255,0.45)' : hexToRgba(tColor, 0.45);
+        const futureColor = w.speaker === 'student' ? 'rgba(255,255,255,0.2)' : hexToRgba(tColor, 0.2);
 
         return (
           <React.Fragment key={`${globalIdx}-${w.word}`}>
@@ -255,7 +269,7 @@ const ConversationCaptionsInline: React.FC<{
             <span style={{
               color: isActive ? activeColor : isPast ? pastColor : futureColor,
               textShadow: isActive
-                ? `0 0 16px ${w.speaker === 'student' ? 'rgba(255,255,255,0.35)' : 'rgba(251,146,60,0.35)'}`
+                ? `0 0 16px ${w.speaker === 'student' ? 'rgba(255,255,255,0.35)' : hexToRgba(tColor, 0.35)}`
                 : 'none',
             }}>
               {w.word}
@@ -276,8 +290,9 @@ const TwoBytes: React.FC<{
 }> = ({ equipmentStudent, equipmentTeacher, activeSpeaker }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const tColor = useTeacherColor();
 
-  // Talking animation — active speaker bounces
+  // Talking animation - active speaker bounces
   const bounce = interpolate(Math.sin(frame / fps * Math.PI * 4), [-1, 1], [-4, 4]);
   const idleBob = interpolate(Math.sin(frame / fps * Math.PI * 0.6), [-1, 1], [-3, 3]);
 
@@ -302,7 +317,7 @@ const TwoBytes: React.FC<{
       {/* Teacher — right, orange outline glow when speaking */}
       <div style={{
         transform: `translateY(${activeSpeaker === 'teacher' ? bounce : idleBob}px) rotate(${teacherLean}deg)`,
-        filter: activeSpeaker === 'teacher' ? 'drop-shadow(0 0 12px rgba(251,146,60,0.3))' : 'none',
+        filter: activeSpeaker === 'teacher' ? `drop-shadow(0 0 12px ${hexToRgba(tColor, 0.3)})` : 'none',
         opacity: activeSpeaker === 'student' ? 0.6 : 1,
       }}>
         <ByteMascot size={310} equipment={equipmentTeacher} />
@@ -329,7 +344,7 @@ function useActiveSpeaker(allWords: WordTiming[], titleCardFrames: number): 'stu
 /* ========== MAIN COMPOSITION ========== */
 
 export const LessonReel: React.FC<ReelProps> = ({
-  lines, bgMusicUrl, equipmentStudent, equipmentTeacher,
+  lines, bgMusicUrl, equipmentStudent, equipmentTeacher, teacherColor: tc = '#fb923c',
   durationInFrames, lessonTitle, lessonNumber, moduleTitle,
   introStudent, introTeacher, lang,
 }) => {
@@ -359,6 +374,7 @@ export const LessonReel: React.FC<ReelProps> = ({
   const ctaOp = 1;
 
   return (
+    <TeacherColorCtx.Provider value={tc}>
     <AbsoluteFill style={{ background: BG, fontFamily }}>
       {/* BG music */}
       {bgMusicUrl && <Audio src={bgMusicUrl} volume={0.06} loop />}
@@ -421,7 +437,7 @@ export const LessonReel: React.FC<ReelProps> = ({
               position: 'absolute', top: -65, right: -10,
               padding: '12px 26px', borderRadius: 20,
               background: '#222', border: '1px solid #444',
-              fontSize: 22, color: '#fb923c', fontWeight: 600,
+              fontSize: 22, color: tc, fontWeight: 600,
               whiteSpace: 'nowrap',
             }}>
               {introTeacher || 'Right here.'}
@@ -498,7 +514,7 @@ export const LessonReel: React.FC<ReelProps> = ({
             <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'student' ? '#fff' : '#555', letterSpacing: '0.08em', marginRight: 260 }}>
               {lang === 'sk' ? 'ŠTUDENT' : 'STUDENT'}
             </span>
-            <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'teacher' ? '#fb923c' : '#555', letterSpacing: '0.08em' }}>
+            <span style={{ fontSize: 15, fontWeight: 700, color: activeSpeaker === 'teacher' ? tc : '#555', letterSpacing: '0.08em' }}>
               {lang === 'sk' ? 'LEKTOR' : 'TEACHER'}
             </span>
           </div>
@@ -555,6 +571,7 @@ export const LessonReel: React.FC<ReelProps> = ({
         </AbsoluteFill>
       )}
     </AbsoluteFill>
+    </TeacherColorCtx.Provider>
   );
 };
 
@@ -563,6 +580,7 @@ export const LessonReel: React.FC<ReelProps> = ({
 const BackgroundParticles: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const tc = useTeacherColor();
   return (
     <>
       {Array.from({ length: 8 }, (_, i) => {
@@ -571,7 +589,7 @@ const BackgroundParticles: React.FC = () => {
         const y = baseY + Math.sin((frame / fps * (0.2 + i * 0.1)) + i) * 20;
         const op = interpolate(Math.sin((frame / fps * 0.4) + i), [-1, 1], [0.02, 0.05]);
         const size = 3 + (i % 3);
-        return <div key={i} style={{ position: 'absolute', left: x, top: y, width: size, height: size, borderRadius: size, background: i % 2 === 0 ? '#4ade80' : '#fb923c', opacity: op }} />;
+        return <div key={i} style={{ position: 'absolute', left: x, top: y, width: size, height: size, borderRadius: size, background: i % 2 === 0 ? '#4ade80' : tc, opacity: op }} />;
       })}
     </>
   );

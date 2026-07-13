@@ -40,13 +40,14 @@ function getLevel(mn: number): DiffLevel {
 // Student = basic look (white Byte)
 const studentEquip: Record<string, string> = {};
 
-// Teacher outfits — always at least one orange item, rest varies randomly
-const ORANGE_ITEMS = [
-  { glasses: 'glasses-flame' },
-  { hat: 'hat-fire-crown' },
-  { accessory: 'acc-fire-cape' },
-  { antenna: 'ant-flame-orb' },
-  { aura: 'aura-fire' },
+// Teacher color themes - rotate each reel
+const TEACHER_THEMES = [
+  { color: '#fb923c', items: [{ glasses: 'glasses-flame' }, { hat: 'hat-fire-crown' }, { accessory: 'acc-fire-cape' }, { antenna: 'ant-flame-orb' }, { aura: 'aura-fire' }] },
+  { color: '#60a5fa', items: [{ glasses: 'glasses-frost' }, { hat: 'hat-ice-crown' }, { antenna: 'ant-frost-crystal' }, { aura: 'aura-blue' }, { aura: 'aura-water' }] },
+  { color: '#a855f7', items: [{ hat: 'hat-galaxy' }, { glasses: 'glasses-void' }, { aura: 'aura-galaxy' }, { accessory: 'acc-cosmic-cape' }, { aura: 'aura-cosmic' }] },
+  { color: '#4ade80', items: [{ aura: 'aura-green' }, { aura: 'aura-earth' }, { accessory: 'acc-crystal' }, { antenna: 'ant-diamond' }, { antenna: 'ant-star' }] },
+  { color: '#f472b6', items: [{ antenna: 'ant-heart' }, { aura: 'aura-cosmic' }, { hat: 'hat-void-crown' }, { glasses: 'glasses-void' }, { accessory: 'acc-cosmic-cape' }] },
+  { color: '#facc15', items: [{ hat: 'hat-golden-crown' }, { glasses: 'glasses-golden' }, { antenna: 'ant-golden-star' }, { accessory: 'acc-wings-gold' }, { aura: 'aura-golden' }] },
 ];
 
 const EXTRA_ITEMS: Record<string, string>[] = [
@@ -59,10 +60,8 @@ const EXTRA_ITEMS: Record<string, string>[] = [
   { glasses: 'glasses-round' },
   { glasses: 'glasses-cool' },
   { glasses: 'glasses-aviator' },
-  { glasses: 'glasses-frost' },
   { accessory: 'acc-medal' },
   { accessory: 'acc-chain' },
-  { accessory: 'acc-crystal' },
   { accessory: 'acc-scarf' },
   { accessory: 'acc-bowtie' },
   { antenna: 'ant-lightning' },
@@ -71,17 +70,15 @@ const EXTRA_ITEMS: Record<string, string>[] = [
   { antenna: 'ant-heart' },
 ];
 
-function pickTeacherEquipment(): Record<string, string> {
-  // Always one orange item
-  const orange = ORANGE_ITEMS[Math.floor(Math.random() * ORANGE_ITEMS.length)];
-  const orangeSlot = Object.keys(orange)[0];
+function pickTeacherTheme(): { color: string; equipment: Record<string, string> } {
+  const theme = TEACHER_THEMES[Math.floor(Math.random() * TEACHER_THEMES.length)];
+  const themeItem = theme.items[Math.floor(Math.random() * theme.items.length)];
 
-  // Fill ALL slots: hat, glasses, accessory, antenna — one from each
   const slots = ['hat', 'glasses', 'accessory', 'antenna'];
-  const equip: Record<string, string> = { ...orange };
+  const equip: Record<string, string> = { ...themeItem };
 
   for (const slot of slots) {
-    if (equip[slot]) continue; // orange already fills this slot
+    if (equip[slot]) continue;
     const options = EXTRA_ITEMS.filter(item => Object.keys(item)[0] === slot);
     if (options.length > 0) {
       const pick = options[Math.floor(Math.random() * options.length)];
@@ -89,7 +86,8 @@ function pickTeacherEquipment(): Record<string, string> {
     }
   }
 
-  return equip;
+  console.log(`🎨 Teacher color: ${theme.color}`);
+  return { color: theme.color, equipment: equip };
 }
 
 /* ========== INTRO GREETINGS ========== */
@@ -108,13 +106,13 @@ const INTRO_GREETINGS_EN = [
 ];
 
 const INTRO_GREETINGS_SK = [
-  { introStudent: 'Máš chvíľku?', introTeacher: 'Jasné.' },
-  { introStudent: 'Môžem sa opýtať?', introTeacher: 'Samozrejme.' },
-  { introStudent: 'Mám otázku.', introTeacher: 'Pýtaj sa.' },
-  { introStudent: 'Pomôžeš mi?', introTeacher: 'Vždy.' },
-  { introStudent: 'Vysvetlíš mi to?', introTeacher: 'Jasné.' },
-  { introStudent: 'Som pripravený.', introTeacher: 'Poďme.' },
-  { introStudent: 'Čau!', introTeacher: 'Ahoj!' },
+  { introStudent: 'Mas chvilku?', introTeacher: 'Jasne.' },
+  { introStudent: 'Mozem sa opytat?', introTeacher: 'Samozrejme.' },
+  { introStudent: 'Mam otazku.', introTeacher: 'Pytaj sa.' },
+  { introStudent: 'Pomozes mi?', introTeacher: 'Vzdy.' },
+  { introStudent: 'Vysvetlis mi to?', introTeacher: 'Jasne.' },
+  { introStudent: 'Som pripraveny.', introTeacher: 'Podme.' },
+  { introStudent: 'Cau!', introTeacher: 'Ahoj!' },
 ];
 
 function pickIntroGreeting(lang: 'en' | 'sk') {
@@ -154,7 +152,7 @@ async function main() {
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
-  // 1. Fetch lesson — use priority topic list with no-repeat tracking
+  // 1. Fetch lesson
   const skFields = lang === 'sk' ? ', title_sk, introduction_sk, learning_content_sk, key_takeaways_sk' : '';
 
   let lesson: any;
@@ -166,7 +164,6 @@ async function main() {
     if (!data?.length) { console.log('❌ Lesson not found'); process.exit(0); }
     lesson = data[0];
   } else {
-    // Get posted reel lesson IDs
     let postedLessonIds: number[] = [];
     try {
       const { data: trackData } = await sb.storage.from(BUCKET).download('tracking/reels.json');
@@ -176,31 +173,27 @@ async function main() {
       }
     } catch {}
 
-    // Try priority topics first
     const { PRIORITY_TOPICS } = await import('./reelTopics.js');
     const { data: allLessons } = await sb.from('cb_lessons')
       .select(`id, title, introduction, learning_content, key_takeaways, module_id, lesson_number${skFields}`)
       .order('id');
 
     if (allLessons) {
-      // Find unposted priority topics
       const priorityLessons = PRIORITY_TOPICS
         .map(title => allLessons.find(l => l.title === title))
         .filter(l => l && !postedLessonIds.includes(l.id));
 
       if (priorityLessons.length > 0) {
-        // Random from unposted priority
         lesson = priorityLessons[Math.floor(Math.random() * priorityLessons.length)];
         console.log(`📋 Priority topic (${priorityLessons.length} remaining)`);
       } else {
-        // All priority done — pick any unposted lesson
         const unposted = allLessons.filter(l => !postedLessonIds.includes(l.id) && l.learning_content);
         if (unposted.length > 0) {
           lesson = unposted[Math.floor(Math.random() * unposted.length)];
           console.log(`🔄 Fallback topic (${unposted.length} remaining)`);
         } else {
           lesson = allLessons[Math.floor(Math.random() * allLessons.length)];
-          console.log('🔄 All topics posted — random pick');
+          console.log('🔄 All topics posted - random pick');
         }
       }
     }
@@ -211,9 +204,8 @@ async function main() {
   const { data: mod } = await sb.from('cb_modules').select('module_number, title, title_sk').eq('id', lesson.module_id).single();
   const moduleNumber = mod?.module_number || 1;
   const level = getLevel(moduleNumber);
-  const equipTeacher = pickTeacherEquipment();
+  const teacherTheme = pickTeacherTheme();
 
-  // Pick correct language fields
   const lessonTitle = (lang === 'sk' && lesson.title_sk) ? lesson.title_sk : lesson.title;
   const lessonIntro = (lang === 'sk' && lesson.introduction_sk) ? lesson.introduction_sk : (lesson.introduction || '');
   const lessonContent = (lang === 'sk' && lesson.learning_content_sk) ? lesson.learning_content_sk : (lesson.learning_content || '');
@@ -230,9 +222,7 @@ async function main() {
     lessonTakeaways,
     lang,
   );
-  // Override code if --code was provided
   if (customCode) {
-    // Remove GPT's code, put custom code on the first teacher line
     for (const line of script.lines) line.code = undefined;
     const teacherLine = script.lines.find(l => l.speaker === 'teacher' && l.spoken);
     if (teacherLine) teacherLine.code = customCode;
@@ -260,13 +250,11 @@ async function main() {
     const tl = tts.lines[i];
     const sl = script.lines[i];
 
-    // Skip silent lines (no audio)
     if (!tl.audioPath || tl.durationSeconds === 0) {
       console.log(`  Line ${i + 1}: (silent, skipped)`);
       continue;
     }
 
-    // Upload audio
     const audioBytes = fs.readFileSync(tl.audioPath);
     const remotePath = `reels/${lesson.id}/${timestamp}/line_${i}.mp3`;
     await sb.storage.from(BUCKET).upload(remotePath, audioBytes, { contentType: 'audio/mpeg', upsert: true });
@@ -294,7 +282,8 @@ async function main() {
   const reelProps = {
     lines: reelLines,
     equipmentStudent: studentEquip,
-    equipmentTeacher: equipTeacher,
+    equipmentTeacher: teacherTheme.equipment,
+    teacherColor: teacherTheme.color,
     durationInFrames,
     lessonTitle: lessonTitle,
     lessonNumber: lesson.lesson_number,
@@ -317,11 +306,11 @@ async function main() {
   const videoUrl = videoUrlData.publicUrl;
 
   const caption = lang === 'sk'
-    ? `CODUY Lekcia - ${lessonTitle}\n\nViac lekcií a cvičení nájdeš v aplikácii CODUY.\n📲 coduy.sk | Zadarmo na App Store a Google Play\n\n#coding #programming #learntocode #coduy #developer #tech #python #reels`
+    ? `CODUY Lekcia - ${lessonTitle}\n\nViac lekcii a cviceni najdes v aplikacii CODUY.\n📲 coduy.sk | Zadarmo na App Store a Google Play\n\n#coding #programming #learntocode #coduy #developer #tech #python #reels`
     : `CODUY Lesson - ${lessonTitle}\n\nFor more lessons and exercises download the CODUY app.\n📲 coduy.com | Free on App Store & Google Play\n\n#coding #programming #learntocode #coduy #developer #tech #python #reels`;
 
   if (dryRun) {
-    console.log(`\n🏁 DRY RUN — video at ${videoPath}`);
+    console.log(`\n🏁 DRY RUN - video at ${videoPath}`);
     return;
   }
 
@@ -345,7 +334,7 @@ async function main() {
     console.error('⚠️ Story failed (non-fatal):', err);
   }
 
-  // Delete old reels on same topic (keep only the latest)
+  // Delete old reels on same topic
   let reels: any[] = [];
   try {
     const { data: existing } = await sb.storage.from(BUCKET).download('tracking/reels.json');
@@ -366,7 +355,6 @@ async function main() {
     }
   }
 
-  // Remove old entries for this topic+lang, add new one
   reels = reels.filter(r => !(r.lessonId === lesson.id && r.lang === lang));
   const reelInfo = {
     lessonId: lesson.id,
@@ -382,7 +370,6 @@ async function main() {
   await sb.storage.from(BUCKET).upload('tracking/reels.json', Buffer.from(JSON.stringify(reels, null, 2)), { contentType: 'application/json', upsert: true });
   console.log(`📋 Saved reel info (${reels.length} total reels tracked)`);
 
-  // Output lesson_id for workflow chaining (EN → SK same lesson)
   console.log(`lesson_id=${lesson.id}`);
   console.log('\n✅ DONE');
 }
