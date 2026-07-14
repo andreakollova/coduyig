@@ -167,15 +167,22 @@ export const ByteFallAnimation: React.FC<{
   // Build subtitle: show a group of words around the current spoken word
   let subtitle = '';
   if (words.length > 0 && currentTime >= words[0].start) {
-    // Find which group of words to show (groups of ~5-8 words)
     const GROUP_SIZE = 6;
-    const spokenIdx = currentWordIdx >= 0 ? currentWordIdx : words.findIndex(w => currentTime < w.start) - 1;
+    // If between words or past last word, use the last spoken word
+    let spokenIdx = currentWordIdx >= 0 ? currentWordIdx : -1;
+    if (spokenIdx < 0) {
+      // Find last word that already started
+      for (let i = words.length - 1; i >= 0; i--) {
+        if (currentTime >= words[i].start) { spokenIdx = i; break; }
+      }
+    }
     if (spokenIdx >= 0) {
       const groupStart = Math.floor(spokenIdx / GROUP_SIZE) * GROUP_SIZE;
       const groupEnd = Math.min(groupStart + GROUP_SIZE, words.length);
       const groupWords = words.slice(groupStart, groupEnd);
-      // Only show if we're within this group's time range
-      if (currentTime >= groupWords[0].start && currentTime < groupWords[groupEnd - groupStart - 1].end + 0.5) {
+      const lastWord = groupWords[groupWords.length - 1];
+      // Show group while speaking + 1.5s after last word ends
+      if (currentTime >= groupWords[0].start && currentTime < lastWord.end + 1.5) {
         subtitle = groupWords.map((w, i) => {
           const absIdx = groupStart + i;
           const isActive = absIdx === spokenIdx;
@@ -200,7 +207,7 @@ export const ByteFallAnimation: React.FC<{
 
       {/* Audio */}
       {audioUrl && <Audio src={staticFile(audioUrl)} />}
-      <Audio src={staticFile('wind.wav')} volume={interpolate(frame, [0, fallEnd - fps * 1, fallEnd], [0.19, 0.19, 0], { extrapolateRight: 'clamp' })} loop />
+      <Audio src={staticFile('wind.wav')} volume={interpolate(frame, [0, fallEnd - fps * 1, fallEnd], [0.35, 0.35, 0], { extrapolateRight: 'clamp' })} loop />
 
       {/* Space stars */}
       {showStars && Array.from({ length: 30 }, (_, i) => {

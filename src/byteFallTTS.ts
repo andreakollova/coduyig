@@ -161,7 +161,7 @@ const SK_PHONETICS: Record<string, string> = {
   'GUI': 'džé jú aj',
   'CLI': 'sí el aj',
   'IDE': 'aj dí í',
-  'OOP': 'ou ou pí',
+  'OOP': 'ó ó pé',
   'RAM': 'rem',
   'CPU': 'sí pí jú',
   'GPU': 'džé pí jú',
@@ -380,7 +380,7 @@ const SK_PHONETICS: Record<string, string> = {
   'RISC': 'risk',
   'JIT': 'džit',
   'VS': 'ví es',
-  'OOP': 'ou ou pí',
+  'OOP': 'ó ó pé',
   'SMTP': 'es em tí pí',
   'IMAP': 'aj mep',
 };
@@ -402,9 +402,22 @@ const EN_ONLY_ABBREVS = new Set(
     return isAbbrev && !skipWords.includes(k);
   })
 );
-const EN_PHONETICS: Record<string, string> = Object.fromEntries(
-  Object.entries(SK_PHONETICS).filter(([key]) => EN_ONLY_ABBREVS.has(key))
-);
+// EN TTS (ElevenLabs) reads most abbreviations correctly on its own.
+// Only override the few that it mispronounces.
+const EN_PHONETICS: Record<string, string> = {
+  'CRUD': 'crud',
+  'AJAX': 'ay-jax',
+  'OAuth': 'oh-auth',
+  'UEFI': 'you-ee-eff-eye',
+  'JSX': 'jay-ess-ex',
+  'LEGB': 'ell-ee-gee-bee',
+  'OWASP': 'oh-wasp',
+  'CISC': 'sisk',
+  'RISC': 'risk',
+  'JIT': 'jit',
+  'GIL': 'gill',
+  'CI/CD': 'see-eye see-dee',
+};
 
 // Build a mapping from original words to their phonetic expansions
 function buildWordMap(text: string, lang: 'sk' | 'en' = 'sk'): { ttsText: string; originalWords: string[]; phoneticGroups: number[] } {
