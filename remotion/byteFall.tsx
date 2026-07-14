@@ -15,6 +15,8 @@ export interface ByteFallWord {
   end: number;
 }
 
+const CHUTE_COLORS = ['#4ade80', '#60a5fa', '#f59e0b', '#a855f7', '#f472b6', '#34d399', '#fb923c', '#818cf8'];
+
 export const ByteFallAnimation: React.FC<{
   equipment?: Record<string, string>;
   durationInFrames: number;
@@ -24,6 +26,7 @@ export const ByteFallAnimation: React.FC<{
   audioUrl?: string;
   words?: ByteFallWord[];
   lang?: 'en' | 'sk';
+  chuteColor?: string;
 }> = ({
   equipment = {},
   term = 'SSH',
@@ -32,7 +35,10 @@ export const ByteFallAnimation: React.FC<{
   audioUrl,
   words = [],
   lang = 'sk',
+  chuteColor,
 }) => {
+  // Pick a stable color from the term so it's consistent across renders
+  const parachuteColor = chuteColor || CHUTE_COLORS[term.split('').reduce((s, c) => s + c.charCodeAt(0), 0) % CHUTE_COLORS.length];
   const frame = useCurrentFrame();
   const { fps, height, width } = useVideoConfig();
 
@@ -240,7 +246,7 @@ export const ByteFallAnimation: React.FC<{
           {term}
         </div>
         <div style={{
-          fontSize: 22, fontWeight: 600, color: '#4ade80',
+          fontSize: 22, fontWeight: 600, color: parachuteColor,
           letterSpacing: '0.08em', marginTop: 6,
           opacity: 1,
         }}>
@@ -286,12 +292,12 @@ export const ByteFallAnimation: React.FC<{
             }}>
               <svg width={cW} height={cH + 60} viewBox={`0 0 ${cW} ${cH + 60}`}>
                 <ellipse cx={cW / 2} cy={cH * 0.45} rx={cW / 2 - 10} ry={cH * 0.45}
-                  fill="none" stroke="#4ade80" strokeWidth="3" opacity="0.7" />
+                  fill="none" stroke={parachuteColor} strokeWidth="3" opacity="0.7" />
                 <ellipse cx={cW / 2} cy={cH * 0.45} rx={cW / 2 - 10} ry={cH * 0.45}
-                  fill="#4ade80" opacity="0.08" />
+                  fill={parachuteColor} opacity="0.08" />
                 {[0.25, 0.5, 0.75].map((t) => (
                   <line key={t} x1={cW * t} y1={5} x2={cW * t} y2={cH * 0.85}
-                    stroke="#4ade80" strokeWidth="1.5" opacity="0.3" />
+                    stroke={parachuteColor} strokeWidth="1.5" opacity="0.3" />
                 ))}
                 <line x1={15} y1={cH * 0.8} x2={cW / 2 - 30} y2={cH + 55} stroke="#888" strokeWidth="1.5" />
                 <line x1={cW - 15} y1={cH * 0.8} x2={cW / 2 + 30} y2={cH + 55} stroke="#888" strokeWidth="1.5" />
@@ -366,7 +372,7 @@ export const ByteFallAnimation: React.FC<{
           {term}
         </div>
         <div style={{
-          fontSize: 22, fontWeight: 600, color: '#4ade80',
+          fontSize: 22, fontWeight: 600, color: parachuteColor,
           letterSpacing: '0.06em', marginBottom: 16,
         }}>
           {termFull}

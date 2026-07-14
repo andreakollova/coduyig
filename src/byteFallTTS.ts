@@ -485,16 +485,27 @@ async function ttsSegment(text: string, voiceId: string, lang: 'sk' | 'en' = 'sk
   let lastOrigIdx = -1;
   for (let ti = 0; ti < rawTimings.length; ti++) {
     const origIdx = ti < phoneticGroups.length ? phoneticGroups[ti] : -1;
-    if (origIdx === lastOrigIdx && mergedTimings.length > 0) {
+    if (origIdx >= 0 && origIdx === lastOrigIdx && mergedTimings.length > 0) {
       // Extend the end time of the current merged word
       mergedTimings[mergedTimings.length - 1].end = rawTimings[ti].end;
-    } else {
+    } else if (origIdx >= 0 && origIdx < originalWords.length) {
       mergedTimings.push({
-        word: origIdx >= 0 && origIdx < originalWords.length ? originalWords[origIdx] : rawTimings[ti].word,
+        word: originalWords[origIdx],
         start: rawTimings[ti].start,
         end: rawTimings[ti].end,
       });
       lastOrigIdx = origIdx;
+    } else {
+      // Extra words from TTS beyond our mapping — use raw word, don't merge
+      const rawWord = rawTimings[ti].word.replace(/[.,!?;:]/g, '').trim();
+      if (rawWord) {
+        mergedTimings.push({
+          word: rawTimings[ti].word,
+          start: rawTimings[ti].start,
+          end: rawTimings[ti].end,
+        });
+      }
+      lastOrigIdx = -1;
     }
   }
 
