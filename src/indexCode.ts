@@ -27,16 +27,19 @@ async function main() {
 
   for (const lang of ['en', 'sk'] as const) {
     const prompt = lang === 'sk' ? challenge.prompt_sk : challenge.prompt_en;
+    const snippet = lang === 'en' ? challenge.codeSnippetEn : challenge.codeSnippet;
+    const answer = lang === 'en' ? challenge.codeAnswerEn : challenge.codeAnswer;
+    const correct = lang === 'en' ? challenge.correctEn : challenge.correct;
 
     // Slide 1: Question — VIDEO
-    const s1Props = { prompt, codeSnippet: challenge.codeSnippet, options: challenge.options, equipment: challenge.equipment, lang };
+    const s1Props = { prompt, codeSnippet: snippet, options: challenge.options, equipment: challenge.equipment, lang };
     console.log(`🎬 [${lang}] Code question video`);
     const c1 = await comp('SlideCodeQuestion', s1Props);
     const p1 = path.join(OUT_DIR, `${lang}_code1.mp4`);
     await renderMedia({ composition: c1, serveUrl, timeoutInMilliseconds: 120000, codec: 'h264', outputLocation: p1, inputProps: s1Props });
 
     // Slide 2: Answer — VIDEO
-    const s2Props = { prompt, codeAnswer: challenge.codeAnswer, correct: challenge.correct, options: challenge.options, equipment: challenge.equipment, lang };
+    const s2Props = { prompt, codeAnswer: answer, correct, options: challenge.options, equipment: challenge.equipment, lang };
     console.log(`🎬 [${lang}] Code answer video`);
     const c2 = await comp('SlideCodeAnswer', s2Props);
     const p2 = path.join(OUT_DIR, `${lang}_code2.mp4`);

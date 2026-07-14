@@ -267,6 +267,7 @@ async function main() {
       definition: def,
       audioUrl: audioFileName,
       words,
+      lang,
     };
 
     console.log(`\n🎬 [${lang}] Rendering ByteFall (${durationFrames} frames)...`);

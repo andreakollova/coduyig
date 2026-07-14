@@ -23,6 +23,7 @@ export const ByteFallAnimation: React.FC<{
   definition?: string;
   audioUrl?: string;
   words?: ByteFallWord[];
+  lang?: 'en' | 'sk';
 }> = ({
   equipment = {},
   term = 'SSH',
@@ -30,6 +31,7 @@ export const ByteFallAnimation: React.FC<{
   definition = 'Bezpečný komunikačný protokol na vzdialený prístup k serverom',
   audioUrl,
   words = [],
+  lang = 'sk',
 }) => {
   const frame = useCurrentFrame();
   const { fps, height, width } = useVideoConfig();
@@ -383,7 +385,7 @@ export const ByteFallAnimation: React.FC<{
             fontSize: 18, fontWeight: 500, color: '#888',
             letterSpacing: '0.02em',
           }}>
-            kompletnejšie vysvetlenie tejto skratky nájdeš v popise
+            {lang === 'sk' ? 'kompletnejšie vysvetlenie tejto skratky nájdeš v popise' : 'check description for the full explanation'}
           </div>
         </div>
       )}
