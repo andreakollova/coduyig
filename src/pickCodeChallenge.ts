@@ -169,24 +169,29 @@ export async function pickCodeChallenge(): Promise<CodeChallengeData | null> {
 async function generateExplanation(ex: any): Promise<{ en: string; sk: string }> {
   if (!OPENAI_KEY) return { en: `The correct answer is ${ex.correct}.`, sk: `Správna odpoveď je ${ex.correct}.` };
 
-  const prompt = `Code exercise: ${ex.prompt_en}
-Code: ${ex.code}
-Options: ${ex.options.join(', ')}
-Correct: ${ex.correct}
+  const codeEn = ex.code_en || ex.code;
+  const correctEn = ex.correct_en || ex.correct;
 
-Write a SHORT explanation (2-3 sentences, max 180 chars) of WHY "${ex.correct}" is correct. Educational, clear, conversational tone.
-
-Return JSON: {"en": "...", "sk": "..."}
-IMPORTANT: "sk" MUST be written entirely in Slovak (slovenčina). Never Czech. Never English. The Slovak text must be a natural Slovak explanation, not a translation of the English one.`;
-
-  try {
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${OPENAI_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-4o', messages: [{ role: 'user', content: prompt }], temperature: 0.3, max_tokens: 300, response_format: { type: 'json_object' } }),
-    });
-    return JSON.parse((await res.json()).choices?.[0]?.message?.content || '{}');
-  } catch {
-    return { en: `${ex.correct} is the correct answer.`, sk: `${ex.correct} je správna odpoveď.` };
+  // Generate EN and SK separately to avoid JSON mixing issues
+  async function genOne(lang: 'en' | 'sk'): Promise<string> {
+    const isEn = lang === 'en';
+    const prompt = isEn
+      ? `Code exercise: ${ex.prompt_en}\nCode: ${codeEn}\nCorrect answer: ${correctEn}\n\nWrite a SHORT explanation (2-3 sentences, max 180 chars) of WHY "${correctEn}" is correct. Use English variable names from the code. Educational, clear tone. Reply with ONLY the explanation text, no JSON, no quotes.`
+      : `Cvičenie: ${ex.prompt_sk}\nKód: ${ex.code}\nSprávna odpoveď: ${ex.correct}\n\nNapíš KRÁTKE vysvetlenie (2-3 vety, max 180 znakov) PREČO je "${ex.correct}" správna odpoveď. Použi slovenské premenné z kódu. Slovensky. Odpovedz LEN textom vysvetlenia, žiadny JSON.`;
+    try {
+      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${OPENAI_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }], temperature: 0.3, max_tokens: 200 }),
+      });
+      const data = await res.json();
+      return (data.choices?.[0]?.message?.content || '').trim().replace(/^["']|["']$/g, '');
+    } catch { return ''; }
   }
+
+  const [en, sk] = await Promise.all([genOne('en'), genOne('sk')]);
+  return {
+    en: en || `${correctEn} is the correct answer.`,
+    sk: sk || `${ex.correct} je správna odpoveď.`,
+  };
 }
