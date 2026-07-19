@@ -531,7 +531,7 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
   const isSkStudent = lang === 'sk' && speaker === 'student';
   const isSkTeacher = lang === 'sk' && speaker === 'teacher';
 
-  let stability = isSkStudent ? 0.6 : isSkTeacher ? 0.3 : 0.45;
+  let stability = isSkStudent ? 0.6 : isSkTeacher ? 0.3 : 0.55;
   let style = isSkStudent ? 0.3 : isSkTeacher ? 0.8 : 0.5;
   if (enthusiastic) {
     stability = 0.35;
