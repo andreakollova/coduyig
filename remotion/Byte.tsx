@@ -121,6 +121,28 @@ export const ByteMascot: React.FC<ByteProps> = ({ size = 400, equipment = {}, bo
               fill="#0a0020" stroke="#a855f7" strokeWidth="1.5" />
           </g>
         )}
+        {equipment?.accessory?.includes('medal') && (
+          <g>
+            <line x1="60" y1="105" x2="60" y2="118" stroke="#f5a623" strokeWidth="1.5" />
+            <circle cx="60" cy="122" r="6" fill="#1a1200" stroke="#f5a623" strokeWidth="1.5" />
+            <text x="60" y="125" textAnchor="middle" fontSize="7" fill="#f5a623" fontWeight="bold">★</text>
+          </g>
+        )}
+        {equipment?.accessory?.includes('chain') && (
+          <g opacity={0.9}>
+            {[44, 52, 60, 68, 76].map(x => <circle key={x} cx={x} cy="108" r="3" fill="none" stroke="#f5a623" strokeWidth="1.2" />)}
+          </g>
+        )}
+        {equipment?.accessory?.includes('scarf') && (
+          <g>
+            <path d="M35,100 Q60,112 85,100 Q82,108 60,115 Q38,108 35,100 Z" fill="#1a0800" stroke="#ff6030" strokeWidth="1.2" />
+          </g>
+        )}
+        {equipment?.accessory?.includes('crystal') && (
+          <g style={{ filter: 'drop-shadow(0 0 8px rgba(74,222,128,0.5))' }}>
+            <polygon points="60,105 54,118 66,118" fill="#0a1a0a" stroke="#4ade80" strokeWidth="1.5" />
+          </g>
+        )}
       </svg>
     </div>
   );

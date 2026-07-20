@@ -86,6 +86,13 @@ function pickTeacherTheme(): { color: string; equipment: Record<string, string> 
     }
   }
 
+  // Teacher MUST always have at least a hat or glasses (something visible)
+  if (!equip.hat && !equip.glasses) {
+    const hats = EXTRA_ITEMS.filter(item => Object.keys(item)[0] === 'hat');
+    const pick = hats[Math.floor(Math.random() * hats.length)];
+    equip.hat = pick.hat;
+  }
+
   console.log(`🎨 Teacher color: ${theme.color}`);
   return { color: theme.color, equipment: equip };
 }
