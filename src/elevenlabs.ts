@@ -531,8 +531,11 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
   const isSkStudent = lang === 'sk' && speaker === 'student';
   const isSkTeacher = lang === 'sk' && speaker === 'teacher';
 
-  let stability = isSkStudent ? 0.6 : isSkTeacher ? 0.3 : 0.55;
-  let style = isSkStudent ? 0.3 : isSkTeacher ? 0.8 : 0.5;
+  // Higher stability = more consistent volume across lines (crucial for student)
+  const isEnStudent = lang === 'en' && speaker === 'student';
+  const isEnTeacher = lang === 'en' && speaker === 'teacher';
+  let stability = isSkStudent ? 0.65 : isSkTeacher ? 0.3 : isEnStudent ? 0.65 : 0.5;
+  let style = isSkStudent ? 0.3 : isSkTeacher ? 0.8 : isEnStudent ? 0.35 : 0.55;
   if (enthusiastic) {
     stability = 0.35;
     style = 0.85;
@@ -612,16 +615,18 @@ export async function generateConversationTTS(
     if (line.speaker === 'student') baseSpeed = 1.1;
     const lineSpeed = isLastStudentLine ? 0.95 : baseSpeed;
 
-    const { audioBuffer, wordTimings, duration } = await ttsLine(line.spoken, voiceId, lang, lineSpeed, line.speaker, isLastStudentLine);
+    // Never use enthusiastic mode - it causes volume inconsistency
+    const { audioBuffer, wordTimings, duration } = await ttsLine(line.spoken, voiceId, lang, lineSpeed, line.speaker, false);
 
     // Save raw audio then normalize volume
     const rawPath = path.join(outputDir, `line_${i}_raw.mp3`);
     const audioPath = path.join(outputDir, `line_${i}.mp3`);
     fs.writeFileSync(rawPath, audioBuffer);
 
-    // Normalize audio + remove background noise using ffmpeg
+    // Normalize audio: compressor evens out dynamics, then loudnorm sets consistent level
+    // Two-step is crucial for short clips (greetings etc.) where loudnorm alone fails
     try {
-      execSync(`ffmpeg -y -i "${rawPath}" -af "loudnorm=I=-14:TP=-1:LRA=11" "${audioPath}" 2>/dev/null`);
+      execSync(`ffmpeg -y -i "${rawPath}" -af "acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7" "${audioPath}" 2>/dev/null`);
       fs.unlinkSync(rawPath);
     } catch {
       // If ffmpeg fails, use raw audio
