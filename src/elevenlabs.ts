@@ -610,7 +610,7 @@ export async function generateConversationTTS(
     console.log(`  Line ${i + 1} [${line.speaker}]: "${line.spoken.slice(0, 50)}..."`);
 
     // Last student line (summary) speaks slower for clarity
-    const isLastStudentLine = line.speaker === 'student' && i === lines.length - 2;
+    const isLastStudentLine = line.speaker === 'student' && i === lines.length - 3;
     let baseSpeed = 1.3;
     if (line.speaker === 'student') baseSpeed = 1.1;
     const lineSpeed = isLastStudentLine ? 0.95 : baseSpeed;

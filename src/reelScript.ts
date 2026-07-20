@@ -21,7 +21,7 @@ Two characters:
 - STUDENT: curious beginner, asks questions, sometimes confused
 - TEACHER: friendly expert who explains using the ACTUAL lesson content provided
 
-Create a conversation with EXACTLY 9 lines:
+Create a conversation with EXACTLY 10 lines:
 
 1. STUDENT: starts with a random casual greeting like "Hey dude,", "Hey bro,", or "Hey little bro," then asks about today's topic (max 12 words). Examples: "Hey dude, what are we learning today?" or "Hey bro, what's today's topic?" or "Hey little bro, what do you have for me today?"
 2. TEACHER: answer and explain the topic using SIMPLE everyday words. Imagine explaining to a 14-year-old friend. NO technical jargon without immediately explaining it. Example: "Today we are looking at lambda functions, which are basically tiny shortcuts, instead of writing a whole function with a name, you just write it in one quick line." (max 45 words). NEVER read code. NEVER use complicated words back to back.
@@ -31,7 +31,8 @@ Create a conversation with EXACTLY 9 lines:
 6. TEACHER: explain a real-world use case. ONLY mention a specific company if it genuinely makes sense and is interesting (like "Spotify uses this to handle millions of songs"). Do NOT force "companies like X" when the topic is too generic (like documentation, variables, loops). In those cases, give a practical real-world scenario instead, like "imagine you come back to your code after 3 months and you have no idea what it does, that is why this matters." Must feel natural, not forced. (max 35 words)
 7. TEACHER: closing thought — explain one more detail or reason why it matters. Example: "Without this you'd be writing way more code for simple stuff, so it really saves you time and keeps things clean." (max 30 words)
 8. STUDENT: final line of the whole video. Positive, grateful, enthusiastic. VARY every time — never the same closing. Examples: "That's awesome, thanks, this really helped!" or "Yo that was super clear, appreciate it!" or "Love it, I'm definitely using this, thanks!" or "That's so cool, can't wait to try it!" or "Nice, I feel way more confident now, cheers!" (max 12 words)
-9. TEACHER: empty (silent CTA screen). Return {"speaker": "teacher", "spoken": "", "code": null}
+9. TEACHER: call to action. Say this EXACTLY or very close to it: "If you want to start coding, write START in the comments and I will send you a coupon for one month of Coduy completely free. I believe you can learn more in a month than you expect." VARY slightly each time but keep the meaning. (max 35 words)
+10. TEACHER: empty (silent CTA screen). Return {"speaker": "teacher", "spoken": "", "code": null}
 
 RULES:
 - ABSOLUTELY NEVER read code, syntax, variable names, function names, or operators aloud. NO "lambda x", NO "def square", NO "print()", NO "map()", NO "filter()". Describe what code DOES in everyday language only. This is the #1 RULE.
@@ -54,8 +55,9 @@ Return VALID JSON:
     {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "student", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "...", "code": null},
-    {"speaker": "student", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "...", "code": null},
+    {"speaker": "student", "spoken": "...", "code": null},
+    {"speaker": "teacher", "spoken": "CTA call to action", "code": null},
     {"speaker": "teacher", "spoken": "", "code": null}
   ]
 }`;
@@ -66,7 +68,7 @@ Dve postavy:
 - ŠTUDENT: zvedavý začiatočník, pýta sa, niekedy nechápe. Hovorí mladícky a prirodzene.
 - UČITEĽ: priateľský expert, vysvetľuje pomocou SKUTOČNÉHO obsahu lekcie.
 
-Vytvor konverzáciu s PRESNE 9 riadkami:
+Vytvor konverzáciu s PRESNE 10 riadkami:
 
 1. ŠTUDENT: začne náhodným oslovením ako "Kámo,", "Bráško,", alebo "Kamoško," a potom sa pýta na tému (max 12 slov). Príklady: "Kámo, čo sa dnes budeme učiť?" alebo "Bráško, aká je dnešná téma?" alebo "Kamoško, čo pre mňa máš dnes?"
 2. UČITEĽ: odpovie a vysvetlí tému JEDNODUCHO, ako keby to vysvetľoval 14-ročnému kamarátovi. ŽIADNE zložité slová za sebou. Ak použiješ odborný výraz, hneď ho vysvetli. Napríklad: "Dnes sa pozrieme na lambda funkcie, čo sú vlastne také malé skratky, namiesto toho aby si písal celú funkciu s menom, napíšeš ju rýchlo do jedného riadku." (max 45 slov). NIKDY nečítaj kód.
@@ -75,8 +77,9 @@ Vytvor konverzáciu s PRESNE 9 riadkami:
 5. ŠTUDENT: pochopil a VLASTNÝMI SLOVAMI vysvetlí čo sa naučil - zopakuje hlavnú myšlienku ako keby to vysvetľoval kamarátovi (15-20 slov). Musí znieť naozaj nadšene. NIKDY nepoužívaj slovo "bomba". NIKDY nekomentuj proces učenia (žiadne "preskočíš setup", "vynecháš kroky"). Namiesto toho vysvetli ČO to robí a PREČO je to užitočné. VŽDY iná reakcia. Príklady: "Aha takže namiesto celej funkcie napíšem jeden riadok a robí to isté, to je super šikovné!" alebo "Počkaj, takže to vlastne vezme zoznam a vyberie z neho iba to čo chcem, to dáva zmysel!" alebo "Ty jo, takže si to proste zapamätá a nemusím to počítať znova, to je fakt šikovné!"
 6. UČITEĽ: vysvetli reálne použitie v praxi. Spomeň konkrétnu firmu IBA ak to naozaj dáva zmysel a je to zaujímavé (napr. "Spotify to používa na spracovanie miliónov skladieb"). NENÚŤ "firmy ako X" keď je téma príliš všeobecná (napr. dokumentácia, premenné, cykly). V tých prípadoch daj praktický scenár, napríklad "predstav si že sa vrátiš k svojmu kódu po 3 mesiacoch a netušíš čo to robí, preto je toto dôležité." Musí znieť prirodzene, nie nútene. (max 35 slov)
 7. UČITEĽ: záverečná myšlienka plynulo — prečo je to dôležité. Vysvetli ešte jeden detail alebo dôvod navyše. Napríklad: "Bez tohto by si musel písať oveľa viac kódu, takže ti to reálne šetrí čas a robí kód prehľadnejší." (max 30 slov)
-8. ŠTUDENT: posledná veta celého videa. Pozitívna, vďačná, entuziastická. VŽDY iná — nikdy rovnaký záver. Veta MUSÍ končiť slovom "ďakujem", "vďaka" alebo "dík" — vždy posledné slovo. Príklady: "Super, toto mi fakt pomohlo, ďakujem!" alebo "Ty jo, to bolo super jasné, vďaka!" alebo "Páči sa mi to, určite to vyskúšam, dík!" alebo "To je pecka, teraz sa na to teším, ďakujem!" alebo "Jasné, cítim sa oveľa istejšie, vďaka!" (max 12 slov)
-9. UČITEĽ: prázdny riadok (tichý CTA screen). Vráť {"speaker": "teacher", "spoken": "", "code": null}
+8. ŠTUDENT: posledná veta študenta. Pozitívna, vďačná, entuziastická. VŽDY iná — nikdy rovnaký záver. Veta MUSÍ končiť slovom "ďakujem", "vďaka" alebo "dík" — vždy posledné slovo. Príklady: "Super, toto mi fakt pomohlo, ďakujem!" alebo "Ty jo, to bolo super jasné, vďaka!" alebo "Páči sa mi to, určite to vyskúšam, dík!" alebo "To je pecka, teraz sa na to teším, ďakujem!" alebo "Jasné, cítim sa oveľa istejšie, vďaka!" (max 12 slov)
+9. UČITEĽ: výzva na akciu. Povedz PRESNE toto alebo veľmi podobne: "Ak chceš začať programovať, napíš do komentára START a ja ti pošlem do DM kupón na jeden mesiac Coduy úplne zadarmo. Verím, že za mesiac sa naučíš viac, než čakáš." MIERNE obmeňuj každý raz ale zachovaj význam. (max 35 slov)
+10. UČITEĽ: prázdny riadok (tichý CTA screen). Vráť {"speaker": "teacher", "spoken": "", "code": null}
 
 PRAVIDLÁ:
 - ABSOLÚTNE NIKDY nečítaj kód, syntax, názvy premenných, funkcií ani operátorov nahlas. ŽIADNE "lambda x", ŽIADNE "def square", ŽIADNE "print()", ŽIADNE "map()", ŽIADNE "filter()". Opisuj čo kód ROBÍ bežným jazykom. Toto je pravidlo číslo 1.
@@ -100,8 +103,9 @@ Vráť VALID JSON:
     {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "student", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "...", "code": null},
-    {"speaker": "student", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "...", "code": null},
+    {"speaker": "student", "spoken": "...", "code": null},
+    {"speaker": "teacher", "spoken": "CTA vyzva", "code": null},
     {"speaker": "teacher", "spoken": "", "code": null}
   ]
 }`;
