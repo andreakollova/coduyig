@@ -80,7 +80,7 @@ const SK_PHONETICS: Record<string, string> = {
   'start': 'štart',
   'Coduy': 'koduj',
   'coduy': 'koduj',
-  'DM': 'dé em',
+  'DM': 'dí em',
   'dnes': 'dnes',
   'Dnes': 'Dnes',
   'try': 'traj',
