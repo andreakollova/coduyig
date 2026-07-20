@@ -1,11 +1,10 @@
 /**
  * Render Cron entry point — single cron job, auto-detects slot by UTC hour.
- * Schedule: 0 7,11,17 * * * (runs 3x daily)
+ * Schedule: 0 7,17 * * * (runs 2x daily)
  * 07 UTC = 09 CEST (morning reel)
- * 11 UTC = 13 CEST (lunch post)
- * 17 UTC = 19 CEST (evening reel)
+ * 17 UTC = 19 CEST (evening post)
  *
- * Optional: npx tsx src/cron.ts --slot morning|lunch|evening
+ * Optional: npx tsx src/cron.ts --slot morning|evening
  */
 import { execSync } from 'node:child_process';
 
@@ -17,13 +16,12 @@ let slot = process.argv.includes('--slot')
 
 // Auto-detect slot from UTC hour
 if (!slot) {
-  if (hour < 9) slot = 'morning';
-  else if (hour < 14) slot = 'lunch';
+  if (hour < 12) slot = 'morning';
   else slot = 'evening';
 }
 
-if (!['morning', 'lunch', 'evening'].includes(slot)) {
-  console.error('Invalid slot. Use: morning | lunch | evening');
+if (!['morning', 'evening'].includes(slot)) {
+  console.error('Invalid slot. Use: morning | evening');
   process.exit(1);
 }
 
@@ -43,11 +41,9 @@ function run(cmd: string) {
 
 console.log(`Slot: ${slot} | UTC hour: ${hour} | Day: ${day}`);
 
-if (slot === 'morning' || slot === 'evening') {
+if (slot === 'morning') {
   // Rotate 3 reel types: 0=rozhovor, 1=bytefall, 2=bytesurf
-  const offset = slot === 'evening' ? 1 : 0;
-  const reelType = (day + offset) % 3;
-
+  const reelType = day % 3;
   console.log(`Reel type ${reelType} (0=rozhovor, 1=bytefall, 2=bytesurf)`);
 
   if (reelType === 0) {
@@ -65,15 +61,17 @@ if (slot === 'morning' || slot === 'evening') {
   } else {
     run('npx tsx src/indexByteSurf.ts');
   }
-} else if (slot === 'lunch') {
-  // Alternate quiz (even days) and code challenge (odd days)
-  const lunchType = day % 2;
-  console.log(`Lunch type ${lunchType} (0=quiz, 1=code)`);
+} else if (slot === 'evening') {
+  // Rotate 3 post types: 0=fill code, 1=quiz, 2=glossary
+  const postType = day % 3;
+  console.log(`Post type ${postType} (0=code, 1=quiz, 2=glossary)`);
 
-  if (lunchType === 0) {
+  if (postType === 0) {
+    run('npx tsx src/indexCode.ts');
+  } else if (postType === 1) {
     run('npx tsx src/indexQuiz.ts');
   } else {
-    run('npx tsx src/indexCode.ts');
+    run('npx tsx src/indexGlossary.ts');
   }
 }
 
