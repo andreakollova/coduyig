@@ -185,7 +185,12 @@ async function generateExplanation(ex: any): Promise<{ en: string; sk: string }>
         body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }], temperature: 0.3, max_tokens: 200 }),
       });
       const data = await res.json();
-      return (data.choices?.[0]?.message?.content || '').trim().replace(/^["']|["']$/g, '');
+      let text = (data.choices?.[0]?.message?.content || '').trim();
+      // Strip wrapping quotes
+      text = text.replace(/^["']|["']$/g, '');
+      // Remove stray quotes around the answer word (e.g. "input" -> input)
+      text = text.replace(/["'"„"]/g, '');
+      return text;
     } catch { return ''; }
   }
 
