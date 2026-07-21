@@ -310,6 +310,22 @@ const glossary = [
     explanation_sk: 'Framework od Meta (Facebook) na tvorbu natívnych mobilných aplikácií pomocou JavaScriptu a Reactu. Jeden kód pre iOS aj Android. Používajú ho aplikácie ako Instagram, Discord a Shopify.',
     explanation_en: 'A framework by Meta (Facebook) for building native mobile apps using JavaScript and React. One codebase for both iOS and Android. Used by apps like Instagram, Discord and Shopify.',
     example: 'export default function App() {\n  return (\n    <View>\n      <Text>Hello React Native!</Text>\n    </View>\n  );\n}' },
+  { id: 'gradle', term: 'Gradle', category: 'pojem', short: 'Build Automation Tool',
+    explanation_sk: 'Automatizačný nástroj na zostavovanie aplikácií, najmä pre Android a Java projekty. Riadi kompiláciu kódu, sťahovanie knižníc, testovanie a vytváranie finálnych súborov na distribúciu. Používa konfiguračné súbory na definovanie závislostí a krokov zostavenia.',
+    explanation_en: 'A build automation tool for compiling applications, especially for Android and Java projects. It manages code compilation, downloading libraries, testing and creating final distribution files. It uses configuration files to define dependencies and build steps.',
+    example: 'dependencies {\n  implementation "com.google.firebase:firebase-messaging"\n  implementation "androidx.core:core-ktx:1.12.0"\n}' },
+  { id: 'firebase', term: 'Firebase', category: 'pojem', short: 'Google App Platform',
+    explanation_sk: 'Platforma od Google na vývoj mobilných a webových aplikácií. Poskytuje databázu v reálnom čase, autentifikáciu používateľov, push notifikácie, analytiku, hosting a mnoho ďalších služieb bez potreby vlastného servera.',
+    explanation_en: 'A platform by Google for developing mobile and web applications. It provides a real-time database, user authentication, push notifications, analytics, hosting and many other services without needing your own server.',
+    example: 'Firebase.initializeApp()\nFirebaseMessaging.getInstance()\n  .token.addOnCompleteListener { task ->\n    val token = task.result\n  }' },
+  { id: 'xcode', term: 'Xcode', category: 'pojem', short: 'Apple Development IDE',
+    explanation_sk: 'Vývojové prostredie od Apple na vytváranie aplikácií pre iPhone, iPad, Mac a Apple Watch. Obsahuje editor kódu, debugger, simulátor zariadení a nástroje na publikovanie do App Store.',
+    explanation_en: 'Apple development environment for creating iPhone, iPad, Mac and Apple Watch apps. It includes a code editor, debugger, device simulator and tools for publishing to the App Store.',
+    example: 'Product → Archive\nDistribute App → App Store Connect\nUpload' },
+  { id: 'androidstudio', term: 'Android Studio', category: 'pojem', short: 'Android Development IDE',
+    explanation_sk: 'Oficiálne vývojové prostredie od Google na vytváranie Android aplikácií. Obsahuje editor kódu, emulátor zariadení, debugger a nástroje na publikovanie do Google Play Store.',
+    explanation_en: 'The official development environment by Google for creating Android applications. It includes a code editor, device emulator, debugger and tools for publishing to the Google Play Store.',
+    example: 'Build → Generate Signed APK\nUpload to Google Play Console' },
 ];
 
 export interface GlossaryData {
@@ -346,6 +362,7 @@ const termDifficulty: Record<string, 'beginner' | 'advanced' | 'professional'> =
   php: 'beginner', dart: 'advanced', scala: 'professional',
   // Frameworks
   capacitor: 'advanced', flutter: 'advanced', reactnative: 'advanced',
+  gradle: 'advanced', firebase: 'advanced', xcode: 'advanced', androidstudio: 'advanced',
   // Professional
   jwt: 'professional', oauth: 'professional', tcp: 'professional',
   llm: 'professional', rag: 'professional', mcp: 'professional', gpt: 'professional',
