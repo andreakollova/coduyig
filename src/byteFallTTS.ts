@@ -655,11 +655,19 @@ export async function generateByteFallVoiceover(
 
     audioParts.push(normPath);
 
-    // Offset word timings
+    // Get actual duration after normalization (compressor can change length slightly)
+    let actualDuration = duration;
+    try {
+      const dur = execSync(`ffprobe -v error -show_entries format=duration -of csv=p=0 "${normPath}" 2>/dev/null`).toString().trim();
+      actualDuration = parseFloat(dur) || duration;
+    } catch {}
+
+    // Offset word timings — scale to match actual duration if different
+    const scale = actualDuration / Math.max(duration, 0.1);
     for (const w of wordTimings) {
-      allWords.push({ word: w.word, start: w.start + cumTime, end: w.end + cumTime });
+      allWords.push({ word: w.word, start: w.start * scale + cumTime, end: w.end * scale + cumTime });
     }
-    cumTime += duration + 0.3; // small gap between parts
+    cumTime += actualDuration + 0.3; // small gap between parts
   }
 
   // Concatenate all audio parts with gaps
