@@ -152,7 +152,7 @@ export async function generateBTSVoiceover(
     const normPath = path.join(outputDir, `bts_${i}.mp3`);
     fs.writeFileSync(rawPath, parts[i].audio);
     try {
-      execSync(`ffmpeg -y -i "${rawPath}" -af "loudnorm=I=-14:TP=-1:LRA=11" "${normPath}" 2>/dev/null`);
+      execSync(`ffmpeg -y -i "${rawPath}" -af "acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7" "${normPath}" 2>/dev/null`);
       fs.unlinkSync(rawPath);
     } catch { fs.renameSync(rawPath, normPath); }
     audioPaths.push(normPath);
