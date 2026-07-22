@@ -36,15 +36,15 @@ interface Theme {
 
 const THEMES: Record<string, Theme> = {
   surf: {
-    bg: '#020612',
-    gradientTop: 'rgba(30, 64, 175, 0.2)',
-    gradientBottom: 'rgba(30, 64, 175, 0.2)',
-    waveColor: '135, 206, 255',
-    bigWaveColor: '100, 180, 255',
+    bg: '#0a0a0a',
+    gradientTop: 'rgba(40, 40, 40, 0.15)',
+    gradientBottom: 'rgba(30, 30, 30, 0.2)',
+    waveColor: '80, 80, 80',
+    bigWaveColor: '60, 60, 60',
     items: ['🐠', '🐟', '🐡', '🐚', '🦀', '🪸', '🐙', '🦑', '🐳', '🌊'],
     vehicleName: 'surfboard',
-    subtitleBg: 'rgba(2, 6, 18, 0.85)',
-    subtitleBorder: 'rgba(135, 206, 255, 0.1)',
+    subtitleBg: 'rgba(10, 10, 10, 0.9)',
+    subtitleBorder: 'rgba(80, 80, 80, 0.15)',
     bgMusic: 'sea.wav',
   },
 };
@@ -252,7 +252,7 @@ export const ByteSurfAnimation: React.FC<{
         opacity: isQuestionerSpeaking ? 0.3 : byteOpacity,
         transition: isQuestionerSpeaking ? 'opacity 0.5s' : 'none',
       }}>
-        <ByteMascot size={byteSize} equipment={equipment} bodyColor="#0d1b2a" />
+        <ByteMascot size={byteSize} equipment={equipment} bodyColor="#1a1a1a" />
       </div>
 
       {/* === SHARK === */}

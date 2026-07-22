@@ -89,9 +89,9 @@ Pravidlá:
 - Použi "ty" formu — "napíšeš", "vidíš", "tvoj telefón"
 - Použi prirovnania k bežnému životu ak to pomôže
 - NIKDY nepoužívaj skratky okrem: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL. Ak potrebuješ inú skratku, použi celý názov
-- Na konci spomeň niečo prekvapivé alebo zaujímavé
+- Na konci pridaj 2 extra vety o technickej stránke - akú technológiu to využíva, aký protokol alebo štandard za tým stojí
 - NIKDY nezačínaj opakovaním otázky! Otázku už položil niekto iný. Ty len odpovedáš. Začni rovno vysvetlením.
-- Max 100 slov
+- Max 120 slov
 - Slovenčina (NIKDY čeština)
 - Vrať LEN text vysvetlenia, nič iné`
     : `Write an explanation for a short video (30-40 seconds spoken) on the topic: "${question}"
@@ -103,9 +103,9 @@ Rules:
 - Use "you" form — "you type", "you see", "your phone"
 - Use real-life comparisons if they help
 - NEVER use abbreviations except: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL. For any other abbreviation, spell out the full name
-- Mention something surprising or interesting at the end
+- At the end add 2 extra sentences about the technical side - what technology, protocol or standard is behind it
 - NEVER start by repeating the question! Someone else already asked it. Just go straight to the answer.
-- Max 100 words
+- Max 120 words
 - Return ONLY the explanation text, nothing else`;
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
