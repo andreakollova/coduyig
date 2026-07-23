@@ -553,8 +553,8 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
   // Higher stability = more consistent volume across lines (crucial for student)
   const isEnStudent = lang === 'en' && speaker === 'student';
   const isEnTeacher = lang === 'en' && speaker === 'teacher';
-  let stability = isSkStudent ? 0.8 : isSkTeacher ? 0.3 : isEnStudent ? 0.8 : 0.5;
-  let style = isSkStudent ? 0.15 : isSkTeacher ? 0.8 : isEnStudent ? 0.15 : 0.55;
+  let stability = isSkStudent ? 0.8 : isSkTeacher ? 0.55 : isEnStudent ? 0.8 : 0.5;
+  let style = isSkStudent ? 0.15 : isSkTeacher ? 0.45 : isEnStudent ? 0.15 : 0.55;
   if (enthusiastic) {
     stability = 0.35;
     style = 0.85;

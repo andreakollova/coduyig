@@ -68,9 +68,9 @@ Dve postavy:
 Vytvor konverzáciu s PRESNE 8 riadkami:
 
 1. ŠTUDENT: začne náhodným oslovením ako "Kámo,", "Bráško,", alebo "Kamoško," a potom sa pýta na tému (max 12 slov). Príklady: "Kámo, čo sa dnes budeme učiť?" alebo "Bráško, aká je dnešná téma?" alebo "Kamoško, čo pre mňa máš dnes?"
-2. UČITEĽ: odpovie a vysvetlí tému JEDNODUCHO, ako keby to vysvetľoval 14-ročnému kamarátovi. ŽIADNE zložité slová za sebou. Ak použiješ odborný výraz, hneď ho vysvetli. Napríklad: "Dnes sa pozrieme na lambda funkcie, čo sú vlastne také malé skratky, namiesto toho aby si písal celú funkciu s menom, napíšeš ju rýchlo do jedného riadku." (max 45 slov). NIKDY nečítaj kód.
+2. UČITEĽ: odpovie a vysvetlí tému zrozumiteľne ale profesionálne, ako skúsený programátor. Hovor plynulo v dlhých vetách, nie koktavo. Ak použiješ odborný výraz, hneď ho vysvetli. Napríklad: "Dnes sa pozrieme na lambda funkcie. Sú to anonymné funkcie, ktoré napíšeš do jedného riadku namiesto toho, aby si definoval celú funkciu s menom." (max 45 slov). NIKDY nečítaj kód. NIKDY nepoužívaj výplňové slová ako "vlastne", "proste", "tak nejako".
 3. ŠTUDENT: pokojná zvedavá otázka (max 12 slov). "OK a kedy sa to reálne používa?" alebo "A ako to funguje v praxi?"
-4. UČITEĽ: vysvetlí to hlbšie a technickejšie, ale stále zrozumiteľne. Použi "vlastne", "proste to funguje tak že", "pod kapotou". Vysvetli AKO to funguje krok za krokom s reálnymi technickými detailmi. Napríklad: "Vlastne keď niečo potrebuješ iba raz, tak namiesto celej funkcie napíšeš jeden riadok a Python ho vykoná priamo tam. Spustí sa, vráti výsledok a pamäť sa uvoľní." ŽIADNE laické prirovnania. (max 55 slov)
+4. UČITEĽ: vysvetlí to hlbšie a technickejšie, ale stále zrozumiteľne. Hovor plynulo a sebaisto, ako človek čo to naozaj ovláda. Vysvetli AKO to funguje krok za krokom. Napríklad: "Keď niečo potrebuješ iba raz, napíšeš jeden riadok a Python ho vykoná priamo tam, vráti výsledok a pamäť sa uvoľní." ŽIADNE laické prirovnania. ŽIADNE výplňové slová (vlastne, proste, tak nejako). Plynulé dlhé vety. (max 55 slov)
 5. ŠTUDENT: pochopil a VLASTNÝMI SLOVAMI vysvetlí čo sa naučil (20-30 slov). Hovorí normálnym pokojným hlasom, rovnako ako v ostatných riadkoch. Zhrnie koncept a trochu to rozvinie — ukáže že pochopil pridaním vlastných myšlienok. NIKDY nepoužívaj prehnané nadšené reakcie ako "to je bomba!", "pecka!", "ty jo!". Proste hovorí prirodzene. VŽDY iná reakcia. Príklady: "Takže vlastne namiesto toho aby som písal celú funkciu s menom, napíšem rýchly jednoriadkový výraz ktorý spraví to isté a potom zmizne, to dáva zmysel." alebo "Jasné, takže to prejde zoznamom a vyberie iba tie položky čo spĺňajú moju podmienku, čím sa vyhnem manuálnemu cyklu."
 6. UČITEĽ: vysvetli reálne použitie v praxi. Spomeň konkrétnu firmu IBA ak to naozaj dáva zmysel a je to zaujímavé (napr. "Spotify to používa na spracovanie miliónov skladieb"). NENÚŤ "firmy ako X" keď je téma príliš všeobecná (napr. dokumentácia, premenné, cykly). V tých prípadoch daj praktický scenár, napríklad "predstav si že sa vrátiš k svojmu kódu po 3 mesiacoch a netušíš čo to robí, preto je toto dôležité." Musí znieť prirodzene, nie nútene. (max 35 slov)
 7. UČITEĽ: záverečná myšlienka plynulo — prečo je to dôležité. Vysvetli ešte jeden detail alebo dôvod navyše. Napríklad: "Bez tohto by si musel písať oveľa viac kódu, takže ti to reálne šetrí čas a robí kód prehľadnejší." (max 30 slov)
@@ -82,7 +82,7 @@ PRAVIDLÁ:
 - NIKDY nepoužívaj dvojbodky (:) alebo bodkočiarky (;). Iba bodky a čiarky.
 - NIKDY nepoužívaj laické prirovnania ako kuchár, recept, škatuľa, dom, auto, kuchyňa, zásuvka, polička. Použi reálne technické príklady so skutočnými technológiami, appkami alebo kódom.
 - Píš PLYNULÉ vety. Spájaj cez "a", "ktorý", "takže", "pretože". NIE krátke fragmenty.
-- Použi neformálnu slovenčinu. "Čauko", "super", "fajn", "hm", "aha", "jasné", "pecka", "paráda", "crazy".
+- Použi prirodzenú slovenčinu. Učiteľ hovorí profesionálne ale priateľsky. NEPOUŽÍVAJ slangové slová ako "pecka", "crazy", "paráda". Hovor plynulo a sebaisto.
 - NIKDY čeština.
 - Správna slovenská gramatika. Pred "ktorý", "ktorá", "ktoré", "kde", "keď", "pretože", "lebo" VŽDY daj čiarku.
 - Dávaj pozor na správne tvary — "efektívne programovať" (príslovka) vs "efektívne riešenie" (prídavné meno). Zmäkčenie na konci závisí od kontextu.
@@ -115,7 +115,16 @@ export async function generateReelScript(
     return fallbackScript(title, introduction, lang);
   }
 
-  const system = lang === 'sk' ? SYSTEM_SK : SYSTEM_EN;
+  const skAddendum = `
+
+LANGUAGE: Write the ENTIRE script in SLOVAK (slovenčina). NEVER Czech.
+- Student greetings: "Kámo,", "Bráško,", or "Kamoško," (not "Hey bro")
+- Student final line MUST end with "ďakujem", "vďaka" or "dík"
+- Use natural Slovak: correct grammar, commas before "ktorý/kde/keď/pretože"
+- Teacher speaks professionally but friendly, no slang ("pecka", "crazy", "paráda")
+- NO filler words: "vlastne", "proste", "tak nejako"`;
+
+  const system = lang === 'sk' ? SYSTEM_EN + skAddendum : SYSTEM_EN;
 
   const prompt = `LESSON TITLE: ${title}
 
