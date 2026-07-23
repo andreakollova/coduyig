@@ -64,7 +64,7 @@ export async function generateBTSVoiceover(
 
   // Random greeting — varied for each video
   const skGreetings = ['kámo', 'bráško', 'kámo', 'bráško', 'kámo'];
-  const enGreetings = ['bro', 'dude', 'buddy', 'pal', 'rockstar'];
+  const enGreetings = ['bro', 'dude', 'buddy', 'pal', 'man'];
   const greetIdx = Math.floor(Math.random() * 5);
   const greeting = lang === 'sk' ? skGreetings[greetIdx] : enGreetings[greetIdx];
 
