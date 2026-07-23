@@ -630,7 +630,7 @@ export async function generateConversationTTS(
     // Last student line (summary) speaks slower for clarity
     const isLastStudentLine = line.speaker === 'student' && i === lines.length - 3;
     let baseSpeed = 1.3;
-    if (line.speaker === 'student') baseSpeed = 1.1;
+    if (line.speaker === 'student') baseSpeed = lang === 'sk' ? 0.95 : 1.1;
     const lineSpeed = isLastStudentLine ? 0.95 : baseSpeed;
 
     // Never use enthusiastic mode - it causes volume inconsistency
