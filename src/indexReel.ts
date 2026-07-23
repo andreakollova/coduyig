@@ -72,11 +72,16 @@ const EXTRA_ITEMS: Record<string, string>[] = [
 
 function pickTeacherTheme(): { color: string; equipment: Record<string, string> } {
   const theme = TEACHER_THEMES[Math.floor(Math.random() * TEACHER_THEMES.length)];
-  const themeItem = theme.items[Math.floor(Math.random() * theme.items.length)];
 
+  // Use ALL theme items first — fill each slot from theme
+  const equip: Record<string, string> = {};
+  for (const item of theme.items) {
+    const slot = Object.keys(item)[0];
+    if (!equip[slot]) equip[slot] = item[slot as keyof typeof item] as string;
+  }
+
+  // Fill remaining empty slots with extras (only if theme didn't cover them)
   const slots = ['hat', 'glasses', 'accessory', 'antenna'];
-  const equip: Record<string, string> = { ...themeItem };
-
   for (const slot of slots) {
     if (equip[slot]) continue;
     const options = EXTRA_ITEMS.filter(item => Object.keys(item)[0] === slot);
@@ -86,14 +91,12 @@ function pickTeacherTheme(): { color: string; equipment: Record<string, string> 
     }
   }
 
-  // Teacher MUST always have at least a hat or glasses (something visible)
-  if (!equip.hat && !equip.glasses) {
-    const hats = EXTRA_ITEMS.filter(item => Object.keys(item)[0] === 'hat');
-    const pick = hats[Math.floor(Math.random() * hats.length)];
-    equip.hat = pick.hat;
-  }
+  // Always add aura from theme
+  const themeAura = theme.items.find(i => 'aura' in i);
+  if (themeAura) equip.aura = (themeAura as any).aura;
 
   console.log(`🎨 Teacher color: ${theme.color}`);
+  console.log(`🎽 Equipment:`, JSON.stringify(equip));
   return { color: theme.color, equipment: equip };
 }
 
