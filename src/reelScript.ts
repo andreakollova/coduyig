@@ -180,15 +180,16 @@ async function translateToSlovak(lines: ReelLine[]): Promise<ReelLine[]> {
 
 PRAVIDLÁ:
 - Prekladaj voľne, nie doslova. Dôležitý je zmysel a plynulosť, nie presný preklad slovo po slove.
-- Slovenčina musí znieť prirodzene, s dobrým slovosledom a správnym skloňovaním.
-- NIKDY čeština.
-- Študent oslovuje: "Kámo," alebo "Bráško," (nie "Hey bro")
+- Učiteľ hovorí ako šikovný kamarát čo programuje - nie ako profesor, nie ako učebnica. Sebaisty, jasný, zaujímavý. Ako populárny YouTuber čo vysvetľuje kód.
+- Použi prirodzené frázy: "v podstate", "funguje to tak že", "keď to spustíš", "napríklad keď"
+- NEPOUŽÍVAJ strnulý akademický jazyk: "zabezpečujú", "pričom", "jedinečné prvky", "odlišné prvky", "efektívne porovnávať kolekcie"
+- Slovenčina musí znieť ako by to povedal reálny človek, nie robot alebo učebnica
+- NIKDY čeština
+- Študent oslovuje: "Kámo," alebo "Bráško,"
 - Posledná veta študenta MUSÍ končiť slovom "ďakujem", "vďaka" alebo "dík"
-- Učiteľ hovorí profesionálne ale priateľsky. Žiadny slang.
-- NIKDY nepoužívaj výplňové slová: "vlastne", "proste", "tak nejako"
 - Technické termíny (API, CPU, Python, lambda, set) NEPREKLADAJ
 - Správna slovenská gramatika: čiarky pred "ktorý/kde/keď/pretože/lebo"
-- Plynulé dlhé vety, NIE krátke koktavé fragmenty
+- Plynulé vety, NIE krátke koktavé fragmenty
 
 Formát vstupu: index|speaker|text
 Vráť JSON: {"lines": {"0": "preložená veta", "1": "preložená veta", ...}}
