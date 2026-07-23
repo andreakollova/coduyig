@@ -176,22 +176,22 @@ async function translateToSlovak(lines: ReelLine[]): Promise<ReelLine[]> {
         response_format: { type: 'json_object' },
         messages: [{
           role: 'user',
-          content: `Prelož tento anglický dialóg do plynulej, prirodzenej slovenčiny. Toto je rozhovor medzi študentom a učiteľom o programovaní.
+          content: `Prelož tento anglický dialóg do slovenčiny. Toto je rozhovor medzi študentom a učiteľom o programovaní.
+
+NAJDÔLEŽITEJŠIE: Zachovaj PRESNE rovnakú kvalitu, štýl a energiu ako má anglická verzia. Ak EN verzia spomína konkrétnu firmu (Spotify, Instagram, Netflix), zachovaj ju. Ak EN verzia dáva praktický príklad, daj rovnako dobrý praktický príklad. NESTRAŤ kvalitu pri preklade.
 
 PRAVIDLÁ:
-- Prekladaj voľne, nie doslova. Dôležitý je zmysel a plynulosť, nie presný preklad slovo po slove.
-- Učiteľ hovorí ako skúsený developer v IT firme - vie o čom hovorí, používa správne technické termíny, ale vysvetľuje ich zrozumiteľne. Nie ako profesor, nie ako dieťa.
-- Správne technické pojmy po slovensky (množina, operátor, funkcia, premenná) ale v prirodzených vetách
-- NEPOUŽÍVAJ strnulý akademický jazyk: "zabezpečujú", "pričom", "odlišné prvky", "efektívne porovnávať kolekcie"
-- NEPOUŽÍVAJ príliš zjednodušený jazyk: "v podstate je to taká vec čo", "proste to spraví že"
-- Slovenčina musí znieť ako reálny programátor čo vie o čom hovorí a vysvetľuje to kolegovi
-- NIKDY nepíš kód, syntax, operátory ani špeciálne znaky do hovoreného textu. Žiadne "set_a | set_b", "print()", "def func()", "__str__". Môžeš povedať názvy konceptov ako "args", "kwargs", "tuple", "n-tice" ale NIKDY s hviezdičkami, podčiarkovníkmi alebo zátvorkami. Povedz "args" nie "*args".
+- Prekladaj voľne, nie doslova. Zachovaj zmysel, praktické príklady a myšlienku "nauč sa rozmýšľať ako programátor"
+- Učiteľ hovorí sebaistvo a jasne. Vie o čom hovorí. Vysvetľuje tak, že po vypočutí vieš prečo to existuje, kedy to použiješ a ako to funguje
+- Každá veta musí priniesť NOVÚ informáciu. Ak EN verzia hovorí o Spotify, povedz to aj po slovensky. Ak EN hovorí o praktickom scenári, zachovaj ho
+- NIKDY neopakuj to isté inými slovami. Ak si už povedal čo to robí, ďalšia veta musí povedať KEDY alebo PREČO, nie znova ČO
+- NIKDY nepíš kód ani špeciálne znaky. Môžeš povedať "args", "tuple" ale nie "*args", "print()"
 - NIKDY čeština
-- Študent oslovuje: "Kámo," alebo "Bráško,"
+- Študent: "Kámo," alebo "Bráško,"
 - Posledná veta študenta MUSÍ končiť slovom "ďakujem", "vďaka" alebo "dík"
 - Technické termíny (API, CPU, Python, lambda, set) NEPREKLADAJ
-- Správna slovenská gramatika: čiarky pred "ktorý/kde/keď/pretože/lebo"
-- Plynulé vety, NIE krátke koktavé fragmenty
+- Správna slovenská gramatika
+- Plynulé vety
 
 Formát vstupu: index|speaker|text
 Vráť JSON: {"lines": {"0": "preložená veta", "1": "preložená veta", ...}}
