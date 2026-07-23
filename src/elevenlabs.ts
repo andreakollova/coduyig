@@ -16,7 +16,7 @@ const VOICES = {
   },
   sk: {
     teacher: 'Ewvy14akxdhONg4fmNry', // was DXwrzy2wtKORwDTbsMwk
-    student: '5TUD5nYN251MvBggIfLu',
+    student: 's3TPKV1kjDlVtZbl4Ksh', // same as EN student — consistent quality
   },
 };
 
@@ -553,8 +553,8 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
   // Higher stability = more consistent volume across lines (crucial for student)
   const isEnStudent = lang === 'en' && speaker === 'student';
   const isEnTeacher = lang === 'en' && speaker === 'teacher';
-  let stability = isSkStudent ? 0.75 : isSkTeacher ? 0.3 : isEnStudent ? 0.75 : 0.5;
-  let style = isSkStudent ? 0.2 : isSkTeacher ? 0.8 : isEnStudent ? 0.2 : 0.55;
+  let stability = isSkStudent ? 0.85 : isSkTeacher ? 0.3 : isEnStudent ? 0.8 : 0.5;
+  let style = isSkStudent ? 0.15 : isSkTeacher ? 0.8 : isEnStudent ? 0.15 : 0.55;
   if (enthusiastic) {
     stability = 0.35;
     style = 0.85;
@@ -640,13 +640,14 @@ export async function generateConversationTTS(
     const audioPath = path.join(outputDir, `line_${i}.mp3`);
     fs.writeFileSync(rawPath, audioBuffer);
 
-    // Normalize audio: compressor evens out dynamics, then loudnorm sets consistent level
-    // Two-step is crucial for short clips (greetings etc.) where loudnorm alone fails
+    // Normalize audio: highpass removes low rumble/buzz, compressor evens dynamics, loudnorm sets level
     try {
-      execSync(`ffmpeg -y -i "${rawPath}" -af "acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7" "${audioPath}" 2>/dev/null`);
+      const filters = line.speaker === 'student'
+        ? 'highpass=f=80,acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7'
+        : 'acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7';
+      execSync(`ffmpeg -y -i "${rawPath}" -af "${filters}" "${audioPath}" 2>/dev/null`);
       fs.unlinkSync(rawPath);
     } catch {
-      // If ffmpeg fails, use raw audio
       fs.renameSync(rawPath, audioPath);
     }
 

@@ -186,6 +186,27 @@ async function main() {
       .order('id');
 
     if (allLessons) {
+      // When running SK, use the same lesson as the last EN reel
+      if (lang === 'sk' && postedLessonIds.length > 0) {
+        try {
+          const { data: trackData2 } = await sb.storage.from(BUCKET).download('tracking/reels.json');
+          if (trackData2) {
+            const reels = JSON.parse(await trackData2.text());
+            const lastEn = reels.filter((r: any) => r.lang === 'en').sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())[0];
+            const lastSk = reels.filter((r: any) => r.lang === 'sk').sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())[0];
+            // If last EN reel has no matching SK reel, use that lesson
+            if (lastEn && (!lastSk || lastSk.lessonId !== lastEn.lessonId)) {
+              const match = allLessons.find((l: any) => l.id === lastEn.lessonId);
+              if (match) {
+                lesson = match;
+                console.log(`🔗 Using same lesson as last EN reel: ${lesson.title}`);
+              }
+            }
+          }
+        } catch {}
+      }
+
+      if (!lesson) {
       const priorityLessons = PRIORITY_TOPICS
         .map(title => allLessons.find(l => l.title === title))
         .filter(l => l && !postedLessonIds.includes(l.id));
@@ -203,6 +224,7 @@ async function main() {
           console.log('🔄 All topics posted - random pick');
         }
       }
+      } // close if (!lesson)
     }
 
     if (!lesson) { console.log('❌ No lesson found'); process.exit(0); }
