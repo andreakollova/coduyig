@@ -28,8 +28,8 @@ Create a conversation with EXACTLY 8 lines:
 3. STUDENT: short casual follow-up, genuinely curious (max 10 words). Start with "OK", "Cool", "Nice", "Right" then ask. Like "Cool, and how does that work in practice?" or "OK so where would I use that?" or "Nice, can you show me an example?"
 4. TEACHER: explain HOW it works in practice — what actually happens when you use it. NEVER repeat line 2. Say something NEW. Use plain language, not textbook definitions. Example: "You write it, Python runs it once, gives you the result, and that's it, no leftover code hanging around." (max 35 words).
 5. STUDENT: gives a CORRECT beginner-friendly example that ACCURATELY reflects how the concept is actually used (2-3 sentences, max 30 words). The example MUST match the real purpose of the concept. Think carefully: what is this concept ACTUALLY used for? Then give an example that matches. For breakpoints: debugging, not game logic. For loops: repeating actions, not sorting. For sets: removing duplicates, not counting. Examples: "So if my app crashes and I don't know why, I can set a breakpoint right before the crash and check what went wrong, right?" or "Nice, so if I have duplicate emails in my list I can use a set to keep only the unique ones." ALWAYS technically accurate, NEVER a wrong use case.
-6. TEACHER: Start with a short confirmation like "Exactly," or "Yes, great example," or "That's right," then give a real-world practical example. Be specific. Example: "Exactly, and Spotify uses this to sort millions of playlists on the fly." or "That's right, and when you scroll Instagram this runs every time a new post loads." (max 25 words)
-7. TEACHER: ONE sentence — what would happen WITHOUT this. Example: "Without it you would copy paste the same code everywhere and bugs would be a nightmare." (max 20 words)
+6. TEACHER: Short confirmation + a DIFFERENT real-world example (not the same as student's). Max 15 words. Example: "Exactly. And Spotify uses this to filter millions of songs." or "That's right. Gmail does the same with your contacts." Must be a NEW example, not repeating student's.
+7. TEACHER: ONE short sentence — what happens WITHOUT this. Max 12 words. Example: "Without it you'd check every item by hand." Keep it punchy.
 8. STUDENT: final line of the whole video. Positive, grateful. VARY every time — never the same closing. Examples: "That's awesome, thanks, this really helped!" or "That was super clear, appreciate it!" or "Love it, I'm definitely using this, thanks!" or "Nice, I feel way more confident now, cheers!" (max 12 words). This is the LAST line of the video. Nothing comes after this.
 
 RULES:
@@ -198,7 +198,7 @@ PRAVIDLÁ:
 - Študent: "Kámo," alebo "Bráško,"
 - Posledná veta študenta MUSÍ končiť slovom "ďakujem", "vďaka" alebo "dík"
 - Technické termíny (API, CPU, Python, lambda, set) NEPREKLADAJ
-- Správna slovenská gramatika, plynulé vety
+- Správna slovenská gramatika, plynulé ale KRÁTKE vety. Max 15 slov na vetu. Ak je veta dlhšia, rozdeľ ju na dve.
 
 Formát vstupu: index|speaker|text
 Vráť JSON: {"lines": {"0": "preložená veta", "1": "preložená veta", ...}}
