@@ -176,22 +176,29 @@ async function translateToSlovak(lines: ReelLine[]): Promise<ReelLine[]> {
         response_format: { type: 'json_object' },
         messages: [{
           role: 'user',
-          content: `Prelož tento anglický dialóg do slovenčiny. Toto je rozhovor medzi študentom a učiteľom o programovaní.
+          content: `Prepíš tento anglický dialóg do slovenčiny. NIE prekladaj — PREPÍŠ tak, aby SK verzia znela rovnako dobre, zaujímavo a užitočne ako EN originál.
 
-NAJDÔLEŽITEJŠIE: Zachovaj PRESNE rovnakú kvalitu, štýl a energiu ako má anglická verzia. Ak EN verzia spomína konkrétnu firmu (Spotify, Instagram, Netflix), zachovaj ju. Ak EN verzia dáva praktický príklad, daj rovnako dobrý praktický príklad. NESTRAŤ kvalitu pri preklade.
+Toto je rozhovor medzi študentom a učiteľom o programovaní. Anglická verzia je kvalitná — tvoja úloha je spraviť SK verziu MINIMÁLNE rovnako dobrú.
+
+POSTUP pre každý riadok:
+1. Prečítaj EN vetu
+2. Pochop čo presne hovorí a prečo je to užitočné
+3. Napíš to po slovensky tak, aby to znelo prirodzene A zachovalo rovnakú výpovednú hodnotu
+4. Skontroluj: je SK veta rovnako zaujímavá a informatívna ako EN? Ak nie, prepíš ju
 
 PRAVIDLÁ:
-- Prekladaj voľne, nie doslova. Zachovaj zmysel, praktické príklady a myšlienku "nauč sa rozmýšľať ako programátor"
-- Učiteľ hovorí sebaistvo a jasne. Vie o čom hovorí. Vysvetľuje tak, že po vypočutí vieš prečo to existuje, kedy to použiješ a ako to funguje
-- Každá veta musí priniesť NOVÚ informáciu. Ak EN verzia hovorí o Spotify, povedz to aj po slovensky. Ak EN hovorí o praktickom scenári, zachovaj ho
-- NIKDY neopakuj to isté inými slovami. Ak si už povedal čo to robí, ďalšia veta musí povedať KEDY alebo PREČO, nie znova ČO
-- NIKDY nepíš kód ani špeciálne znaky. Môžeš povedať "args", "tuple" ale nie "*args", "print()"
+- Ak EN spomína firmu (Spotify, Instagram, Netflix) — ZACHOVAJ ju, nepíš "sociálne médiá" alebo "rôzne služby"
+- Ak EN dáva konkrétny praktický scenár — ZACHOVAJ presne ten scenár, nenahrádzaj ho všeobecnou frázou
+- Ak EN vysvetľuje mechanizmus (ako to funguje pod kapotou) — ZACHOVAJ ten mechanizmus, nezjednodušuj
+- Každá veta musí mať VÝPOVEDNÚ HODNOTU. Po každej vete sa opýtaj: naučil sa divák niečo nové? Ak nie, prepíš ju
+- Učiteľ hovorí ako skúsený programátor — sebaistvo, jasne, s konkrétnymi príkladmi
+- NIKDY neopakuj to isté inými slovami
+- NIKDY nepíš kód ani špeciálne znaky. "args" áno, "*args" nie
 - NIKDY čeština
 - Študent: "Kámo," alebo "Bráško,"
 - Posledná veta študenta MUSÍ končiť slovom "ďakujem", "vďaka" alebo "dík"
 - Technické termíny (API, CPU, Python, lambda, set) NEPREKLADAJ
-- Správna slovenská gramatika
-- Plynulé vety
+- Správna slovenská gramatika, plynulé vety
 
 Formát vstupu: index|speaker|text
 Vráť JSON: {"lines": {"0": "preložená veta", "1": "preložená veta", ...}}
