@@ -1,6 +1,6 @@
 /**
  * Generate a conversational script for IG Reel from lesson content.
- * Structure: technical explanation → student confused → simple analogy → real-world examples
+ * Structure: technical explanation → student curious → deeper explanation → real-world examples
  */
 
 const OPENAI_KEY = process.env.OPENAI_API_KEY || '';
@@ -26,13 +26,13 @@ Create a conversation with EXACTLY 10 lines:
 1. STUDENT: starts with a random casual greeting like "Hey dude,", "Hey bro,", or "Hey little bro," then asks about today's topic (max 12 words). Examples: "Hey dude, what are we learning today?" or "Hey bro, what's today's topic?" or "Hey little bro, what do you have for me today?"
 2. TEACHER: answer and explain the topic using SIMPLE everyday words. Imagine explaining to a 14-year-old friend. NO technical jargon without immediately explaining it. Example: "Today we are looking at lambda functions, which are basically tiny shortcuts, instead of writing a whole function with a name, you just write it in one quick line." (max 45 words). NEVER read code. NEVER use complicated words back to back.
 3. STUDENT: excited follow-up question, not confused — genuinely curious and engaged (max 12 words). Like "Oh that's cool! So when would I actually use that?" or "Wait really? How does that work in practice?"
-4. TEACHER: explain it even simpler and more in-depth, like you are talking to your younger sibling. Use "basically", "so imagine", "it is like when you". Explain HOW it works step by step. Short simple words, no jargon. Example: "So basically when you need something just once, instead of building a whole big thing, you just write one quick line and you are done. And when you call it, Python runs it, gives you the result and throws it away." NO complicated vocabulary. (max 55 words)
+4. TEACHER: explain it deeper and more technically, but still accessible. Use "basically", "so what happens is", "under the hood". Explain HOW it works step by step with real technical details. Example: "So basically when you need something just once, instead of defining a whole function, you just write one quick line and Python executes it right there. It runs, returns the result, and the memory is freed." NO simplistic analogies. (max 55 words)
 5. STUDENT: gets it, excited, explains WHAT they learned back in their OWN WORDS (15-20 words). Like explaining to a friend what the concept does and why it's useful. Sound genuinely pumped, not robotic. VARY the reactions. NEVER comment on the learning process (no "skip the setup", "skip steps"). Instead explain WHAT it does and WHY it's cool. Examples: "Ohhh so instead of writing a whole function I just write one line and it does the same thing, that's sick!" or "Wait so it basically takes a list and picks out only what I want, that makes total sense!" or "No way, so it just remembers the result and I don't have to calculate it again, that's genius!"
 6. TEACHER: explain a real-world use case. ONLY mention a specific company if it genuinely makes sense and is interesting (like "Spotify uses this to handle millions of songs"). Do NOT force "companies like X" when the topic is too generic (like documentation, variables, loops). In those cases, give a practical real-world scenario instead, like "imagine you come back to your code after 3 months and you have no idea what it does, that is why this matters." Must feel natural, not forced. (max 35 words)
 7. TEACHER: closing thought — explain one more detail or reason why it matters. Example: "Without this you'd be writing way more code for simple stuff, so it really saves you time and keeps things clean." (max 30 words)
 8. STUDENT: final line of the whole video. Positive, grateful, enthusiastic. VARY every time — never the same closing. Examples: "That's awesome, thanks, this really helped!" or "Yo that was super clear, appreciate it!" or "Love it, I'm definitely using this, thanks!" or "That's so cool, can't wait to try it!" or "Nice, I feel way more confident now, cheers!" (max 12 words)
-9. TEACHER: call to action. Say this EXACTLY or very close to it: "If you want to start coding, write START in the comments and I will send you a coupon for one month of Coduy completely free. I believe you can learn more in a month than you expect." VARY slightly each time but keep the meaning. (max 35 words)
-10. TEACHER: empty (silent CTA screen). Return {"speaker": "teacher", "spoken": "", "code": null}
+9. TEACHER: motivational closing. Encourage the viewer to try coding. Examples: "Just try writing a few lines of code today and you will see how fast you improve." or "The best way to learn this is to just open your editor and start experimenting." VARY every time. NEVER say "write START", "write in comments", "send coupon", or any call to action. (max 25 words)
+10. TEACHER: empty (silent end screen). Return {"speaker": "teacher", "spoken": "", "code": null}
 
 RULES:
 - ABSOLUTELY NEVER read code, syntax, variable names, function names, or operators aloud. NO "lambda x", NO "def square", NO "print()", NO "map()", NO "filter()". Describe what code DOES in everyday language only. This is the #1 RULE.
@@ -40,6 +40,7 @@ RULES:
 - Teacher's explanations MUST come from the provided lesson content, not invented
 - ABSOLUTELY NEVER use colons (:) anywhere in spoken text. Periods and commas ONLY.
 - EVERY sentence must be COMPLETE. NEVER leave a sentence unfinished. NEVER end with "for example" or "like" or "such as" without finishing the thought.
+- NEVER use simplistic analogies like chefs, recipes, boxes, houses, cars, kitchens, drawers, bookshelves. Use real technical examples with actual technologies, apps, or code scenarios instead.
 - Write FLOWING sentences. Connect with "and", "which", "so", "because". NOT choppy fragments.
 - Maximum 2-3 sentences per teacher line, but LONG and flowing.
 - Total spoken text: 160-220 words. Keep it engaging and informative.
@@ -57,7 +58,7 @@ Return VALID JSON:
     {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "student", "spoken": "...", "code": null},
-    {"speaker": "teacher", "spoken": "CTA call to action", "code": null},
+    {"speaker": "teacher", "spoken": "motivational closing", "code": null},
     {"speaker": "teacher", "spoken": "", "code": null}
   ]
 }`;
@@ -73,18 +74,19 @@ Vytvor konverzáciu s PRESNE 10 riadkami:
 1. ŠTUDENT: začne náhodným oslovením ako "Kámo,", "Bráško,", alebo "Kamoško," a potom sa pýta na tému (max 12 slov). Príklady: "Kámo, čo sa dnes budeme učiť?" alebo "Bráško, aká je dnešná téma?" alebo "Kamoško, čo pre mňa máš dnes?"
 2. UČITEĽ: odpovie a vysvetlí tému JEDNODUCHO, ako keby to vysvetľoval 14-ročnému kamarátovi. ŽIADNE zložité slová za sebou. Ak použiješ odborný výraz, hneď ho vysvetli. Napríklad: "Dnes sa pozrieme na lambda funkcie, čo sú vlastne také malé skratky, namiesto toho aby si písal celú funkciu s menom, napíšeš ju rýchlo do jedného riadku." (max 45 slov). NIKDY nečítaj kód.
 3. ŠTUDENT: nadšená zvedavá otázka — NIE zmätený, ale zaujatý a zapálený (max 12 slov). "To je zaujímavé! A kedy sa to reálne používa?" alebo "Počkaj, fakt? A ako to funguje v praxi?"
-4. UČITEĽ: vysvetlí to ešte jednoduchšie a viac do hĺbky, ako keby rozprával mladšiemu súrodencovi. Použi "vlastne", "proste", "predstav si". Krátke jednoduché slová, žiadny žargón. Vysvetli AKO to funguje krok za krokom. Napríklad: "Vlastne keď niečo potrebuješ iba raz, tak namiesto toho aby si staval celú veľkú vec, proste napíšeš jeden rýchly riadok a hotovo. A keď to zavoláš, Python ho spustí, vráti výsledok a zahodí ho." ŽIADNE komplikované slovíčka. (max 55 slov)
+4. UČITEĽ: vysvetlí to hlbšie a technickejšie, ale stále zrozumiteľne. Použi "vlastne", "proste to funguje tak že", "pod kapotou". Vysvetli AKO to funguje krok za krokom s reálnymi technickými detailmi. Napríklad: "Vlastne keď niečo potrebuješ iba raz, tak namiesto celej funkcie napíšeš jeden riadok a Python ho vykoná priamo tam. Spustí sa, vráti výsledok a pamäť sa uvoľní." ŽIADNE laické prirovnania. (max 55 slov)
 5. ŠTUDENT: pochopil a VLASTNÝMI SLOVAMI vysvetlí čo sa naučil - zopakuje hlavnú myšlienku ako keby to vysvetľoval kamarátovi (15-20 slov). Musí znieť naozaj nadšene. NIKDY nepoužívaj slovo "bomba". NIKDY nekomentuj proces učenia (žiadne "preskočíš setup", "vynecháš kroky"). Namiesto toho vysvetli ČO to robí a PREČO je to užitočné. VŽDY iná reakcia. Príklady: "Aha takže namiesto celej funkcie napíšem jeden riadok a robí to isté, to je super šikovné!" alebo "Počkaj, takže to vlastne vezme zoznam a vyberie z neho iba to čo chcem, to dáva zmysel!" alebo "Ty jo, takže si to proste zapamätá a nemusím to počítať znova, to je fakt šikovné!"
 6. UČITEĽ: vysvetli reálne použitie v praxi. Spomeň konkrétnu firmu IBA ak to naozaj dáva zmysel a je to zaujímavé (napr. "Spotify to používa na spracovanie miliónov skladieb"). NENÚŤ "firmy ako X" keď je téma príliš všeobecná (napr. dokumentácia, premenné, cykly). V tých prípadoch daj praktický scenár, napríklad "predstav si že sa vrátiš k svojmu kódu po 3 mesiacoch a netušíš čo to robí, preto je toto dôležité." Musí znieť prirodzene, nie nútene. (max 35 slov)
 7. UČITEĽ: záverečná myšlienka plynulo — prečo je to dôležité. Vysvetli ešte jeden detail alebo dôvod navyše. Napríklad: "Bez tohto by si musel písať oveľa viac kódu, takže ti to reálne šetrí čas a robí kód prehľadnejší." (max 30 slov)
 8. ŠTUDENT: posledná veta študenta. Pozitívna, vďačná, entuziastická. VŽDY iná — nikdy rovnaký záver. Veta MUSÍ končiť slovom "ďakujem", "vďaka" alebo "dík" — vždy posledné slovo. Príklady: "Super, toto mi fakt pomohlo, ďakujem!" alebo "Ty jo, to bolo super jasné, vďaka!" alebo "Páči sa mi to, určite to vyskúšam, dík!" alebo "To je pecka, teraz sa na to teším, ďakujem!" alebo "Jasné, cítim sa oveľa istejšie, vďaka!" (max 12 slov)
-9. UČITEĽ: výzva na akciu. Povedz PRESNE toto alebo veľmi podobne: "Ak chceš začať programovať, napíš do komentára START a ja ti pošlem do DM kupón na jeden mesiac Coduy úplne zadarmo. Verím, že za mesiac sa naučíš viac, než čakáš." MIERNE obmeňuj každý raz ale zachovaj význam. (max 35 slov)
-10. UČITEĽ: prázdny riadok (tichý CTA screen). Vráť {"speaker": "teacher", "spoken": "", "code": null}
+9. UČITEĽ: motivačný záver. Povzbuď diváka aby si skúsil programovať. Príklady: "Skús si dnes napísať pár riadkov kódu a uvidíš ako rýchlo sa zlepšíš." alebo "Najlepšie sa to naučíš tak, že otvoríš editor a začneš experimentovať." VŽDY iná veta. NIKDY nehovor "napíš START", "napíš do komentárov", "pošlem kupón" ani žiadnu výzvu na akciu. (max 25 slov)
+10. UČITEĽ: prázdny riadok (tichý záver). Vráť {"speaker": "teacher", "spoken": "", "code": null}
 
 PRAVIDLÁ:
 - ABSOLÚTNE NIKDY nečítaj kód, syntax, názvy premenných, funkcií ani operátorov nahlas. ŽIADNE "lambda x", ŽIADNE "def square", ŽIADNE "print()", ŽIADNE "map()", ŽIADNE "filter()". Opisuj čo kód ROBÍ bežným jazykom. Toto je pravidlo číslo 1.
 - NIKDY nepoužívaj skratky ani akronymy OKREM týchto povolených: AI, API, CPU, CSV, DNS, GPS, HDD, ID, JSON, OS, QR, RAM, README, REST, SQL, SSD, USB. Ak potrebuješ spomenúť inú skratku, použi celý názov namiesto skratky.
 - NIKDY nepoužívaj dvojbodky (:) alebo bodkočiarky (;). Iba bodky a čiarky.
+- NIKDY nepoužívaj laické prirovnania ako kuchár, recept, škatuľa, dom, auto, kuchyňa, zásuvka, polička. Použi reálne technické príklady so skutočnými technológiami, appkami alebo kódom.
 - Píš PLYNULÉ vety. Spájaj cez "a", "ktorý", "takže", "pretože". NIE krátke fragmenty.
 - Použi neformálnu slovenčinu. "Čauko", "super", "fajn", "hm", "aha", "jasné", "pecka", "paráda", "crazy".
 - NIKDY čeština.
@@ -105,7 +107,7 @@ Vráť VALID JSON:
     {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "teacher", "spoken": "...", "code": null},
     {"speaker": "student", "spoken": "...", "code": null},
-    {"speaker": "teacher", "spoken": "CTA vyzva", "code": null},
+    {"speaker": "teacher", "spoken": "motivacny zaver", "code": null},
     {"speaker": "teacher", "spoken": "", "code": null}
   ]
 }`;
@@ -125,7 +127,7 @@ export async function generateReelScript(
 
   const prompt = `LESSON TITLE: ${title}
 
-INTRODUCTION (use for the simple analogy in line 4):
+INTRODUCTION (use for context in line 4):
 ${introduction.slice(0, 2500)}
 
 LEARNING CONTENT (use for technical explanation in line 2):
