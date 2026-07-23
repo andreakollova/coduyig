@@ -185,6 +185,7 @@ PRAVIDLÁ:
 - NEPOUŽÍVAJ strnulý akademický jazyk: "zabezpečujú", "pričom", "odlišné prvky", "efektívne porovnávať kolekcie"
 - NEPOUŽÍVAJ príliš zjednodušený jazyk: "v podstate je to taká vec čo", "proste to spraví že"
 - Slovenčina musí znieť ako reálny programátor čo vie o čom hovorí a vysvetľuje to kolegovi
+- NIKDY nepíš kód, syntax, operátory ani názvy premenných do hovoreného textu. Žiadne "set_a | set_b", "print()", "def func()". Opisuj čo kód robí slovami.
 - NIKDY čeština
 - Študent oslovuje: "Kámo," alebo "Bráško,"
 - Posledná veta študenta MUSÍ končiť slovom "ďakujem", "vďaka" alebo "dík"
