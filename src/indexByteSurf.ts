@@ -83,29 +83,29 @@ async function generateScript(question: string, lang: 'sk' | 'en'): Promise<stri
     ? `Napíš vysvetlenie pre krátke video (30-40 sekúnd hovorenia) na tému: "${question}"
 
 Pravidlá:
-- Píš ako keby si to vysvetľoval kamarátovi, nie ako učebnica
-- Plynulé dlhé vety spojené čiarkami, nie krátke bodka za bodkou
-- Vysvetli krok za krokom čo sa deje, aby tomu rozumel aj úplný laik
+- Vysvetli to jednoducho a jasne, krok za krokom, ako kamarátovi
+- Štruktúra: 1) Čo to je v jednej vete, 2) Ako to funguje prakticky, 3) Konkrétny príklad z reálneho života
+- Plynulé vety, nie krátke bodka za bodkou
 - Použi "ty" formu — "napíšeš", "vidíš", "tvoj telefón"
-- Použi prirovnania k bežnému životu ak to pomôže
-- NIKDY nepoužívaj skratky okrem: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL. Ak potrebuješ inú skratku, použi celý názov
-- Na konci pridaj 2 extra vety o technickej stránke - akú technológiu to využíva, aký protokol alebo štandard za tým stojí
-- NIKDY nezačínaj opakovaním otázky! Otázku už položil niekto iný. Ty len odpovedáš. Začni rovno vysvetlením.
-- Max 120 slov
+- Použi jedno konkrétne prirovnanie k bežnému životu
+- NIKDY nepoužívaj skratky okrem: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL
+- NIKDY nezačínaj opakovaním otázky! Začni rovno vysvetlením
+- NIKDY nepíš výzvy typu "napíš do komentov", "daj follow", "poslem ti kód" alebo čokoľvek podobné
+- Max 100 slov
 - Slovenčina (NIKDY čeština)
 - Vrať LEN text vysvetlenia, nič iné`
     : `Write an explanation for a short video (30-40 seconds spoken) on the topic: "${question}"
 
 Rules:
-- Write like you are explaining to a friend, not a textbook
-- Flowing long sentences connected with commas, not short choppy ones
-- Explain step by step what happens so a complete beginner understands
+- Explain it simply and clearly, step by step, like to a friend
+- Structure: 1) What it is in one sentence, 2) How it works practically, 3) One concrete real-life example
+- Flowing sentences, not short choppy ones
 - Use "you" form — "you type", "you see", "your phone"
-- Use real-life comparisons if they help
-- NEVER use abbreviations except: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL. For any other abbreviation, spell out the full name
-- At the end add 2 extra sentences about the technical side - what technology, protocol or standard is behind it
-- NEVER start by repeating the question! Someone else already asked it. Just go straight to the answer.
-- Max 120 words
+- Use one specific real-life comparison
+- NEVER use abbreviations except: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL
+- NEVER start by repeating the question! Just go straight to the answer
+- NEVER write calls to action like "write start in comments", "follow me", "I will send you the code" or anything similar
+- Max 100 words
 - Return ONLY the explanation text, nothing else`;
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
