@@ -83,28 +83,30 @@ async function generateScript(question: string, lang: 'sk' | 'en'): Promise<stri
     ? `Napíš vysvetlenie pre krátke video (30-40 sekúnd hovorenia) na tému: "${question}"
 
 Pravidlá:
-- Vysvetli to jednoducho a jasne, krok za krokom, ako kamarátovi
-- Štruktúra: 1) Čo to je v jednej vete, 2) Ako to funguje prakticky, 3) Konkrétny príklad z reálneho života
+- Vysvetli technicky správne ale zrozumiteľne, ako skúsený programátor juniorovi
+- Použi konkrétne technické pojmy a reálny kód/technológie ako príklady, nie metafory o kuchároch, stoloch alebo škatuliach
+- Štruktúra: 1) Krátka definícia, 2) Ako to funguje technicky, 3) Konkrétny príklad s reálnou technológiou alebo kódom
 - Plynulé vety, nie krátke bodka za bodkou
-- Použi "ty" formu — "napíšeš", "vidíš", "tvoj telefón"
-- Použi jedno konkrétne prirovnanie k bežnému životu
+- Použi "ty" formu — "napíšeš", "vidíš", "tvoj kód"
 - NIKDY nepoužívaj skratky okrem: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL
 - NIKDY nezačínaj opakovaním otázky! Začni rovno vysvetlením
-- NIKDY nepíš výzvy typu "napíš do komentov", "daj follow", "poslem ti kód" alebo čokoľvek podobné
+- NIKDY nepíš výzvy typu "napíš do komentov", "daj follow", "poslem ti kód"
+- NIKDY nepoužívaj laické prirovnania (kuchár, recept, škatuľa, auto, dom) — použi reálne technické príklady
 - Max 100 slov
 - Slovenčina (NIKDY čeština)
 - Vrať LEN text vysvetlenia, nič iné`
     : `Write an explanation for a short video (30-40 seconds spoken) on the topic: "${question}"
 
 Rules:
-- Explain it simply and clearly, step by step, like to a friend
-- Structure: 1) What it is in one sentence, 2) How it works practically, 3) One concrete real-life example
+- Explain it technically correct but accessible, like a senior developer explaining to a junior
+- Use real technical terms and actual code/technologies as examples, NOT metaphors about chefs, boxes, tables or houses
+- Structure: 1) Short definition, 2) How it works technically, 3) Concrete example with real technology or code
 - Flowing sentences, not short choppy ones
-- Use "you" form — "you type", "you see", "your phone"
-- Use one specific real-life comparison
+- Use "you" form — "you write", "you see", "your code"
 - NEVER use abbreviations except: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL
 - NEVER start by repeating the question! Just go straight to the answer
-- NEVER write calls to action like "write start in comments", "follow me", "I will send you the code" or anything similar
+- NEVER write calls to action like "write start in comments", "follow me", "I will send you the code"
+- NEVER use simplistic analogies (chef, recipe, box, car, house) — use real technical examples
 - Max 100 words
 - Return ONLY the explanation text, nothing else`;
 

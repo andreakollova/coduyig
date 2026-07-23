@@ -63,9 +63,9 @@ export async function generateBTSVoiceover(
   fs.mkdirSync(outputDir, { recursive: true });
 
   // Random greeting — varied for each video
-  const skGreetings = ['kámo', 'bráško', 'kámo', 'bráško', 'kámo'];
-  const enGreetings = ['bro', 'dude', 'buddy', 'pal', 'man'];
-  const greetIdx = Math.floor(Math.random() * 5);
+  const skGreetings = ['kámo', 'bráško', 'kámo', 'bráško'];
+  const enGreetings = ['bro', 'dude', 'buddy', 'pal'];
+  const greetIdx = Math.floor(Math.random() * 4);
   const greeting = lang === 'sk' ? skGreetings[greetIdx] : enGreetings[greetIdx];
 
   // Part 1: Byte intro (BYTE voice) — random variations
@@ -88,7 +88,8 @@ export async function generateBTSVoiceover(
   // Part 2: Questioner question (QUESTIONER voice)
   const greetingCap = greeting.charAt(0).toUpperCase() + greeting.slice(1);
   // Questioner just asks the question directly with greeting
-  const questionText = `"${greetingCap}, ${question.charAt(0).toLowerCase()}${question.slice(1)}"`;
+  const hey = lang === 'sk' ? 'Hej' : 'Hey';
+  const questionText = `"${hey} ${greeting}, ${question.charAt(0).toLowerCase()}${question.slice(1)}"`;
 
   // Part 3a: "Nechaj ma" / "Leave me alone" / "Give me a break"
   const dismissVariants = lang === 'sk'
