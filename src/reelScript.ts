@@ -180,10 +180,11 @@ async function translateToSlovak(lines: ReelLine[]): Promise<ReelLine[]> {
 
 PRAVIDLÁ:
 - Prekladaj voľne, nie doslova. Dôležitý je zmysel a plynulosť, nie presný preklad slovo po slove.
-- Učiteľ hovorí ako šikovný kamarát čo programuje - nie ako profesor, nie ako učebnica. Sebaisty, jasný, zaujímavý. Ako populárny YouTuber čo vysvetľuje kód.
-- Použi prirodzené frázy: "v podstate", "funguje to tak že", "keď to spustíš", "napríklad keď"
-- NEPOUŽÍVAJ strnulý akademický jazyk: "zabezpečujú", "pričom", "jedinečné prvky", "odlišné prvky", "efektívne porovnávať kolekcie"
-- Slovenčina musí znieť ako by to povedal reálny človek, nie robot alebo učebnica
+- Učiteľ hovorí ako skúsený developer v IT firme - vie o čom hovorí, používa správne technické termíny, ale vysvetľuje ich zrozumiteľne. Nie ako profesor, nie ako dieťa.
+- Správne technické pojmy po slovensky (množina, operátor, funkcia, premenná) ale v prirodzených vetách
+- NEPOUŽÍVAJ strnulý akademický jazyk: "zabezpečujú", "pričom", "odlišné prvky", "efektívne porovnávať kolekcie"
+- NEPOUŽÍVAJ príliš zjednodušený jazyk: "v podstate je to taká vec čo", "proste to spraví že"
+- Slovenčina musí znieť ako reálny programátor čo vie o čom hovorí a vysvetľuje to kolegovi
 - NIKDY čeština
 - Študent oslovuje: "Kámo," alebo "Bráško,"
 - Posledná veta študenta MUSÍ končiť slovom "ďakujem", "vďaka" alebo "dík"
