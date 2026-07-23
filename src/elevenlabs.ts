@@ -465,6 +465,19 @@ const EN_ABBREV_ONLY = new Set(
 
 function applyPhonetics(text: string, lang: 'en' | 'sk'): string {
   let result = text;
+
+  // Handle Python dunder methods (__str__, __init__, etc.) — replace before other phonetics
+  result = result.replace(/__([a-z_]+)__/g, (_, name) => {
+    const readable = lang === 'sk' ? `dunder ${name}` : `dunder ${name}`;
+    return readable;
+  });
+  // Handle single/double underscores in code-like text
+  result = result.replace(/_([a-z]+)/g, (match, name) => {
+    // Only replace if it looks like code (preceded by underscore)
+    if (match.startsWith('__')) return match; // already handled above
+    return match;
+  });
+
   const sorted = Object.entries(SK_PHONETICS).sort((a, b) => b[0].length - a[0].length);
   for (const [en, sk] of sorted) {
     // For EN: only replace abbreviations, skip regular English words
@@ -572,11 +585,9 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
   const audioBuffer = Buffer.from(data.audio_base64, 'base64');
   const wordTimings = charsToWords(data.alignment);
 
-  // Replace phonetic words with original text for captions
-  if (lang === 'sk') {
-    for (let i = 0; i < wordTimings.length && i < originalWords.length; i++) {
-      wordTimings[i].word = originalWords[i];
-    }
+  // Replace phonetic words with original text for captions (both SK and EN)
+  for (let i = 0; i < wordTimings.length && i < originalWords.length; i++) {
+    wordTimings[i].word = originalWords[i];
   }
 
   const duration = wordTimings.length > 0 ? wordTimings[wordTimings.length - 1].end + 0.3 : 2;
