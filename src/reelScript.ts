@@ -115,16 +115,8 @@ export async function generateReelScript(
     return fallbackScript(title, introduction, lang);
   }
 
-  const skAddendum = `
-
-LANGUAGE: Write the ENTIRE script in SLOVAK (slovenčina). NEVER Czech.
-- Student greetings: "Kámo,", "Bráško,", or "Kamoško," (not "Hey bro")
-- Student final line MUST end with "ďakujem", "vďaka" or "dík"
-- Use natural Slovak: correct grammar, commas before "ktorý/kde/keď/pretože"
-- Teacher speaks professionally but friendly, no slang ("pecka", "crazy", "paráda")
-- NO filler words: "vlastne", "proste", "tak nejako"`;
-
-  const system = lang === 'sk' ? SYSTEM_EN + skAddendum : SYSTEM_EN;
+  // Always generate in EN first — SK gets translated after for better quality
+  const system = SYSTEM_EN;
 
   const prompt = `LESSON TITLE: ${title}
 
@@ -158,9 +150,9 @@ ${keyTakeaways.join('\n')}`;
 
     let lines = parsed.lines.map((l: any) => ({ speaker: l.speaker, spoken: l.spoken, code: l.code || undefined }));
 
-    // Slovak grammar verification pass
+    // For SK: translate the EN script to natural Slovak
     if (lang === 'sk') {
-      lines = await verifySlovakGrammar(lines);
+      lines = await translateToSlovak(lines);
     }
 
     return { lines };
@@ -168,6 +160,63 @@ ${keyTakeaways.join('\n')}`;
     console.error('⚠️ GPT failed:', err);
     return fallbackScript(title, introduction, lang);
   }
+}
+
+async function translateToSlovak(lines: ReelLine[]): Promise<ReelLine[]> {
+  const script = lines.filter(l => l.spoken).map((l, i) => `${i}|${l.speaker}|${l.spoken}`).join('\n');
+
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${OPENAI_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        temperature: 0.3,
+        max_tokens: 2000,
+        response_format: { type: 'json_object' },
+        messages: [{
+          role: 'user',
+          content: `Prelož tento anglický dialóg do plynulej, prirodzenej slovenčiny. Toto je rozhovor medzi študentom a učiteľom o programovaní.
+
+PRAVIDLÁ:
+- Prekladaj voľne, nie doslova. Dôležitý je zmysel a plynulosť, nie presný preklad slovo po slove.
+- Slovenčina musí znieť prirodzene, s dobrým slovosledom a správnym skloňovaním.
+- NIKDY čeština.
+- Študent oslovuje: "Kámo," alebo "Bráško," (nie "Hey bro")
+- Posledná veta študenta MUSÍ končiť slovom "ďakujem", "vďaka" alebo "dík"
+- Učiteľ hovorí profesionálne ale priateľsky. Žiadny slang.
+- NIKDY nepoužívaj výplňové slová: "vlastne", "proste", "tak nejako"
+- Technické termíny (API, CPU, Python, lambda, set) NEPREKLADAJ
+- Správna slovenská gramatika: čiarky pred "ktorý/kde/keď/pretože/lebo"
+- Plynulé dlhé vety, NIE krátke koktavé fragmenty
+
+Formát vstupu: index|speaker|text
+Vráť JSON: {"lines": {"0": "preložená veta", "1": "preložená veta", ...}}
+
+DIALÓG:
+${script}`
+        }],
+      }),
+    });
+    const data = await res.json();
+    const parsed = JSON.parse(data.choices?.[0]?.message?.content || '{}');
+    const translated = parsed.lines || {};
+
+    let fixes = 0;
+    for (const [idx, newText] of Object.entries(translated)) {
+      const i = parseInt(idx);
+      if (i >= 0 && i < lines.length && typeof newText === 'string' && newText.trim()) {
+        if (lines[i].spoken !== newText) fixes++;
+        lines[i].spoken = newText as string;
+      }
+    }
+    console.log(`🇸🇰 Translated ${fixes} lines to Slovak`);
+  } catch (err) {
+    console.error('⚠️ Translation failed, using grammar check fallback');
+    lines = await verifySlovakGrammar(lines);
+  }
+
+  return lines;
 }
 
 async function verifySlovakGrammar(lines: ReelLine[]): Promise<ReelLine[]> {
