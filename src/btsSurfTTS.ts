@@ -88,8 +88,8 @@ export async function generateBTSVoiceover(
   // Part 2: Questioner question (QUESTIONER voice)
   const greetingCap = greeting.charAt(0).toUpperCase() + greeting.slice(1);
   // Questioner just asks the question directly with greeting
-  const hey = lang === 'sk' ? 'Hej' : 'Hey';
-  const questionText = `"${hey} ${greeting}, ${question.charAt(0).toLowerCase()}${question.slice(1)}"`;
+  const prefix = lang === 'sk' ? `${greetingCap}` : `Hey ${greeting}`;
+  const questionText = `"${prefix}, ${question.charAt(0).toLowerCase()}${question.slice(1)}"`;
 
   // Part 3a: "Nechaj ma" / "Leave me alone" / "Give me a break"
   const dismissVariants = lang === 'sk'
