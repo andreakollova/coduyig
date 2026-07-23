@@ -466,17 +466,18 @@ const EN_ABBREV_ONLY = new Set(
 function applyPhonetics(text: string, lang: 'en' | 'sk'): string {
   let result = text;
 
-  // Handle Python dunder methods (__str__, __init__, etc.) — replace before other phonetics
-  result = result.replace(/__([a-z_]+)__/g, (_, name) => {
-    const readable = lang === 'sk' ? `dunder ${name}` : `dunder ${name}`;
-    return readable;
-  });
-  // Handle single/double underscores in code-like text
-  result = result.replace(/_([a-z]+)/g, (match, name) => {
-    // Only replace if it looks like code (preceded by underscore)
-    if (match.startsWith('__')) return match; // already handled above
-    return match;
-  });
+  // Handle Python dunder methods (__str__, __init__, etc.)
+  result = result.replace(/__([a-z_]+)__/g, (_, name) => `dunder ${name}`);
+
+  // Remove asterisks (*args → args, **kwargs → kwargs)
+  result = result.replace(/\*+/g, '');
+
+  // SK: n-tice → en tice
+  if (lang === 'sk') {
+    result = result.replace(/\bn-tice\b/gi, 'en tice');
+    result = result.replace(/\bn-ticu\b/gi, 'en ticu');
+    result = result.replace(/\bn-tíc\b/gi, 'en tíc');
+  }
 
   const sorted = Object.entries(SK_PHONETICS).sort((a, b) => b[0].length - a[0].length);
   for (const [en, sk] of sorted) {

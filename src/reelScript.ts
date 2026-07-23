@@ -33,7 +33,7 @@ Create a conversation with EXACTLY 8 lines:
 8. STUDENT: final line of the whole video. Positive, grateful. VARY every time — never the same closing. Examples: "That's awesome, thanks, this really helped!" or "That was super clear, appreciate it!" or "Love it, I'm definitely using this, thanks!" or "Nice, I feel way more confident now, cheers!" (max 12 words). This is the LAST line of the video. Nothing comes after this.
 
 RULES:
-- ABSOLUTELY NEVER read code, syntax, variable names, function names, operators, or special characters aloud. NO "lambda x", NO "def square", NO "print()", NO "*args", NO "**kwargs", NO "__str__", NO "tuple", NO "n-tice". Instead describe what it DOES: "a function that accepts any number of inputs" instead of "a function with *args". Describe behavior, not syntax. This is the #1 RULE.
+- ABSOLUTELY NEVER read code syntax or special characters aloud. NO "lambda x", NO "def square", NO "print()", NO "__str__". You CAN say concept names like "args", "kwargs", "tuple" but NEVER with asterisks, underscores, parentheses or any code symbols. Say "args" not "*args". Describe what code DOES, not how it looks. This is the #1 RULE.
 - NEVER use abbreviations or acronyms EXCEPT these allowed ones: AI, API, CPU, CSV, DNS, GPS, HDD, ID, JSON, OS, QR, RAM, README, REST, SQL, SSD, USB. If you need to mention any other abbreviation, spell out the full name instead.
 - Teacher's explanations MUST come from the provided lesson content, not invented
 - ABSOLUTELY NEVER use colons (:) anywhere in spoken text. Periods and commas ONLY.
@@ -185,7 +185,7 @@ PRAVIDLÁ:
 - NEPOUŽÍVAJ strnulý akademický jazyk: "zabezpečujú", "pričom", "odlišné prvky", "efektívne porovnávať kolekcie"
 - NEPOUŽÍVAJ príliš zjednodušený jazyk: "v podstate je to taká vec čo", "proste to spraví že"
 - Slovenčina musí znieť ako reálny programátor čo vie o čom hovorí a vysvetľuje to kolegovi
-- NIKDY nepíš kód, syntax, operátory ani názvy premenných do hovoreného textu. Žiadne "set_a | set_b", "print()", "def func()", "*args", "**kwargs", "n-tice", "__str__". Opisuj čo kód robí slovami. Namiesto "*args" povedz "ľubovoľný počet vstupov". Namiesto "n-tice" povedz "zoskupenie hodnôt".
+- NIKDY nepíš kód, syntax, operátory ani špeciálne znaky do hovoreného textu. Žiadne "set_a | set_b", "print()", "def func()", "__str__". Môžeš povedať názvy konceptov ako "args", "kwargs", "tuple", "n-tice" ale NIKDY s hviezdičkami, podčiarkovníkmi alebo zátvorkami. Povedz "args" nie "*args".
 - NIKDY čeština
 - Študent oslovuje: "Kámo," alebo "Bráško,"
 - Posledná veta študenta MUSÍ končiť slovom "ďakujem", "vďaka" alebo "dík"
