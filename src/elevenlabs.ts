@@ -147,6 +147,10 @@ const SK_PHONETICS: Record<string, string> = {
   'ZeroDivisionError': 'zíro divížn eror',
   'AttributeError': 'etribjút eror',
   // Abbreviations from lessons
+  'CLI': 'sí el áj',
+  'GUI': 'džé jú áj',
+  'IDE': 'áj dí í',
+  'OOP': 'ó ó pé',
   'LEGB': 'el í džé bí',
   'OWASP': 'ou vasp',
   'TDD': 'tí dí dí',
