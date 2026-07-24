@@ -147,10 +147,10 @@ const SK_PHONETICS: Record<string, string> = {
   'ZeroDivisionError': 'zíro divížn eror',
   'AttributeError': 'etribjút eror',
   // Abbreviations from lessons
-  'CLI': 'sí el áj',
-  'GUI': 'džé jú áj',
-  'IDE': 'áj dí í',
-  'OOP': 'ó ó pé',
+  'CLI': 'sí el áj',  // SK only — EN reads it natively
+  'GUI': 'džé jú áj', // SK only
+  'IDE': 'áj dí í',   // SK only
+  'OOP': 'ó ó pé',    // SK only
   'LEGB': 'el í džé bí',
   'OWASP': 'ou vasp',
   'TDD': 'tí dí dí',
@@ -459,7 +459,8 @@ const SK_PHONETICS: Record<string, string> = {
 const EN_ABBREV_ONLY = new Set(
   Object.keys(SK_PHONETICS).filter(k => {
     const isAbbrev = k === k.toUpperCase() || ['IoT', 'OAuth', 'GraphQL'].includes(k);
-    const isRegularWord = /^[a-z]/.test(k) || ['Secure', 'Shell', 'True', 'False', 'None'].includes(k)
+    const skOnlyAbbrevs = ['CLI', 'GUI', 'IDE', 'OOP'];
+    const isRegularWord = /^[a-z]/.test(k) || skOnlyAbbrevs.includes(k) || ['Secure', 'Shell', 'True', 'False', 'None'].includes(k)
       || k.endsWith('Error') || ['Try', 'Except', 'While', 'Break', 'Continue', 'Raise', 'Yield',
         'Async', 'Await', 'Tuple', 'Cache', 'Thread', 'Scope', 'Debug', 'Debugger', 'Loop',
         'Boolean', 'Byte', 'Float', 'Queue', 'Stack', 'Slice', 'Range', 'Finally'].includes(k);
