@@ -226,7 +226,7 @@ const SK_PHONETICS: Record<string, string> = {
   'OCR': 'ou sí ár',
   'UUID': 'jú jú áj dí',
   // DevOps
-  'CI/CD': 'sí áj sí dí',
+  'CI/CD': 'sí áj, sí dí',
   // Tools
   'npm': 'en pí em',
   'TDD': 'tí dí dí',
@@ -550,6 +550,11 @@ function applyPhonetics(text: string, lang: 'en' | 'sk'): string {
 
   // Remove asterisks (*args → args, **kwargs → kwargs)
   result = result.replace(/\*+/g, '');
+
+  // CI/CD — has slash, regex \b won't work, handle before loop
+  if (lang === 'sk') {
+    result = result.replace(/CI\/CD/g, 'sí áj, sí dí');
+  }
 
   // SK: n-tice → en tice
   if (lang === 'sk') {
