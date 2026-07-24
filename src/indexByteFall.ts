@@ -222,7 +222,7 @@ async function waitForContainer(id: string, token: string) {
 async function main() {
   console.log('🪂 ByteFall Publisher\n');
 
-  // Pick random unposted term
+  // Pick NEXT unposted term in order (sequential, not random)
   const postedIds = await getPostedIds();
   let available = GLOSSARY.filter(g => !postedIds.includes(g.id));
   if (available.length === 0) {

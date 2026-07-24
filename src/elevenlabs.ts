@@ -146,34 +146,104 @@ const SK_PHONETICS: Record<string, string> = {
   'FileNotFoundError': 'fajl not faund eror',
   'ZeroDivisionError': 'zíro divížn eror',
   'AttributeError': 'etribjút eror',
-  // Abbreviations from lessons
-  'CLI': 'sí el áj',  // SK only — EN reads it natively
-  'GUI': 'džé jú áj', // SK only
-  'IDE': 'áj dí í',   // SK only
-  'OOP': 'ó ó pé',    // SK only
-  'LEGB': 'el í džé bí',
-  'OWASP': 'ou vasp',
+  // === ALL glossary abbreviations (ByteFall source) ===
+  // Core
+  'API': 'ej pí aj',
+  'CLI': 'sí el áj',
+  'GUI': 'džé jú áj',
+  'IDE': 'áj dí í',
+  'SDK': 'es dí kej',
+  'SSH': 'es es ejč',
+  // Web protocols
+  'HTTP': 'ejč tí tí pí',
+  'HTTPS': 'ejč tí tí pí es',
+  'TCP': 'tí sí pí',
+  'IP': 'áj pí',
+  'DNS': 'dí en es',
+  'URL': 'jú ár el',
+  'URI': 'jú ár áj',
+  'SSL': 'es es el',
+  'TLS': 'tí el es',
+  'CDN': 'sí dí en',
+  'VPN': 'ví pí en',
+  // Data formats
+  'JSON': 'džejson',
+  'XML': 'eks em el',
+  'CSV': 'sí es ví',
+  'HTML': 'ejč tí em el',
+  'CSS': 'sí es es',
+  // Database & backend
+  'SQL': 'es kjú el',
+  'ORM': 'ó ár em',
+  'CRUD': 'krad',
+  // Auth & security
+  'JWT': 'džej dablju tí',
+  'OAuth': 'ou ót',
+  // Hardware
+  'CPU': 'sí pí jú',
+  'GPU': 'džé pí jú',
+  'RAM': 'rem',
+  'SSD': 'es es dí',
+  'HDD': 'ejč dí dí',
+  'BIOS': 'bajos',
+  'UEFI': 'jú í ef áj',
+  // System & infra
+  'OS': 'ou es',
+  'VM': 'ví em',
+  'VPS': 'ví pí es',
+  // Web architecture
+  'DOM': 'dom',
+  'JSX': 'džej es eks',
+  'CSR': 'sí es ár',
+  'SSR': 'es es ár',
+  'SSG': 'es es džé',
+  'ISR': 'áj es ár',
+  'SPA': 'es pí ej',
+  'PWA': 'pí dablju ej',
+  'MVC': 'em ví sí',
+  'MVVM': 'em ví ví em',
+  // Programming paradigms
+  'OOP': 'ó ó pé',
+  'FP': 'ef pé',
+  // AI & ML
+  'MCP': 'em sí pí',
+  'LLM': 'el el em',
+  'VLM': 'ví el em',
+  'RAG': 'rag',
+  'A2A': 'ej tú ej',
+  'CoT': 'sí ou tí',
+  'MoE': 'em ou í',
+  'RLHF': 'ár el ejč ef',
+  'TTS': 'tí tí es',
+  'STT': 'es tí tí',
+  'NLP': 'en el pí',
+  'CV': 'sí ví',
+  'ASR': 'ej es ár',
+  'GPT': 'džé pí tí',
+  'LoRA': 'lóra',
+  'PEFT': 'peft',
+  'RL': 'ár el',
+  'OCR': 'ou sí ár',
+  'UUID': 'jú jú áj dí',
+  // DevOps
+  'CI/CD': 'sí áj sí dí',
+  // Tools
+  'npm': 'en pí em',
   'TDD': 'tí dí dí',
   'GIL': 'džé aj el',
+  'Git': 'git',
+  // Other
+  'AI': 'ej aj',
+  'ID': 'aj dí',
+  'VS': 'ví es',
+  'REST': 'rest',
+  'README': 'ríd mí',
+  'LEGB': 'el í džé bí',
+  'OWASP': 'ou vasp',
   'PEP': 'pep',
   'CISC': 'sisk',
   'RISC': 'risk',
   'JIT': 'džit',
-  'CSV': 'sí es ví',
-  'API': 'ej pí aj',
-  'REST': 'rest',
-  'DNS': 'dí en es',
-  'SQL': 'es kjú el',
-  'JSON': 'džejson',
-  'OS': 'ou es',
-  'CPU': 'sí pí jú',
-  'RAM': 'rem',
-  'SSD': 'es es dí',
-  'HDD': 'ejč dí dí',
-  'AI': 'ej aj',
-  'ID': 'aj dí',
-  'VS': 'ví es',
-  'README': 'ríd mí',
   // Python tools & modules
   'asyncio': 'ejsink aj ou',
   'pytest': 'paj test',
@@ -459,7 +529,11 @@ const SK_PHONETICS: Record<string, string> = {
 const EN_ABBREV_ONLY = new Set(
   Object.keys(SK_PHONETICS).filter(k => {
     const isAbbrev = k === k.toUpperCase() || ['IoT', 'OAuth', 'GraphQL'].includes(k);
-    const skOnlyAbbrevs = ['CLI', 'GUI', 'IDE', 'OOP'];
+    const skOnlyAbbrevs = ['CLI', 'GUI', 'IDE', 'OOP', 'SDK', 'SSH', 'HTTP', 'HTTPS', 'TCP', 'IP',
+      'URL', 'URI', 'SSL', 'TLS', 'CDN', 'VPN', 'XML', 'HTML', 'CSS', 'ORM', 'CRUD', 'JWT',
+      'GPU', 'BIOS', 'UEFI', 'VM', 'VPS', 'DOM', 'JSX', 'CSR', 'SSR', 'SSG', 'ISR', 'SPA',
+      'PWA', 'MVC', 'MVVM', 'FP', 'MCP', 'LLM', 'VLM', 'RAG', 'A2A', 'CoT', 'MoE', 'RLHF',
+      'TTS', 'STT', 'NLP', 'CV', 'ASR', 'GPT', 'LoRA', 'PEFT', 'RL', 'OCR', 'UUID', 'CI/CD', 'npm'];
     const isRegularWord = /^[a-z]/.test(k) || skOnlyAbbrevs.includes(k) || ['Secure', 'Shell', 'True', 'False', 'None'].includes(k)
       || k.endsWith('Error') || ['Try', 'Except', 'While', 'Break', 'Continue', 'Raise', 'Yield',
         'Async', 'Await', 'Tuple', 'Cache', 'Thread', 'Scope', 'Debug', 'Debugger', 'Loop',
