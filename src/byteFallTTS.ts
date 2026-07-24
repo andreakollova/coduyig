@@ -688,8 +688,16 @@ export async function generateByteFallVoiceover(
   }
   fs.writeFileSync(listFile, concatLines.join('\n'));
 
+  const rawFinal = path.join(outputDir, 'bytefall_voice_raw.mp3');
   const finalAudio = path.join(outputDir, 'bytefall_voice.mp3');
-  execSync(`ffmpeg -y -f concat -safe 0 -i "${listFile}" -c:a libmp3lame -q:a 2 "${finalAudio}" 2>/dev/null`);
+  execSync(`ffmpeg -y -f concat -safe 0 -i "${listFile}" -c:a libmp3lame -q:a 2 "${rawFinal}" 2>/dev/null`);
+  // Normalize entire audio at once for consistent volume throughout
+  try {
+    execSync(`ffmpeg -y -i "${rawFinal}" -af "acompressor=threshold=-20dB:ratio=6:attack=3:release=30:makeup=4,loudnorm=I=-13:TP=-1:LRA=5" "${finalAudio}" 2>/dev/null`);
+    fs.unlinkSync(rawFinal);
+  } catch {
+    fs.renameSync(rawFinal, finalAudio);
+  }
 
   // Get actual audio duration
   const durationStr = execSync(`ffprobe -v error -show_entries format=duration -of csv=p=0 "${finalAudio}" 2>/dev/null`).toString().trim();
