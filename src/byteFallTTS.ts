@@ -614,8 +614,7 @@ export async function generateByteFallVoiceover(
       introLine,
       `${term}! ${termFull}.`,
       ...explains,
-      `${term}!`,
-      `${termFull}.`,
+      `${term}. ${termFull}.`,
       (() => {
         const en = [
           'If you want to know more, the full explanation is in the description below.',
