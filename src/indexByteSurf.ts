@@ -85,7 +85,8 @@ async function generateScript(question: string, lang: 'sk' | 'en'): Promise<stri
 Pravidlá:
 - Vysvetli jednoducho a kamarátsky, ako keby vysvetľuješ spolužiakovi pri pive
 - Používaj bežné slová, nie odborné výrazy — ak musíš použiť technický pojem, hneď ho vysvetli jednoducho
-- Štruktúra: 1) Jednoduché vysvetlenie čo to je, 2) Ako to funguje v praxi, 3) Praktický príklad
+- HLAVNE ZODPOVEDAJ OTÁZKU — ak sa pýta PREČO, vysvetli dôvod/príčinu, nie len ako to funguje
+- Štruktúra: 1) Priama odpoveď na otázku (prečo/ako/čo), 2) Jednoduché vysvetlenie prečo je to tak, 3) Praktický príklad
 - Plynulé vety, nie krátke bodka za bodkou
 - Použi "ty" formu — "napíšeš", "vidíš", "tvoj kód"
 - NIKDY nepoužívaj skratky okrem: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL
@@ -101,7 +102,8 @@ Pravidlá:
 Rules:
 - Explain it simply and casually, like you are explaining to a friend over coffee
 - Use everyday words, not jargon — if you must use a technical term, immediately explain it simply
-- Structure: 1) Simple explanation of what it is, 2) How it works in practice, 3) Practical example
+- ACTUALLY ANSWER THE QUESTION — if it asks WHY, explain the reason/cause, not just how it works
+- Structure: 1) Direct answer to the question (why/how/what), 2) Simple explanation of why it is that way, 3) Practical example
 - Flowing sentences, not short choppy ones
 - Use "you" form — "you write", "you see", "your code"
 - NEVER use abbreviations except: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL
