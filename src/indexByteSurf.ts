@@ -83,31 +83,33 @@ async function generateScript(question: string, lang: 'sk' | 'en'): Promise<stri
     ? `Napíš vysvetlenie pre krátke video (30-40 sekúnd hovorenia) na tému: "${question}"
 
 Pravidlá:
-- Vysvetli technicky správne ale zrozumiteľne, ako skúsený programátor juniorovi
-- Použi konkrétne technické pojmy a reálny kód/technológie ako príklady, nie metafory o kuchároch, stoloch alebo škatuliach
-- Štruktúra: 1) Krátka definícia, 2) Ako to funguje technicky, 3) Konkrétny príklad s reálnou technológiou alebo kódom
+- Vysvetli jednoducho a kamarátsky, ako keby vysvetľuješ spolužiakovi pri pive
+- Používaj bežné slová, nie odborné výrazy — ak musíš použiť technický pojem, hneď ho vysvetli jednoducho
+- Štruktúra: 1) Jednoduché vysvetlenie čo to je, 2) Ako to funguje v praxi, 3) Praktický príklad
 - Plynulé vety, nie krátke bodka za bodkou
 - Použi "ty" formu — "napíšeš", "vidíš", "tvoj kód"
 - NIKDY nepoužívaj skratky okrem: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL
 - NIKDY nezačínaj opakovaním otázky! Začni rovno vysvetlením
 - NIKDY nepíš výzvy typu "napíš do komentov", "daj follow", "poslem ti kód"
-- NIKDY nepoužívaj laické prirovnania (kuchár, recept, škatuľa, auto, dom) — použi reálne technické príklady
-- Max 100 slov
+- NIKDY nepoužívaj laické prirovnania (kuchár, recept, škatuľa, auto, dom)
+- NIKDY nepíš názvy súborov, prípony, kód, úvodzovky okolo názvov, cesty, premenné ani syntax — toto bude ČÍTANÉ NAHLAS a TTS to nevie prečítať
+- Max 80 slov
 - Slovenčina (NIKDY čeština)
 - Vrať LEN text vysvetlenia, nič iné`
     : `Write an explanation for a short video (30-40 seconds spoken) on the topic: "${question}"
 
 Rules:
-- Explain it technically correct but accessible, like a senior developer explaining to a junior
-- Use real technical terms and actual code/technologies as examples, NOT metaphors about chefs, boxes, tables or houses
-- Structure: 1) Short definition, 2) How it works technically, 3) Concrete example with real technology or code
+- Explain it simply and casually, like you are explaining to a friend over coffee
+- Use everyday words, not jargon — if you must use a technical term, immediately explain it simply
+- Structure: 1) Simple explanation of what it is, 2) How it works in practice, 3) Practical example
 - Flowing sentences, not short choppy ones
 - Use "you" form — "you write", "you see", "your code"
 - NEVER use abbreviations except: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL
 - NEVER start by repeating the question! Just go straight to the answer
 - NEVER write calls to action like "write start in comments", "follow me", "I will send you the code"
-- NEVER use simplistic analogies (chef, recipe, box, car, house) — use real technical examples
-- Max 100 words
+- NEVER use simplistic analogies (chef, recipe, box, car, house)
+- NEVER write filenames, file extensions, code, quoted names, paths, variables or syntax — this will be READ ALOUD and TTS cannot pronounce these
+- Max 80 words
 - Return ONLY the explanation text, nothing else`;
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {

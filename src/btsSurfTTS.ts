@@ -41,7 +41,7 @@ async function tts(text: string, voiceId: string, speed = 1.1, style = 0.5): Pro
     headers: { 'xi-api-key': API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       text, model_id: 'eleven_multilingual_v2',
-      voice_settings: { stability: 0.65, similarity_boost: 0.8, style: 0.35, use_speaker_boost: true },
+      voice_settings: { stability: 0.65, similarity_boost: 0.8, style, use_speaker_boost: true },
       speed,
     }),
   });
@@ -148,14 +148,17 @@ export async function generateBTSVoiceover(
   const audioPaths: string[] = [];
   const actualDurations: number[] = [];
 
+  // Parts: 0=intro, 1=questioner, 2=answerPart1, 3=answerPart2, 4=answerPart3, 5=script, 6=closing
+  // Short parts (everything except script at index 5) need volume boost for consistent loudness
   for (let i = 0; i < parts.length; i++) {
     const rawPath = path.join(outputDir, `bts_${i}_raw.mp3`);
     const normPath = path.join(outputDir, `bts_${i}.mp3`);
     fs.writeFileSync(rawPath, parts[i].audio);
     try {
-      // Questioner (index 1) gets extra volume boost
-      const target = i === 1 ? '-12' : '-14';
-      execSync(`ffmpeg -y -i "${rawPath}" -af "acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=${target}:TP=-1:LRA=7" "${normPath}" 2>/dev/null`);
+      const isShort = i !== 5; // everything except the main explanation
+      const boost = isShort ? 'volume=1.8,' : '';
+      const target = '-14';
+      execSync(`ffmpeg -y -i "${rawPath}" -af "${boost}acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=${target}:TP=-1:LRA=7" "${normPath}" 2>/dev/null`);
       fs.unlinkSync(rawPath);
     } catch { fs.renameSync(rawPath, normPath); }
     audioPaths.push(normPath);

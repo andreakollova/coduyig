@@ -37,6 +37,7 @@ Pravidlá:
 - Jednoduché, zrozumiteľné
 - Žiadne analógie, žiadne príklady
 - Slovenčina (NIKDY čeština)
+- Anglické slová z názvu (${termFull}) NECHAJ PRESNE tak ako sú - NEPREKLADAJ ich, NEUPRAVUJ výslovnosť, NEFONETIZUJ (napr. Mixture ostáva Mixture, NIE Miksture/Mikščr)
 - Vrať LEN JSON pole reťazcov
 
 Príklad pre SSH = Secure Shell:
@@ -48,13 +49,14 @@ Pre ${termFull}:`
     : `Abbreviation: ${term} = ${termFull}
 Definition: ${definition}
 
-For each word in "${termFull}" write ONE short sentence in the format:
+${term} is an ABBREVIATION (each letter/part stands for a word). For each word in "${termFull}" write ONE short sentence in the format:
 "[Word] means [short explanation max 8 words]."
 
 Rules:
 - Max 8 words after "means"
 - Simple, clear
 - No analogies, no examples
+- Keep English words from "${termFull}" EXACTLY as written - do NOT rephrase or phonetically alter them
 - Return ONLY a JSON array of strings
 
 Example for SSH = Secure Shell:
@@ -455,6 +457,16 @@ const EN_PHONETICS: Record<string, string> = {
   'JIT': 'jit',
   'GIL': 'gill',
   'CI/CD': 'see-eye see-dee',
+  // Mixed-case abbreviations — ElevenLabs reads these as words instead of spelling them
+  'MoE': 'M-O-E',
+  'CoT': 'C-O-T',
+  'A2A': 'A-two-A',
+  'LoRA': 'low-rah',
+  'PEFT': 'peft',
+  'RLHF': 'R-L-H-F',
+  'MVVM': 'M-V-V-M',
+  'BIOS': 'buy-oss',
+  'UUID': 'you-you-eye-dee',
 };
 
 // Build a mapping from original words to their phonetic expansions

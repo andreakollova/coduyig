@@ -768,8 +768,8 @@ async function ttsLine(text: string, voiceId: string, lang: 'en' | 'sk' = 'en', 
   // Higher stability = more consistent volume across lines (crucial for student)
   const isEnStudent = lang === 'en' && speaker === 'student';
   const isEnTeacher = lang === 'en' && speaker === 'teacher';
-  let stability = isSkStudent ? 0.9 : isSkTeacher ? 0.55 : isEnStudent ? 0.8 : 0.5;
-  let style = isSkStudent ? 0.1 : isSkTeacher ? 0.45 : isEnStudent ? 0.15 : 0.55;
+  let stability = isSkStudent ? 0.9 : isSkTeacher ? 0.55 : isEnStudent ? 0.8 : 0.65;
+  let style = isSkStudent ? 0.1 : isSkTeacher ? 0.45 : isEnStudent ? 0.15 : 0.4;
   if (enthusiastic) {
     stability = 0.35;
     style = 0.85;
@@ -856,10 +856,13 @@ export async function generateConversationTTS(
     fs.writeFileSync(rawPath, audioBuffer);
 
     // Normalize audio: highpass removes low rumble/buzz, compressor evens dynamics, loudnorm sets level
+    // Short lines (< 8 words) get a volume boost because loudnorm struggles with very short audio
+    const wordCount = line.spoken.split(/\s+/).length;
+    const shortBoost = wordCount < 8 ? 'volume=1.8,' : '';
     try {
       const filters = line.speaker === 'student'
-        ? 'highpass=f=80,acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7'
-        : 'acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7';
+        ? `highpass=f=80,${shortBoost}acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7`
+        : `${shortBoost}acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7`;
       execSync(`ffmpeg -y -i "${rawPath}" -af "${filters}" "${audioPath}" 2>/dev/null`);
       fs.unlinkSync(rawPath);
     } catch {
