@@ -180,18 +180,27 @@ async function translateToSlovak(lines: ReelLine[]): Promise<ReelLine[]> {
 
 Toto je rozhovor medzi študentom a učiteľom o programovaní. Anglická verzia je kvalitná — tvoja úloha je spraviť SK verziu MINIMÁLNE rovnako dobrú.
 
+NAJDÔLEŽITEJŠIE PRAVIDLO:
+Študent NESMIE len opakovať čo učiteľ povedal! Študent musí prinášať VLASTNÝ input:
+- Riadok 3: vlastná zvedavá otázka (nie "aha, ok" ale skutočná otázka)
+- Riadok 5: študent dáva VLASTNÝ PRÍKLAD alebo vysvetľuje VLASTNÝMI SLOVAMI. NIKDY len neparafrázuje učiteľa. Musí pridať niečo nové — vlastnú myšlienku, vlastný use case, vlastné pochopenie.
+- Riadok 8: krátka vďačná veta
+
+AK v EN verzii študent dáva príklad (napr. "So if my app crashes..."), SK študent MUSÍ dať ROVNAKO KONKRÉTNY príklad — nie generic "to dáva zmysel".
+
 POSTUP pre každý riadok:
 1. Prečítaj EN vetu
 2. Pochop čo presne hovorí a prečo je to užitočné
-3. Napíš to po slovensky tak, aby to znelo prirodzene A zachovalo rovnakú výpovednú hodnotu
-4. Skontroluj: je SK veta rovnako zaujímavá a informatívna ako EN? Ak nie, prepíš ju
+3. Napíš to po slovensky tak, aby to znelo PRIRODZENE po slovensky — nie ako preklad z angličtiny
+4. SKONTROLUJ SLOVOSLED — slovenčina má iný slovosled ako angličtina! "This helps you find bugs" NIE JE "Toto ti pomáha nájsť chyby" ale "Vďaka tomu ľahšie nájdeš chyby"
+5. Skontroluj: je SK veta rovnako zaujímavá a informatívna ako EN? Ak nie, prepíš ju
 
 PRAVIDLÁ:
-- Ak EN spomína firmu (Spotify, Instagram, Netflix) — ZACHOVAJ ju, nepíš "sociálne médiá" alebo "rôzne služby"
-- Ak EN dáva konkrétny praktický scenár — ZACHOVAJ presne ten scenár, nenahrádzaj ho všeobecnou frázou
-- Ak EN vysvetľuje mechanizmus (ako to funguje pod kapotou) — ZACHOVAJ ten mechanizmus, nezjednodušuj
-- Každá veta musí mať VÝPOVEDNÚ HODNOTU. Po každej vete sa opýtaj: naučil sa divák niečo nové? Ak nie, prepíš ju
-- Učiteľ hovorí ako skúsený programátor — sebaistvo, jasne, s konkrétnymi príkladmi
+- SLOVENSKÝ SLOVOSLED — nepíš anglický slovosled po slovensky. Píš ako by to povedal normálny Slovák
+- Ak EN spomína firmu (Spotify, Instagram, Netflix) — ZACHOVAJ ju
+- Ak EN dáva konkrétny praktický scenár — ZACHOVAJ presne ten scenár
+- Ak EN vysvetľuje mechanizmus — ZACHOVAJ ten mechanizmus, nezjednodušuj
+- Študent NIKDY nesmie len povedať "aha super" alebo "to dáva zmysel" — musí pridať VLASTNÚ myšlienku
 - NIKDY neopakuj to isté inými slovami
 - NIKDY nepíš kód ani špeciálne znaky. "args" áno, "*args" nie
 - NIKDY čeština
