@@ -841,15 +841,14 @@ export async function generateConversationTTS(
 
     console.log(`  Line ${i + 1} [${line.speaker}]: "${line.spoken.slice(0, 50)}..."`);
 
-    // Speed per speaker and line position — consistent for teacher throughout
+    // Speed per speaker — teacher consistent across all lines
     const isLastStudentLine = line.speaker === 'student' && i === lines.length - 3;
     let baseSpeed: number;
     if (line.speaker === 'student') {
       baseSpeed = lang === 'sk' ? 0.9 : 1.1;
       if (isLastStudentLine) baseSpeed = 0.95;
     } else {
-      // Teacher: same speed for ALL lines (no fast intro, no slow outro)
-      baseSpeed = lang === 'sk' ? 1.05 : 1.2;
+      baseSpeed = lang === 'sk' ? 1.3 : 1.3;
     }
 
     // Never use enthusiastic mode - it causes volume inconsistency
