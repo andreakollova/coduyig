@@ -856,13 +856,15 @@ export async function generateConversationTTS(
     fs.writeFileSync(rawPath, audioBuffer);
 
     // Normalize audio: highpass removes low rumble/buzz, compressor evens dynamics, loudnorm sets level
-    // Short lines (< 8 words) get a volume boost because loudnorm struggles with very short audio
+    // Student voice is naturally quieter — boost volume and use louder target (-12 vs -14)
     const wordCount = line.spoken.split(/\s+/).length;
-    const shortBoost = wordCount < 8 ? 'volume=1.8,' : '';
+    const isStudent = line.speaker === 'student';
+    const volBoost = isStudent ? 'volume=2.5,' : (wordCount < 8 ? 'volume=1.8,' : '');
+    const target = isStudent ? '-12' : '-14';
     try {
-      const filters = line.speaker === 'student'
-        ? `highpass=f=80,${shortBoost}acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7`
-        : `${shortBoost}acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7`;
+      const filters = isStudent
+        ? `highpass=f=80,${volBoost}acompressor=threshold=-20dB:ratio=6:attack=3:release=30:makeup=5,loudnorm=I=${target}:TP=-1:LRA=5`
+        : `${volBoost}acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=${target}:TP=-1:LRA=7`;
       execSync(`ffmpeg -y -i "${rawPath}" -af "${filters}" "${audioPath}" 2>/dev/null`);
       fs.unlinkSync(rawPath);
     } catch {
