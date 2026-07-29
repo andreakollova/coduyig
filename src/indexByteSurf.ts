@@ -78,7 +78,11 @@ async function markPosted(id: string) {
 }
 
 // === GENERATE SCRIPT VIA GPT ===
-async function generateScript(question: string, lang: 'sk' | 'en'): Promise<string> {
+async function generateScript(question: string, lang: 'sk' | 'en', enScriptRef?: string): Promise<string> {
+  const enReference = (lang === 'sk' && enScriptRef)
+    ? `\n\nEN REFERENCIA (použi rovnaké príklady, fakty a pointy, ale píš PRIAMO po slovensky, NEprekladaj):\n${enScriptRef}`
+    : '';
+
   const prompt = lang === 'sk'
     ? `Napíš vysvetlenie pre krátke video (30-40 sekúnd hovorenia) na tému: "${question}"
 
@@ -94,9 +98,10 @@ Pravidlá:
 - NIKDY nepíš výzvy typu "napíš do komentov", "daj follow", "poslem ti kód"
 - NIKDY nepoužívaj laické prirovnania (kuchár, recept, škatuľa, auto, dom)
 - NIKDY nepíš názvy súborov, prípony, kód, úvodzovky okolo názvov, cesty, premenné ani syntax — toto bude ČÍTANÉ NAHLAS a TTS to nevie prečítať
+- NIKDY neprekladaj technické koncepty neprirodzene (ŽIADNE "vnútornosti", "pod kapotou"). Použi normálnu slovenčinu
 - Max 80 slov
 - Slovenčina (NIKDY čeština)
-- Vrať LEN text vysvetlenia, nič iné`
+- Vrať LEN text vysvetlenia, nič iné${enReference}`
     : `Write an explanation for a short video (30-40 seconds spoken) on the topic: "${question}"
 
 Rules:
@@ -200,11 +205,11 @@ async function main() {
   const surfColorPick = SURF_COLORS[Math.floor(Math.random() * SURF_COLORS.length)];
   console.log(`🎽 Equipment: ${JSON.stringify(equipment)}\n`);
 
-  // Generate both scripts independently
+  // Generate EN first, then SK using EN as content reference
   console.log('✍️ Generating scripts...');
   const scriptEn = await generateScript(topic.questionEn, 'en');
   console.log(`  EN: "${scriptEn.slice(0, 80)}..."`);
-  const scriptSk = await generateScript(topic.questionSk, 'sk');
+  const scriptSk = await generateScript(topic.questionSk, 'sk', scriptEn);
   console.log(`  SK: "${scriptSk.slice(0, 80)}..."`);
 
   for (const lang of ['sk', 'en'] as const) {
