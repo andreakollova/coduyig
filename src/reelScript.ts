@@ -176,38 +176,34 @@ async function translateToSlovak(lines: ReelLine[]): Promise<ReelLine[]> {
         response_format: { type: 'json_object' },
         messages: [{
           role: 'user',
-          content: `Prepíš tento anglický dialóg do slovenčiny. NIE prekladaj — PREPÍŠ tak, aby SK verzia znela rovnako dobre, zaujímavo a užitočne ako EN originál.
+          content: `Prepíš tento anglický dialóg do slovenčiny. Cieľ: SK verzia musí mať ROVNAKÚ POINTU a ROVNAKÚ KVALITU ako EN originál, ale musí znieť ako keby to Slovák povedal kamarátovi.
 
-Toto je rozhovor medzi študentom a učiteľom o programovaní. Anglická verzia je kvalitná — tvoja úloha je spraviť SK verziu MINIMÁLNE rovnako dobrú.
+Toto je rozhovor medzi študentom a učiteľom o programovaní.
 
-NAJDÔLEŽITEJŠIE PRAVIDLO:
-Študent NESMIE len opakovať čo učiteľ povedal! Študent musí prinášať VLASTNÝ input:
-- Riadok 3: vlastná zvedavá otázka (nie "aha, ok" ale skutočná otázka)
-- Riadok 5: študent dáva VLASTNÝ PRÍKLAD alebo vysvetľuje VLASTNÝMI SLOVAMI. NIKDY len neparafrázuje učiteľa. Musí pridať niečo nové — vlastnú myšlienku, vlastný use case, vlastné pochopenie.
+HLAVNÝ PRINCÍP:
+Každý riadok musí zachovať PRESNE tú istú pointu ako EN originál. Ak EN učiteľ vysvetlí ako niečo funguje, SK učiteľ musí vysvetliť to isté — len po slovensky a zrozumiteľne. Ak EN študent dá príklad s todo appkou, SK študent dá ten istý príklad. NIKDY nezjednodušuj pointu, NIKDY nenahradzuj konkrétny príklad všeobecnou frázou.
+
+Zároveň to musí byť ZROZUMITEĽNÉ — človek bez IT znalostí musí pochopiť o čom sa hovorí. Ak EN použije zložité slovo, v SK ho vysvetli jednoducho ale ZACHOVAJ tú istú myšlienku.
+
+ŠTUDENT:
+- Riadok 3: skutočná zvedavá otázka (nie "aha, ok")
+- Riadok 5: študent dáva VLASTNÝ PRÍKLAD alebo vysvetľuje VLASTNÝMI SLOVAMI — rovnako konkrétne ako v EN. NIKDY len neparafrázuje učiteľa. Ak EN študent hovorí "So if my app crashes and I set a breakpoint...", SK študent MUSÍ dať rovnako konkrétny príklad, nie "to dáva zmysel"
 - Riadok 8: krátka vďačná veta
 
-AK v EN verzii študent dáva príklad (napr. "So if my app crashes..."), SK študent MUSÍ dať ROVNAKO KONKRÉTNY príklad — nie generic "to dáva zmysel".
-
-POSTUP pre každý riadok:
-1. Prečítaj EN vetu
-2. Pochop čo presne hovorí a prečo je to užitočné
-3. Napíš to po slovensky tak, aby to znelo PRIRODZENE po slovensky — nie ako preklad z angličtiny
-4. SKONTROLUJ SLOVOSLED — slovenčina má iný slovosled ako angličtina! "This helps you find bugs" NIE JE "Toto ti pomáha nájsť chyby" ale "Vďaka tomu ľahšie nájdeš chyby"
-5. Skontroluj: je SK veta rovnako zaujímavá a informatívna ako EN? Ak nie, prepíš ju
+SLOVOSLED A ŠTÝL:
+- Píš ako by to povedal normálny Slovák. NIE anglický slovosled preložený do slovenčiny
+- "This helps you find bugs" → "Vďaka tomu ľahšie nájdeš chyby" (NIE "Toto ti pomáha nájsť chyby")
+- Krátke plynulé vety. Max 15 slov na vetu
 
 PRAVIDLÁ:
-- SLOVENSKÝ SLOVOSLED — nepíš anglický slovosled po slovensky. Píš ako by to povedal normálny Slovák
-- Ak EN spomína firmu (Spotify, Instagram, Netflix) — ZACHOVAJ ju
-- Ak EN dáva konkrétny praktický scenár — ZACHOVAJ presne ten scenár
-- Ak EN vysvetľuje mechanizmus — ZACHOVAJ ten mechanizmus, nezjednodušuj
-- Študent NIKDY nesmie len povedať "aha super" alebo "to dáva zmysel" — musí pridať VLASTNÚ myšlienku
+- ZACHOVAJ firmy (Spotify, Netflix), scenáre, mechanizmy z EN — nepíš "rôzne služby"
 - NIKDY neopakuj to isté inými slovami
-- NIKDY nepíš kód ani špeciálne znaky. "args" áno, "*args" nie
+- NIKDY nepíš kód ani špeciálne znaky
 - NIKDY čeština
 - Študent: "Kámo," alebo "Bráško,"
 - Posledná veta študenta MUSÍ končiť slovom "ďakujem", "vďaka" alebo "dík"
 - Technické termíny (API, CPU, Python, lambda, set) NEPREKLADAJ
-- Správna slovenská gramatika, plynulé ale KRÁTKE vety. Max 15 slov na vetu. Ak je veta dlhšia, rozdeľ ju na dve.
+- Správna slovenská gramatika
 
 Formát vstupu: index|speaker|text
 Vráť JSON: {"lines": {"0": "preložená veta", "1": "preložená veta", ...}}
