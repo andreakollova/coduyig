@@ -247,13 +247,41 @@ async function main() {
 
   // 2. Generate conversation script
   console.log('\n=== Generating script ===');
+
+  // For SK: load EN script as content reference so both videos cover similar points
+  let enScriptRef: any[] | undefined;
+  if (lang === 'sk') {
+    try {
+      const { data: enData } = await sb.storage.from(BUCKET).download(`tracking/last_en_script.json`);
+      if (enData) {
+        const enParsed = JSON.parse(await enData.text());
+        if (enParsed.lessonId === lesson.id) {
+          enScriptRef = enParsed.lines;
+          console.log(`📎 Using EN script as reference (${enScriptRef!.length} lines)`);
+        }
+      }
+    } catch {}
+  }
+
   const script = await generateReelScript(
     lessonTitle,
     lessonIntro,
     lessonContent,
     lessonTakeaways,
     lang,
+    enScriptRef,
   );
+
+  // Save EN script for SK to use as reference later
+  if (lang === 'en') {
+    try {
+      await sb.storage.from(BUCKET).upload('tracking/last_en_script.json',
+        Buffer.from(JSON.stringify({ lessonId: lesson.id, lines: script.lines })),
+        { contentType: 'application/json', upsert: true });
+      console.log('📎 Saved EN script as reference for SK');
+    } catch {}
+  }
+
   if (customCode) {
     for (const line of script.lines) line.code = undefined;
     const teacherLine = script.lines.find(l => l.speaker === 'teacher' && l.spoken);

@@ -111,15 +111,15 @@ export async function generateReelScript(
   learningContent: string,
   keyTakeaways: string[],
   lang: 'en' | 'sk' = 'en',
+  enScript?: ReelLine[],
 ): Promise<ReelScript> {
   if (!OPENAI_KEY) {
     return fallbackScript(title, introduction, lang);
   }
 
-  // Generate in the target language directly for natural output
   const system = lang === 'sk' ? SYSTEM_SK : SYSTEM_EN;
 
-  const prompt = `LESSON TITLE: ${title}
+  let prompt = `LESSON TITLE: ${title}
 
 INTRODUCTION (use for context in line 4):
 ${introduction.slice(0, 2500)}
@@ -129,6 +129,13 @@ ${learningContent.slice(0, 4000)}
 
 KEY TAKEAWAYS:
 ${keyTakeaways.join('\n')}`;
+
+  // For SK: pass EN script as content reference so both videos cover similar points/examples
+  if (lang === 'sk' && enScript) {
+    const enRef = enScript.map((l, i) => `${i + 1}. [${l.speaker}]: ${l.spoken}`).join('\n');
+    prompt += `\n\nEN REFERENCIA (použi rovnaké príklady, firmy a pointy, ale píš PRIAMO po slovensky, NEprekladaj):
+${enRef}`;
+  }
 
   try {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
