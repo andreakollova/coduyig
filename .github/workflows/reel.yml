@@ -12,6 +12,10 @@ on:
         description: 'Dry run (render only, no publish)'
         type: boolean
         default: false
+      sk_only:
+        description: 'Only publish SK reel (skip EN)'
+        type: boolean
+        default: false
 
 jobs:
   reel:
@@ -47,6 +51,7 @@ jobs:
           echo "args=$ARGS" >> $GITHUB_OUTPUT
 
       - name: Publish EN Reel
+        if: ${{ inputs.sk_only != true }}
         id: en_reel
         env:
           IG_PAGE_TOKEN_EN: ${{ secrets.IG_PAGE_TOKEN_EN }}
