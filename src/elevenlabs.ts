@@ -841,14 +841,19 @@ export async function generateConversationTTS(
 
     console.log(`  Line ${i + 1} [${line.speaker}]: "${line.spoken.slice(0, 50)}..."`);
 
-    // Last student line (summary) speaks slower for clarity
+    // Speed per speaker and line position — consistent for teacher throughout
     const isLastStudentLine = line.speaker === 'student' && i === lines.length - 3;
-    let baseSpeed = 1.3;
-    if (line.speaker === 'student') baseSpeed = lang === 'sk' ? 0.9 : 1.1;
-    const lineSpeed = isLastStudentLine ? 0.95 : baseSpeed;
+    let baseSpeed: number;
+    if (line.speaker === 'student') {
+      baseSpeed = lang === 'sk' ? 0.9 : 1.1;
+      if (isLastStudentLine) baseSpeed = 0.95;
+    } else {
+      // Teacher: same speed for ALL lines (no fast intro, no slow outro)
+      baseSpeed = lang === 'sk' ? 1.05 : 1.2;
+    }
 
     // Never use enthusiastic mode - it causes volume inconsistency
-    const { audioBuffer, wordTimings, duration } = await ttsLine(line.spoken, voiceId, lang, lineSpeed, line.speaker, false);
+    const { audioBuffer, wordTimings, duration } = await ttsLine(line.spoken, voiceId, lang, baseSpeed, line.speaker, false);
 
     // Save raw audio then normalize volume
     const rawPath = path.join(outputDir, `line_${i}_raw.mp3`);
