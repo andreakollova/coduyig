@@ -84,8 +84,9 @@ PRAVIDLÁ:
 - Píš PLYNULÉ vety. Spájaj cez "a", "ktorý", "takže", "pretože". NIE krátke fragmenty.
 - Použi prirodzenú slovenčinu. Učiteľ hovorí profesionálne ale priateľsky. NEPOUŽÍVAJ slangové slová ako "pecka", "crazy", "paráda". Hovor plynulo a sebaisto.
 - NIKDY čeština.
+- NIKDY neprekladaj anglické technické koncepty do slovenčiny neprirodzene. ŽIADNE "vnútornosti Pythonu", "pod kapotou", "pod pokrievkou". Použi normálne vysvetlenie: "ako to Python rieši" alebo "čo sa deje na pozadí". Technické termíny nechaj v angličtine (list, set, tuple, dictionary, decorator, generator, iterator).
+- Vysvetľuj ZROZUMITEĽNE — po každej vete sa opýtaj: pochopil by to človek ktorý začína s programovaním? Ak nie, zjednoduš.
 - Správna slovenská gramatika. Pred "ktorý", "ktorá", "ktoré", "kde", "keď", "pretože", "lebo" VŽDY daj čiarku.
-- Dávaj pozor na správne tvary — "efektívne programovať" (príslovka) vs "efektívne riešenie" (prídavné meno). Zmäkčenie na konci závisí od kontextu.
 - Celkovo: 200-260 slov.
 
 Vyber JEDEN kód snippet (MAX 3 riadky) z LEARNING CONTENT nižšie. Kód MUSÍ byť relevantný k téme lekcie. NIKDY nepoužívaj príkladový kód z tohto promptu. Pridaj ho k riadku 2.
@@ -115,8 +116,8 @@ export async function generateReelScript(
     return fallbackScript(title, introduction, lang);
   }
 
-  // Always generate in EN first — SK gets translated after for better quality
-  const system = SYSTEM_EN;
+  // Generate in the target language directly for natural output
+  const system = lang === 'sk' ? SYSTEM_SK : SYSTEM_EN;
 
   const prompt = `LESSON TITLE: ${title}
 
@@ -150,9 +151,9 @@ ${keyTakeaways.join('\n')}`;
 
     let lines = parsed.lines.map((l: any) => ({ speaker: l.speaker, spoken: l.spoken, code: l.code || undefined }));
 
-    // For SK: translate the EN script to natural Slovak
+    // For SK: generated directly in Slovak, just verify grammar
     if (lang === 'sk') {
-      lines = await translateToSlovak(lines);
+      lines = await verifySlovakGrammar(lines);
     }
 
     return { lines };
