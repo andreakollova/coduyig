@@ -160,13 +160,13 @@ const SK_PHONETICS: Record<string, string> = {
   'REST': 'rest',
   'JSON': 'džejson',
   'XML': 'eks em el',
-  'GUI': 'džé jú aj',
+  'GUI': 'dží jú aj',
   'CLI': 'sí el aj',
   'IDE': 'aj dí í',
   'OOP': 'ó ó pé',
   'RAM': 'rem',
   'CPU': 'sí pí jú',
-  'GPU': 'džé pí jú',
+  'GPU': 'dží pí jú',
   'SSD': 'es es dí',
   'HDD': 'ejč dí dí',
   'IoT': 'aj ou tí',
@@ -199,7 +199,7 @@ const SK_PHONETICS: Record<string, string> = {
   'JSX': 'džej es eks',
   'CSR': 'sí es ár',
   'SSR': 'es es ár',
-  'SSG': 'es es džé',
+  'SSG': 'es es dží',
   'ISR': 'aj es ár',
   'SPA': 'es pí ej',
   'PWA': 'pí dablju ej',
@@ -219,7 +219,7 @@ const SK_PHONETICS: Record<string, string> = {
   'NLP': 'en el pí',
   'CV': 'sí ví',
   'ASR': 'ej es ár',
-  'GPT': 'džé pí tí',
+  'GPT': 'dží pí tí',
   'LoRA': 'lora',
   'PEFT': 'peft',
   'RL': 'ár el',
@@ -373,10 +373,10 @@ const SK_PHONETICS: Record<string, string> = {
   'npm': 'en pí em',
   'Git': 'git',
   // From lessons
-  'LEGB': 'el í džé bí',
+  'LEGB': 'el í dží bí',
   'OWASP': 'ou vasp',
   'TDD': 'tí dí dí',
-  'GIL': 'džé aj el',
+  'GIL': 'dží aj el',
   'PEP': 'pep',
   'CISC': 'sisk',
   'RISC': 'risk',
@@ -656,9 +656,12 @@ export async function generateByteFallVoiceover(
     const normPath = path.join(outputDir, `bytefall_${i}.mp3`);
     fs.writeFileSync(rawPath, audioBuffer);
 
-    // Normalize audio
+    // Normalize audio — short segments (abbreviation lines, intro) get volume boost
+    const wordCount = line.split(/\s+/).length;
+    const isShort = wordCount < 6;
+    const boost = isShort ? 'volume=2.0,' : '';
     try {
-      execSync(`ffmpeg -y -i "${rawPath}" -af "acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7" "${normPath}" 2>/dev/null`);
+      execSync(`ffmpeg -y -i "${rawPath}" -af "${boost}acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7" "${normPath}" 2>/dev/null`);
       fs.unlinkSync(rawPath);
     } catch {
       fs.renameSync(rawPath, normPath);
