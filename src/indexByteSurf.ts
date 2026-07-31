@@ -87,16 +87,15 @@ async function generateScript(question: string, lang: 'sk' | 'en', enScriptRef?:
     ? `Napíš vysvetlenie pre krátke video (30-40 sekúnd hovorenia) na tému: "${question}"
 
 Pravidlá:
-- Vysvetli jednoducho a kamarátsky, ako keby vysvetľuješ spolužiakovi pri pive
-- Používaj bežné slová, nie odborné výrazy — ak musíš použiť technický pojem, hneď ho vysvetli jednoducho
-- Štruktúra: 1) Najprv vysvetli čo to je jednoducho, 2) Potom PREČO je to tak — dôvod/príčinu, 3) Praktický príklad
+- Vysvetli kamarátsky ale odborne — ako keby vysvetľuješ IT študentovi, nie laikovi. Použi správne technické termíny (napríklad latencia, handshake, resolver, lookup, pointer, index, interrupt, buffer) a vysvetli ich v kontexte, nie osobitne
+- Štruktúra: 1) Najprv vysvetli mechanizmus — čo sa TECHNICKY deje, 2) Potom PREČO je to tak — dôvod/príčinu, 3) Konkrétny technický detail alebo príklad
 - HLAVNE ZODPOVEDAJ OTÁZKU — ak sa pýta PREČO, vysvetli dôvod/príčinu, nie len ako to funguje
 - Plynulé vety, nie krátke bodka za bodkou
 - Použi "ty" formu — "napíšeš", "vidíš", "tvoj kód"
 - NIKDY nepoužívaj skratky okrem: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL
 - NIKDY nezačínaj opakovaním otázky! Začni rovno vysvetlením
 - NIKDY nepíš výzvy typu "napíš do komentov", "daj follow", "poslem ti kód"
-- NIKDY nepoužívaj laické prirovnania (kuchár, recept, škatuľa, auto, dom)
+- NIKDY nepoužívaj laické prirovnania (kuchár, recept, škatuľa, auto, dom, poštár, knižnica)
 - NIKDY nepíš názvy súborov, prípony, kód, úvodzovky okolo názvov, cesty, premenné ani syntax — toto bude ČÍTANÉ NAHLAS a TTS to nevie prečítať
 - NIKDY neprekladaj technické koncepty neprirodzene (ŽIADNE "vnútornosti", "pod kapotou"). Použi normálnu slovenčinu
 - Max 80 slov
@@ -105,16 +104,15 @@ Pravidlá:
     : `Write an explanation for a short video (30-40 seconds spoken) on the topic: "${question}"
 
 Rules:
-- Explain it simply and casually, like you are explaining to a friend over coffee
-- Use everyday words, not jargon — if you must use a technical term, immediately explain it simply
-- Structure: 1) First explain what it is simply, 2) Then WHY it is that way — the reason/cause, 3) Practical example
+- Explain it casually but with technical depth — like you are explaining to a CS student, not a layperson. Use proper technical terms (e.g. latency, handshake, resolver, lookup, pointer, index, interrupt, buffer) and explain them in context, not separately
+- Structure: 1) First explain the mechanism — what TECHNICALLY happens, 2) Then WHY it is that way — the reason/cause, 3) A specific technical detail or example
 - ACTUALLY ANSWER THE QUESTION — if it asks WHY, explain the reason/cause, not just how it works
 - Flowing sentences, not short choppy ones
 - Use "you" form — "you write", "you see", "your code"
 - NEVER use abbreviations except: AI, API, CPU, DNS, GPS, QR, RAM, REST, SQL, SSD, USB, VPN, CDN, SSL
 - NEVER start by repeating the question! Just go straight to the answer
 - NEVER write calls to action like "write start in comments", "follow me", "I will send you the code"
-- NEVER use simplistic analogies (chef, recipe, box, car, house)
+- NEVER use simplistic analogies (chef, recipe, box, car, house, mailman, library)
 - NEVER write filenames, file extensions, code, quoted names, paths, variables or syntax — this will be READ ALOUD and TTS cannot pronounce these
 - Max 80 words
 - Return ONLY the explanation text, nothing else`;
