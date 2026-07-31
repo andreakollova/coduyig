@@ -87,8 +87,8 @@ async function generateScript(question: string, lang: 'sk' | 'en', enScriptRef?:
     ? `Napíš vysvetlenie pre krátke video (30-40 sekúnd hovorenia) na tému: "${question}"
 
 Pravidlá:
-- Vysvetli kamarátsky ale odborne — ako keby vysvetľuješ IT študentovi, nie laikovi. Použi správne technické termíny (napríklad latencia, handshake, resolver, lookup, pointer, index, interrupt, buffer) a vysvetli ich v kontexte, nie osobitne
-- Štruktúra: 1) Najprv vysvetli mechanizmus — čo sa TECHNICKY deje, 2) Potom PREČO je to tak — dôvod/príčinu, 3) Konkrétny technický detail alebo príklad
+- Vysvetli kamarátsky ale s technickou hĺbkou — ako keby vysvetľuješ kamarátovi čo študuje IT. Použi správne technické termíny kde to dáva zmysel (napríklad latencia, handshake, resolver, buffer, interrupt) ale stále to musí znieť prirodzene a ľudsky, nie ako učebnica
+- Štruktúra: 1) Najprv jednoducho vysvetli čo sa deje, 2) Potom PREČO je to tak — dôvod/príčinu s technickým detailom, 3) Praktický príklad
 - HLAVNE ZODPOVEDAJ OTÁZKU — ak sa pýta PREČO, vysvetli dôvod/príčinu, nie len ako to funguje
 - Plynulé vety, nie krátke bodka za bodkou
 - Použi "ty" formu — "napíšeš", "vidíš", "tvoj kód"
@@ -104,8 +104,8 @@ Pravidlá:
     : `Write an explanation for a short video (30-40 seconds spoken) on the topic: "${question}"
 
 Rules:
-- Explain it casually but with technical depth — like you are explaining to a CS student, not a layperson. Use proper technical terms (e.g. latency, handshake, resolver, lookup, pointer, index, interrupt, buffer) and explain them in context, not separately
-- Structure: 1) First explain the mechanism — what TECHNICALLY happens, 2) Then WHY it is that way — the reason/cause, 3) A specific technical detail or example
+- Explain it casually but with technical depth — like you are explaining to a friend who studies CS. Use proper technical terms where they fit naturally (e.g. latency, handshake, resolver, buffer, interrupt) but keep it conversational and human, not like a textbook
+- Structure: 1) First explain simply what happens, 2) Then WHY it is that way — the reason/cause with a technical detail, 3) A practical example
 - ACTUALLY ANSWER THE QUESTION — if it asks WHY, explain the reason/cause, not just how it works
 - Flowing sentences, not short choppy ones
 - Use "you" form — "you write", "you see", "your code"

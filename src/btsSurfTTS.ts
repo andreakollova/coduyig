@@ -7,11 +7,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { applyPhonetics } from './elevenlabs.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const API_KEY = process.env.ELEVENLABS_API_KEY || '';
+const OPENAI_KEY = process.env.OPENAI_API_KEY || '';
 const API = 'https://api.elevenlabs.io/v1';
 
 // Byte's voice (main explainer)
@@ -35,12 +37,61 @@ function charsToWords(chars: ELResponse['alignment']): WordTiming[] {
   return words;
 }
 
-async function tts(text: string, voiceId: string, speed = 1.1, style = 0.5): Promise<{ audio: Buffer; words: WordTiming[]; duration: number }> {
+/** Convert SK text to phonetic spelling for TTS using GPT */
+async function skPhonetics(text: string): Promise<string> {
+  // First apply static phonetics map (SQL→es kvé el, API→á pí áj, etc.)
+  let result = applyPhonetics(text, 'sk');
+
+  if (!OPENAI_KEY) return result;
+
+  // Find remaining English/foreign words that need phonetic conversion
+  const remaining = result.match(/\b[A-Za-z][a-z]{2,}\b/g)?.filter(w => {
+    const skip = new Set(['je', 'to', 'na', 'sa', 'si', 'ak', 'aj', 'ale', 'ako', 'ani', 'aby',
+      'pri', 'pre', 'pod', 'nad', 'bez', 'od', 'do', 'vo', 'tu', 'tam', 'ten', 'nie',
+      'iba', 'len', 'tak', 'lebo', 'alebo', 'potom', 'teda', 'kde', 'kam', 'odkial',
+      'viac', 'menej', 'este', 'uz', 'veľmi', 'stále', 'presne', 'vlastne',
+      'server', 'klient', 'router', 'tablet', 'internet', 'program', 'proces',
+      'typ', 'index', 'test', 'port', 'disk', 'bit', 'bajt', 'pixel']);
+    return !skip.has(w.toLowerCase());
+  }) || [];
+
+  if (remaining.length === 0) return result;
+
+  try {
+    const unique = [...new Set(remaining)];
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${OPENAI_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o', temperature: 0, max_tokens: 500,
+        response_format: { type: 'json_object' },
+        messages: [{ role: 'user', content: `Preveď tieto anglické/cudzie slová na slovenskú fonetiku (ako by to Slovák zapísal výslovnosť). Vráť JSON: {"phonetics": {"word": "phonetic"}}
+
+Slová: ${unique.join(', ')}
+
+Príklady: cache→keš, thread→tred, queue→kjú, slice→slajs, range→rejndž, yield→jíld, while→vajl, break→brejk, framework→frejmvork, handshake→hendšejk, latency→lejtensí, buffer→bafr, pointer→pojntr, resolver→rezolvr` }],
+      }),
+    });
+    const data = await res.json();
+    const phonetics = JSON.parse(data.choices?.[0]?.message?.content || '{}').phonetics || {};
+    for (const [en, sk] of Object.entries(phonetics) as [string, string][]) {
+      result = result.replace(new RegExp(`\\b${en}\\b`, 'g'), sk);
+    }
+  } catch {}
+
+  return result;
+}
+
+async function tts(text: string, voiceId: string, speed = 1.1, style = 0.5, lang: 'sk' | 'en' = 'sk'): Promise<{ audio: Buffer; words: WordTiming[]; duration: number }> {
+  const originalWords = text.split(/\s+/);
+  // Apply phonetics for SK, pass through for EN (ElevenLabs reads English natively)
+  const ttsText = lang === 'sk' ? await skPhonetics(text) : text;
+
   const res = await fetch(`${API}/text-to-speech/${voiceId}/with-timestamps`, {
     method: 'POST',
     headers: { 'xi-api-key': API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      text, model_id: 'eleven_multilingual_v2',
+      text: ttsText, model_id: 'eleven_multilingual_v2',
       voice_settings: { stability: 0.65, similarity_boost: 0.8, style, use_speaker_boost: true },
       speed,
     }),
@@ -49,6 +100,10 @@ async function tts(text: string, voiceId: string, speed = 1.1, style = 0.5): Pro
   const data: ELResponse = await res.json();
   const audio = Buffer.from(data.audio_base64, 'base64');
   const words = charsToWords(data.alignment);
+  // Replace phonetic words with originals for captions
+  for (let i = 0; i < words.length && i < originalWords.length; i++) {
+    words[i].word = originalWords[i];
+  }
   const duration = words.length > 0 ? words[words.length - 1].end + 0.3 : 2;
   return { audio, words, duration };
 }
@@ -135,13 +190,13 @@ export async function generateBTSVoiceover(
 
   // Generate all parts
   // Sequential to avoid rate limits
-  const p1 = await tts(intro, BYTE_VOICE, 1.0, 0.5);
-  const p2 = await tts(questionText, QUESTIONER_VOICE, 0.95, 0.8);
-  const p3a = await tts(answerPart1, BYTE_VOICE, 1.0, 0.5);
-  const p3b = await tts(answerPart2, BYTE_VOICE, 1.0, 0.6);
-  const p3c = await tts(answerPart3, BYTE_VOICE, 0.95, 0.4);
-  const p4 = await tts(script, BYTE_VOICE, 1.0, 0.5);
-  const p5 = await tts(closing, BYTE_VOICE, 0.85, 0.6);
+  const p1 = await tts(intro, BYTE_VOICE, 1.0, 0.5, lang);
+  const p2 = await tts(questionText, QUESTIONER_VOICE, 0.95, 0.8, lang);
+  const p3a = await tts(answerPart1, BYTE_VOICE, 1.0, 0.5, lang);
+  const p3b = await tts(answerPart2, BYTE_VOICE, 1.0, 0.6, lang);
+  const p3c = await tts(answerPart3, BYTE_VOICE, 0.95, 0.4, lang);
+  const p4 = await tts(script, BYTE_VOICE, 1.0, 0.5, lang);
+  const p5 = await tts(closing, BYTE_VOICE, 0.85, 0.6, lang);
 
   // Save and normalize audio parts, measure ACTUAL durations after normalization
   const parts = [p1, p2, p3a, p3b, p3c, p4, p5];

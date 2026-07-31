@@ -672,7 +672,7 @@ const EN_ABBREV_ONLY = new Set(
   })
 );
 
-function applyPhonetics(text: string, lang: 'en' | 'sk'): string {
+export function applyPhonetics(text: string, lang: 'en' | 'sk'): string {
   let result = text;
 
   // Handle Python dunder methods (__str__, __init__, etc.)
