@@ -7,7 +7,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { applyPhonetics } from './elevenlabs.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,12 +47,52 @@ function sanitizeDottedTerms(text: string): string {
     .replace(/(\w)\.(com|org|net|io|sk|cz|dev|app)\b/gi, '$1 bodka $2');
 }
 
-/** Convert SK text to phonetic spelling for TTS using GPT */
+// Slovak letter names for abbreviation expansion (NOT English!)
+// A=á, B=bé, C=cé, D=dé, E=é, F=ef, G=gé, H=há, I=í, J=jé, K=ká,
+// L=el, M=em, N=en, O=ó, P=pé, Q=kvé, R=er, S=es, T=té, U=ú, V=vé,
+// W=dvojité vé, X=iks, Y=ypsilon, Z=zet
+const SK_LETTER: Record<string, string> = {
+  A: 'á', B: 'bé', C: 'cé', D: 'dé', E: 'é', F: 'ef', G: 'gé', H: 'há',
+  I: 'í', J: 'jé', K: 'ká', L: 'el', M: 'em', N: 'en', O: 'ó', P: 'pé',
+  Q: 'kvé', R: 'er', S: 'es', T: 'té', U: 'ú', V: 'vé', W: 'dvojité vé',
+  X: 'iks', Y: 'ypsilon', Z: 'zet',
+};
+
+// Common abbreviations with correct Slovak pronunciation
+const SK_ABBREV: Record<string, string> = {
+  SQL: 'es kvé el', API: 'á pé í', CPU: 'cé pé ú', GPU: 'gé pé ú',
+  RAM: 'rem', SSD: 'es es dé', DNS: 'dé en es', URL: 'ú er el',
+  HTTP: 'há té té pé', HTTPS: 'há té té pé es', HTML: 'há té em el',
+  CSS: 'cé es es', USB: 'ú es bé', VPN: 'vé pé en', CDN: 'cé dé en',
+  SSL: 'es es el', TLS: 'té el es', NFC: 'en ef cé', GPS: 'gé pé es',
+  QR: 'kvé er', AI: 'á í', REST: 'rest', JSON: 'džejson', XML: 'iks em el',
+  LED: 'el é dé', IP: 'í pé', TCP: 'té cé pé', UDP: 'ú dé pé',
+  FTP: 'ef té pé', SSH: 'es es há', IoT: 'í ó té', JWT: 'džej dvojité vé té',
+  OAuth: 'ó ót', ZIP: 'zip', AJAX: 'ejdžeks', DOM: 'dom', CLI: 'cé el í',
+  GUI: 'gé ú í', IDE: 'í dé é', OOP: 'ó ó pé', SDK: 'es dé ká',
+  LLM: 'el el em', BIOS: 'bíos',
+};
+
+/** Expand any uppercase abbreviation to Slovak letter names */
+function expandAbbrevSk(text: string): string {
+  let result = text;
+  // First apply known abbreviations (longest first)
+  const sorted = Object.entries(SK_ABBREV).sort((a, b) => b[0].length - a[0].length);
+  for (const [abbr, phonetic] of sorted) {
+    result = result.replace(new RegExp(`\\b${abbr}\\b`, 'g'), phonetic);
+  }
+  // Expand any remaining uppercase abbreviations (2+ letters) using Slovak letter names
+  result = result.replace(/\b[A-Z]{2,}\b/g, (match) => {
+    return match.split('').map(c => SK_LETTER[c] || c).join(' ');
+  });
+  return result;
+}
+
+/** Convert SK text to phonetic spelling for TTS — uses Slovak letter names + GPT for foreign words */
 async function skPhonetics(text: string): Promise<string> {
-  // Sanitize dotted terms before anything else
+  // Sanitize dotted terms, then expand abbreviations with SLOVAK letter names
   let result = sanitizeDottedTerms(text);
-  // Apply static phonetics map (SQL→es kvé el, API→á pí áj, etc.)
-  result = applyPhonetics(result, 'sk');
+  result = expandAbbrevSk(result);
 
   if (!OPENAI_KEY) return result;
 
@@ -62,9 +101,12 @@ async function skPhonetics(text: string): Promise<string> {
     const skip = new Set(['je', 'to', 'na', 'sa', 'si', 'ak', 'aj', 'ale', 'ako', 'ani', 'aby',
       'pri', 'pre', 'pod', 'nad', 'bez', 'od', 'do', 'vo', 'tu', 'tam', 'ten', 'nie',
       'iba', 'len', 'tak', 'lebo', 'alebo', 'potom', 'teda', 'kde', 'kam', 'odkial',
-      'viac', 'menej', 'este', 'uz', 'veľmi', 'stále', 'presne', 'vlastne',
+      'viac', 'menej', 'este', 'veľmi', 'stále', 'presne', 'vlastne', 'jeden',
       'server', 'klient', 'router', 'tablet', 'internet', 'program', 'proces',
-      'typ', 'index', 'test', 'port', 'disk', 'bit', 'bajt', 'pixel']);
+      'typ', 'index', 'test', 'port', 'disk', 'bit', 'bajt', 'pixel',
+      'rem', 'rest', 'dom', 'zip', 'pop', 'bíos', // from SK_ABBREV expansions
+      'funguje', 'pozri', 'robí', 'hovorí', 'platení', 'surfujem',
+      'tvoj', 'tvoje', 'jeho', 'jej', 'ich', 'nás', 'vás']);
     return !skip.has(w.toLowerCase());
   }) || [];
 
@@ -78,11 +120,11 @@ async function skPhonetics(text: string): Promise<string> {
       body: JSON.stringify({
         model: 'gpt-4o', temperature: 0, max_tokens: 500,
         response_format: { type: 'json_object' },
-        messages: [{ role: 'user', content: `Preveď tieto anglické/cudzie slová na slovenskú fonetiku (ako by to Slovák zapísal výslovnosť). Vráť JSON: {"phonetics": {"word": "phonetic"}}
+        messages: [{ role: 'user', content: `Preveď tieto anglické/cudzie slová na slovenskú fonetiku (ako by to Slovák zapísal výslovnosť). Ak slovo je už slovenské, vráť ho nezmenené. Vráť JSON: {"phonetics": {"word": "phonetic"}}
 
 Slová: ${unique.join(', ')}
 
-Príklady: cache→keš, thread→tred, queue→kjú, slice→slajs, range→rejndž, yield→jíld, while→vajl, break→brejk, framework→frejmvork, handshake→hendšejk, latency→lejtensí, buffer→bafr, pointer→pojntr, resolver→rezolvr` }],
+Príklady: cache→keš, thread→tred, queue→kjú, slice→slajs, range→rejndž, yield→jíld, while→vajl, break→brejk, framework→frejmvork, handshake→hendšejk, latency→lejtensí, buffer→bafr, pointer→pojntr, resolver→rezolvr, cookies→kúkís, Bluetooth→blútúf` }],
       }),
     });
     const data = await res.json();
@@ -95,11 +137,11 @@ Príklady: cache→keš, thread→tred, queue→kjú, slice→slajs, range→rej
   return result;
 }
 
-async function tts(text: string, voiceId: string, speed = 1.1, style = 0.5, lang: 'sk' | 'en' = 'sk', skipPhonetics = false): Promise<{ audio: Buffer; words: WordTiming[]; duration: number }> {
+async function tts(text: string, voiceId: string, speed = 1.1, style = 0.5, lang: 'sk' | 'en' = 'sk'): Promise<{ audio: Buffer; words: WordTiming[]; duration: number }> {
   const originalWords = text.split(/\s+/);
-  // Apply phonetics for SK (unless skipped for short lines where it hurts more than helps),
-  // sanitize dotted terms for EN
-  const ttsText = skipPhonetics ? sanitizeDottedTerms(text) : (lang === 'sk' ? await skPhonetics(text) : sanitizeDottedTerms(text));
+  // SK: expand abbreviations with Slovak letter names + GPT phonetics for foreign words
+  // EN: just sanitize dotted terms (ElevenLabs reads English natively)
+  const ttsText = lang === 'sk' ? await skPhonetics(text) : sanitizeDottedTerms(text);
 
   const res = await fetch(`${API}/text-to-speech/${voiceId}/with-timestamps`, {
     method: 'POST',
@@ -204,18 +246,15 @@ export async function generateBTSVoiceover(
 
   // Generate all parts
   // Sequential to avoid rate limits
-  // Skip phonetics on short SK lines (intro, questioner, dismiss, closing) —
-  // phonetic expansion of abbreviations confuses ElevenLabs language detection
-  // and causes it to mispronounce surrounding Slovak words (e.g. "platení" → "plejtní")
-  // Only apply full phonetics to the main explanation script (p4)
-  const skip = lang === 'sk';
-  const p1 = await tts(intro, BYTE_VOICE, 1.0, 0.5, lang, skip);
-  const p2 = await tts(questionText, QUESTIONER_VOICE, 0.95, 0.8, lang, skip);
-  const p3a = await tts(answerPart1, BYTE_VOICE, 1.0, 0.5, lang, skip);
-  const p3b = await tts(answerPart2, BYTE_VOICE, 1.0, 0.6, lang, skip);
-  const p3c = await tts(answerPart3, BYTE_VOICE, 0.95, 0.4, lang, skip);
-  const p4 = await tts(script, BYTE_VOICE, 1.0, 0.5, lang, false);
-  const p5 = await tts(closing, BYTE_VOICE, 0.85, 0.6, lang, skip);
+  // All parts get SK phonetics — now using Slovak letter names (cé, gé, pé)
+  // instead of English (see, gee, pee), so ElevenLabs stays in Slovak mode
+  const p1 = await tts(intro, BYTE_VOICE, 1.0, 0.5, lang);
+  const p2 = await tts(questionText, QUESTIONER_VOICE, 0.95, 0.8, lang);
+  const p3a = await tts(answerPart1, BYTE_VOICE, 1.0, 0.5, lang);
+  const p3b = await tts(answerPart2, BYTE_VOICE, 1.0, 0.6, lang);
+  const p3c = await tts(answerPart3, BYTE_VOICE, 0.95, 0.4, lang);
+  const p4 = await tts(script, BYTE_VOICE, 1.0, 0.5, lang);
+  const p5 = await tts(closing, BYTE_VOICE, 0.85, 0.6, lang);
 
   // Save and normalize audio parts, measure ACTUAL durations after normalization
   const parts = [p1, p2, p3a, p3b, p3c, p4, p5];
