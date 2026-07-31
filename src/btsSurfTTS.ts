@@ -156,7 +156,7 @@ export async function generateBTSVoiceover(
     fs.writeFileSync(rawPath, parts[i].audio);
     try {
       const isShort = i !== 5; // everything except the main explanation
-      const boost = isShort ? 'volume=1.8,' : '';
+      const boost = isShort ? 'volume=2.5,' : '';
       const target = '-14';
       execSync(`ffmpeg -y -i "${rawPath}" -af "${boost}acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=${target}:TP=-1:LRA=7" "${normPath}" 2>/dev/null`);
       fs.unlinkSync(rawPath);
@@ -210,8 +210,12 @@ export async function generateBTSVoiceover(
   }
   fs.writeFileSync(listFile, lines.join('\n'));
 
+  const concatRaw = path.join(outputDir, 'bts_concat_raw.mp3');
   const finalAudio = path.join(outputDir, 'bts_final.mp3');
-  execSync(`ffmpeg -y -f concat -safe 0 -i "${path.resolve(listFile)}" -c:a libmp3lame -q:a 2 "${path.resolve(finalAudio)}" 2>/dev/null`);
+  execSync(`ffmpeg -y -f concat -safe 0 -i "${path.resolve(listFile)}" -c:a libmp3lame -q:a 2 "${path.resolve(concatRaw)}" 2>/dev/null`);
+  // Final normalization pass on entire audio — ensures consistent volume across ALL segments
+  execSync(`ffmpeg -y -i "${path.resolve(concatRaw)}" -af "acompressor=threshold=-20dB:ratio=6:attack=3:release=30:makeup=4,loudnorm=I=-14:TP=-1:LRA=5" -c:a libmp3lame -q:a 2 "${path.resolve(finalAudio)}" 2>/dev/null`);
+  try { fs.unlinkSync(concatRaw); } catch {}
 
   const durationStr = execSync(`ffprobe -v error -show_entries format=duration -of csv=p=0 "${finalAudio}" 2>/dev/null`).toString().trim();
   const totalDuration = parseFloat(durationStr);
