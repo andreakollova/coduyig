@@ -95,10 +95,11 @@ Príklady: cache→keš, thread→tred, queue→kjú, slice→slajs, range→rej
   return result;
 }
 
-async function tts(text: string, voiceId: string, speed = 1.1, style = 0.5, lang: 'sk' | 'en' = 'sk'): Promise<{ audio: Buffer; words: WordTiming[]; duration: number }> {
+async function tts(text: string, voiceId: string, speed = 1.1, style = 0.5, lang: 'sk' | 'en' = 'sk', skipPhonetics = false): Promise<{ audio: Buffer; words: WordTiming[]; duration: number }> {
   const originalWords = text.split(/\s+/);
-  // Apply phonetics for SK, sanitize dotted terms for EN
-  const ttsText = lang === 'sk' ? await skPhonetics(text) : sanitizeDottedTerms(text);
+  // Apply phonetics for SK (unless skipped for short lines where it hurts more than helps),
+  // sanitize dotted terms for EN
+  const ttsText = skipPhonetics ? sanitizeDottedTerms(text) : (lang === 'sk' ? await skPhonetics(text) : sanitizeDottedTerms(text));
 
   const res = await fetch(`${API}/text-to-speech/${voiceId}/with-timestamps`, {
     method: 'POST',
@@ -203,13 +204,18 @@ export async function generateBTSVoiceover(
 
   // Generate all parts
   // Sequential to avoid rate limits
-  const p1 = await tts(intro, BYTE_VOICE, 1.0, 0.5, lang);
-  const p2 = await tts(questionText, QUESTIONER_VOICE, 0.95, 0.8, lang);
-  const p3a = await tts(answerPart1, BYTE_VOICE, 1.0, 0.5, lang);
-  const p3b = await tts(answerPart2, BYTE_VOICE, 1.0, 0.6, lang);
-  const p3c = await tts(answerPart3, BYTE_VOICE, 0.95, 0.4, lang);
-  const p4 = await tts(script, BYTE_VOICE, 1.0, 0.5, lang);
-  const p5 = await tts(closing, BYTE_VOICE, 0.85, 0.6, lang);
+  // Skip phonetics on short SK lines (intro, questioner, dismiss, closing) —
+  // phonetic expansion of abbreviations confuses ElevenLabs language detection
+  // and causes it to mispronounce surrounding Slovak words (e.g. "platení" → "plejtní")
+  // Only apply full phonetics to the main explanation script (p4)
+  const skip = lang === 'sk';
+  const p1 = await tts(intro, BYTE_VOICE, 1.0, 0.5, lang, skip);
+  const p2 = await tts(questionText, QUESTIONER_VOICE, 0.95, 0.8, lang, skip);
+  const p3a = await tts(answerPart1, BYTE_VOICE, 1.0, 0.5, lang, skip);
+  const p3b = await tts(answerPart2, BYTE_VOICE, 1.0, 0.6, lang, skip);
+  const p3c = await tts(answerPart3, BYTE_VOICE, 0.95, 0.4, lang, skip);
+  const p4 = await tts(script, BYTE_VOICE, 1.0, 0.5, lang, false);
+  const p5 = await tts(closing, BYTE_VOICE, 0.85, 0.6, lang, skip);
 
   // Save and normalize audio parts, measure ACTUAL durations after normalization
   const parts = [p1, p2, p3a, p3b, p3c, p4, p5];
