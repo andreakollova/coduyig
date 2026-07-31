@@ -37,10 +37,23 @@ function charsToWords(chars: ELResponse['alignment']): WordTiming[] {
   return words;
 }
 
+/** Sanitize file extensions and dotted terms for spoken TTS */
+function sanitizeDottedTerms(text: string): string {
+  // Replace common file extensions: "súbor.zip" → "súbor zip", "config.json" → "config json"
+  return text
+    .replace(/(\w)\.(zip|rar|tar|gz|7z|exe|dmg|apk|iso|img)\b/gi, '$1 $2')
+    .replace(/(\w)\.(json|xml|html|css|js|ts|tsx|jsx|py|java|cpp|c|h|rb|go|rs|swift|kt)\b/gi, '$1 $2')
+    .replace(/(\w)\.(txt|csv|pdf|doc|docx|xls|xlsx|ppt|pptx|md|yaml|yml|toml|ini|cfg|conf|env|log)\b/gi, '$1 $2')
+    .replace(/(\w)\.(png|jpg|jpeg|gif|svg|webp|ico|mp3|mp4|wav|avi|mov|mkv)\b/gi, '$1 $2')
+    .replace(/(\w)\.(com|org|net|io|sk|cz|dev|app)\b/gi, '$1 bodka $2');
+}
+
 /** Convert SK text to phonetic spelling for TTS using GPT */
 async function skPhonetics(text: string): Promise<string> {
-  // First apply static phonetics map (SQL→es kvé el, API→á pí áj, etc.)
-  let result = applyPhonetics(text, 'sk');
+  // Sanitize dotted terms before anything else
+  let result = sanitizeDottedTerms(text);
+  // Apply static phonetics map (SQL→es kvé el, API→á pí áj, etc.)
+  result = applyPhonetics(result, 'sk');
 
   if (!OPENAI_KEY) return result;
 
@@ -84,8 +97,8 @@ Príklady: cache→keš, thread→tred, queue→kjú, slice→slajs, range→rej
 
 async function tts(text: string, voiceId: string, speed = 1.1, style = 0.5, lang: 'sk' | 'en' = 'sk'): Promise<{ audio: Buffer; words: WordTiming[]; duration: number }> {
   const originalWords = text.split(/\s+/);
-  // Apply phonetics for SK, pass through for EN (ElevenLabs reads English natively)
-  const ttsText = lang === 'sk' ? await skPhonetics(text) : text;
+  // Apply phonetics for SK, sanitize dotted terms for EN
+  const ttsText = lang === 'sk' ? await skPhonetics(text) : sanitizeDottedTerms(text);
 
   const res = await fetch(`${API}/text-to-speech/${voiceId}/with-timestamps`, {
     method: 'POST',

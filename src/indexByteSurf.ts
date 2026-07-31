@@ -96,7 +96,7 @@ Pravidlá:
 - NIKDY nezačínaj opakovaním otázky! Začni rovno vysvetlením
 - NIKDY nepíš výzvy typu "napíš do komentov", "daj follow", "poslem ti kód"
 - NIKDY nepoužívaj laické prirovnania (kuchár, recept, škatuľa, auto, dom, poštár, knižnica)
-- NIKDY nepíš názvy súborov, prípony, kód, úvodzovky okolo názvov, cesty, premenné ani syntax — toto bude ČÍTANÉ NAHLAS a TTS to nevie prečítať
+- NIKDY nepíš názvy súborov, prípony (žiadne .zip, .json, .py atď.), kód, úvodzovky okolo názvov, cesty, premenné, URL adresy ani syntax — toto bude ČÍTANÉ NAHLAS a TTS to nevie prečítať. Namiesto "súbor.zip" povedz "zip súbor", namiesto "google.com" povedz "Google"
 - NIKDY neprekladaj technické koncepty neprirodzene (ŽIADNE "vnútornosti", "pod kapotou"). Použi normálnu slovenčinu
 - Max 80 slov
 - Slovenčina (NIKDY čeština)
@@ -113,7 +113,7 @@ Rules:
 - NEVER start by repeating the question! Just go straight to the answer
 - NEVER write calls to action like "write start in comments", "follow me", "I will send you the code"
 - NEVER use simplistic analogies (chef, recipe, box, car, house, mailman, library)
-- NEVER write filenames, file extensions, code, quoted names, paths, variables or syntax — this will be READ ALOUD and TTS cannot pronounce these
+- NEVER write filenames, file extensions (no .zip, .json, .py etc.), code, quoted names, paths, URLs, variables or syntax — this will be READ ALOUD and TTS cannot pronounce these. Instead of "file.zip" say "a zip file", instead of "google.com" say "Google"
 - Max 80 words
 - Return ONLY the explanation text, nothing else`;
 
