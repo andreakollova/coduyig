@@ -210,7 +210,9 @@ async function main() {
   const scriptSk = await generateScript(topic.questionSk, 'sk', scriptEn);
   console.log(`  SK: "${scriptSk.slice(0, 80)}..."`);
 
-  for (const lang of ['sk', 'en'] as const) {
+  const langArg = process.env.BYTESURF_LANG || process.argv[2] || '';
+  const langs = langArg === 'sk' ? ['sk'] as const : langArg === 'en' ? ['en'] as const : ['sk', 'en'] as const;
+  for (const lang of langs) {
     const question = lang === 'sk' ? topic.questionSk : topic.questionEn;
     const script = lang === 'sk' ? scriptSk : scriptEn;
 

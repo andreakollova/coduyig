@@ -4,6 +4,11 @@ on:
   # schedule: # MOVED TO daily.yml
     # - cron: '0 12 * * *'  # 12:00 UTC = 14:00 CEST
   workflow_dispatch:
+    inputs:
+      lang:
+        description: 'Language (sk, en, or both)'
+        required: false
+        default: ''
 
 jobs:
   bytesurf:
@@ -36,4 +41,5 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          BYTESURF_LANG: ${{ github.event.inputs.lang }}
         run: npx tsx src/indexByteSurf.ts
