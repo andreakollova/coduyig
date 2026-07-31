@@ -58,19 +58,19 @@ const SK_LETTER: Record<string, string> = {
   X: 'iks', Y: 'ypsilon', Z: 'zet',
 };
 
-// Common abbreviations with correct Slovak pronunciation
+// How Slovaks actually pronounce these abbreviations (mix of SK and EN letter names)
 const SK_ABBREV: Record<string, string> = {
-  SQL: 'es kvé el', API: 'á pé í', CPU: 'cé pé ú', GPU: 'gé pé ú',
-  RAM: 'rem', SSD: 'es es dé', DNS: 'dé en es', URL: 'ú er el',
-  HTTP: 'há té té pé', HTTPS: 'há té té pé es', HTML: 'há té em el',
-  CSS: 'cé es es', USB: 'ú es bé', VPN: 'vé pé en', CDN: 'cé dé en',
-  SSL: 'es es el', TLS: 'té el es', NFC: 'en ef cé', GPS: 'gé pé es',
-  QR: 'kvé er', AI: 'á í', REST: 'rest', JSON: 'džejson', XML: 'iks em el',
-  LED: 'el é dé', IP: 'í pé', TCP: 'té cé pé', UDP: 'ú dé pé',
-  FTP: 'ef té pé', SSH: 'es es há', IoT: 'í ó té', JWT: 'džej dvojité vé té',
-  OAuth: 'ó ót', ZIP: 'zip', AJAX: 'ejdžeks', DOM: 'dom', CLI: 'cé el í',
-  GUI: 'gé ú í', IDE: 'í dé é', OOP: 'ó ó pé', SDK: 'es dé ká',
-  LLM: 'el el em', BIOS: 'bíos',
+  SQL: 'es kvé el', API: 'ej pí aj', CPU: 'sí pí jú', GPU: 'dží pí jú',
+  RAM: 'rem', SSD: 'es es dí', DNS: 'dí en es', URL: 'jú ár el',
+  HTTP: 'ejč tí tí pí', HTTPS: 'ejč tí tí pí es', HTML: 'ejč tí em el',
+  CSS: 'sí es es', USB: 'jú es bí', VPN: 'ví pí en', CDN: 'sí dí en',
+  SSL: 'es es el', TLS: 'tí el es', NFC: 'en ef sí', GPS: 'dží pí es',
+  QR: 'kjú ár', AI: 'ej aj', REST: 'rest', JSON: 'džejson', XML: 'eks em el',
+  LED: 'el í dí', IP: 'aj pí', TCP: 'tí sí pí', UDP: 'jú dí pí',
+  FTP: 'ef tí pí', SSH: 'es es ejč', IoT: 'aj ou tí', JWT: 'džej dablju tí',
+  OAuth: 'ó ót', ZIP: 'zip', AJAX: 'ejdžeks', DOM: 'dom', CLI: 'sí el aj',
+  GUI: 'dží jú aj', IDE: 'aj dí í', OOP: 'ó ó pé', SDK: 'es dí kej',
+  LLM: 'el el em', BIOS: 'bajos',
 };
 
 /** Expand any uppercase abbreviation to Slovak letter names */
@@ -137,6 +137,53 @@ Príklady: cache→keš, thread→tred, queue→kjú, slice→slajs, range→rej
   return result;
 }
 
+/** Build word map: for each original word, track how many phonetic words it expands to */
+function buildWordMap(original: string, phonetic: string): { phoneticGroups: number[] } {
+  const origWords = original.split(/\s+/);
+  const phonWords = phonetic.split(/\s+/);
+
+  // Try to align by walking through both arrays
+  const phoneticGroups: number[] = [];
+  let pi = 0;
+  for (let oi = 0; oi < origWords.length; oi++) {
+    const orig = origWords[oi].replace(/[""".,!?;:]/g, '').toLowerCase();
+    // Check if this original word was expanded (e.g. "GPS" → "gé pé es" = 3 words)
+    // or replaced (e.g. "mobile" → "moubajl" = 1 word)
+    // Find how many phonetic words correspond to this original word
+    if (pi >= phonWords.length) {
+      phoneticGroups.push(0);
+      continue;
+    }
+    // Check if phonetic word at pi matches original (unchanged word)
+    const phonClean = phonWords[pi].replace(/[""".,!?;:]/g, '').toLowerCase();
+    if (phonClean === orig) {
+      phoneticGroups.push(1);
+      pi++;
+    } else {
+      // Word was changed — could be 1-to-1 replacement or 1-to-many expansion
+      // Look ahead in phonetic words to find where the next original word starts
+      let count = 1;
+      if (oi + 1 < origWords.length) {
+        const nextOrig = origWords[oi + 1].replace(/[""".,!?;:]/g, '').toLowerCase();
+        // Scan forward to find next matching original word
+        for (let scan = pi + 1; scan < phonWords.length && scan < pi + 8; scan++) {
+          const scanClean = phonWords[scan].replace(/[""".,!?;:]/g, '').toLowerCase();
+          if (scanClean === nextOrig) {
+            count = scan - pi;
+            break;
+          }
+        }
+      } else {
+        // Last original word — all remaining phonetic words belong to it
+        count = phonWords.length - pi;
+      }
+      phoneticGroups.push(count);
+      pi += count;
+    }
+  }
+  return { phoneticGroups };
+}
+
 async function tts(text: string, voiceId: string, speed = 1.1, style = 0.5, lang: 'sk' | 'en' = 'sk'): Promise<{ audio: Buffer; words: WordTiming[]; duration: number }> {
   const originalWords = text.split(/\s+/);
   // SK: expand abbreviations with Slovak letter names + GPT phonetics for foreign words
@@ -155,13 +202,23 @@ async function tts(text: string, voiceId: string, speed = 1.1, style = 0.5, lang
   if (!res.ok) throw new Error(`ElevenLabs ${res.status}: ${await res.text()}`);
   const data: ELResponse = await res.json();
   const audio = Buffer.from(data.audio_base64, 'base64');
-  const words = charsToWords(data.alignment);
-  // Replace phonetic words with originals for captions
-  for (let i = 0; i < words.length && i < originalWords.length; i++) {
-    words[i].word = originalWords[i];
+  const ttsWords = charsToWords(data.alignment);
+
+  // Map phonetic words back to original words for captions
+  // e.g. "GPS" expanded to "gé pé es" (3 TTS words) → merge back to 1 caption word "GPS"
+  const { phoneticGroups } = buildWordMap(text, ttsText);
+  const captionWords: WordTiming[] = [];
+  let ti = 0;
+  for (let oi = 0; oi < originalWords.length && ti < ttsWords.length; oi++) {
+    const count = phoneticGroups[oi] || 1;
+    const start = ttsWords[ti].start;
+    const end = ttsWords[Math.min(ti + count - 1, ttsWords.length - 1)].end;
+    captionWords.push({ word: originalWords[oi], start, end });
+    ti += count;
   }
-  const duration = words.length > 0 ? words[words.length - 1].end + 0.3 : 2;
-  return { audio, words, duration };
+
+  const duration = captionWords.length > 0 ? captionWords[captionWords.length - 1].end + 0.3 : 2;
+  return { audio, words: captionWords, duration };
 }
 
 export async function generateBTSVoiceover(
