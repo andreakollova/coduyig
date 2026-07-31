@@ -96,17 +96,44 @@ async function skPhonetics(text: string): Promise<string> {
 
   if (!OPENAI_KEY) return result;
 
-  // Find remaining English/foreign words that need phonetic conversion
+  // Find remaining words that MIGHT be English — skip obvious Slovak words
   const remaining = result.match(/\b[A-Za-z][a-z]{2,}\b/g)?.filter(w => {
-    const skip = new Set(['je', 'to', 'na', 'sa', 'si', 'ak', 'aj', 'ale', 'ako', 'ani', 'aby',
+    const skip = new Set([
+      // Slovak grammar
+      'je', 'to', 'na', 'sa', 'si', 'ak', 'aj', 'ale', 'ako', 'ani', 'aby',
       'pri', 'pre', 'pod', 'nad', 'bez', 'od', 'do', 'vo', 'tu', 'tam', 'ten', 'nie',
       'iba', 'len', 'tak', 'lebo', 'alebo', 'potom', 'teda', 'kde', 'kam', 'odkial',
-      'viac', 'menej', 'este', 'veľmi', 'stále', 'presne', 'vlastne', 'jeden',
-      'server', 'klient', 'router', 'tablet', 'internet', 'program', 'proces',
+      'viac', 'menej', 'este', 'stále', 'presne', 'vlastne', 'jeden', 'alebo',
+      'tvoj', 'tvoje', 'jeho', 'jej', 'ich', 'nás', 'vás', 'bol', 'bola', 'bolo',
+      'keď', 'kde', 'preto', 'toto', 'toho', 'ktorý', 'ktorá', 'ktoré',
+      // Slovak verbs/nouns that look English-ish
+      'funguje', 'pozri', 'robí', 'hovorí', 'platení', 'surfujem', 'ukladá',
+      'mobile', 'mobil', 'mobilu', 'mobily', 'mobilom', 'mobiloch',
+      'online', 'offline',
+      'video', 'videa', 'videí', 'audio',
+      'model', 'modelu', 'modely', 'modelov',
+      'super', 'ultra', 'extra', 'mega', 'mini', 'maxi',
+      'final', 'reálne', 'ideálne', 'normálne', 'špeciálne',
+      'profile', 'profil', 'profilu',
+      'moderne', 'moderný', 'moderna',
+      'principe', 'princíp', 'princípu',
+      // SK words with -ov, -om, -och, -ami endings that look foreign
+      'signál', 'signálov', 'signálom', 'signály',
+      'kanál', 'kanálov', 'kanálom', 'kanály',
+      'satelit', 'satelitov', 'satelitom', 'satelity',
+      // Tech words adopted into Slovak (read as Slovak, not English)
+      'server', 'servera', 'serverov', 'serveri', 'serverom',
+      'klient', 'klienta', 'klientov', 'klientom',
+      'router', 'routera', 'routerov', 'routerom',
+      'tablet', 'tabletu', 'tabletov', 'tabletom',
+      'internet', 'internetu', 'internetom',
+      'program', 'programu', 'programov', 'programom',
+      'proces', 'procesu', 'procesov', 'procesom',
+      'protokol', 'protokolu', 'protokolom',
       'typ', 'index', 'test', 'port', 'disk', 'bit', 'bajt', 'pixel',
-      'rem', 'rest', 'dom', 'zip', 'pop', 'bíos', // from SK_ABBREV expansions
-      'funguje', 'pozri', 'robí', 'hovorí', 'platení', 'surfujem',
-      'tvoj', 'tvoje', 'jeho', 'jej', 'ich', 'nás', 'vás']);
+      // From SK_ABBREV expansions
+      'rem', 'rest', 'dom', 'zip', 'pop',
+    ]);
     return !skip.has(w.toLowerCase());
   }) || [];
 
@@ -120,17 +147,25 @@ async function skPhonetics(text: string): Promise<string> {
       body: JSON.stringify({
         model: 'gpt-4o', temperature: 0, max_tokens: 500,
         response_format: { type: 'json_object' },
-        messages: [{ role: 'user', content: `Preveď tieto anglické/cudzie slová na slovenskú fonetiku (ako by to Slovák zapísal výslovnosť). Ak slovo je už slovenské, vráť ho nezmenené. Vráť JSON: {"phonetics": {"word": "phonetic"}}
+        messages: [{ role: 'user', content: `Tieto slová sa nachádzajú v SLOVENSKOM texte. Rozhodni pre každé slovo:
+- Ak je to SLOVENSKÉ slovo (aj keď vyzerá anglicky, napr. "mobile", "signálov", "moderne") → vráť ho NEZMENENÉ
+- Ak je to ANGLICKÝ technický termín ktorý Slováci vyslovujú anglicky (napr. "cache", "thread", "handshake") → preveď na slovenskú fonetiku
+
+Vráť JSON: {"phonetics": {"word": "phonetic"}}
 
 Slová: ${unique.join(', ')}
 
-Príklady: cache→keš, thread→tred, queue→kjú, slice→slajs, range→rejndž, yield→jíld, while→vajl, break→brejk, framework→frejmvork, handshake→hendšejk, latency→lejtensí, buffer→bafr, pointer→pojntr, resolver→rezolvr, cookies→kúkís, Bluetooth→blútúf` }],
+Príklady anglických slov: cache→keš, thread→tred, queue→kjú, framework→frejmvork, handshake→hendšejk, buffer→bafr, pointer→pojntr, cookies→kúkís, Bluetooth→blútúf, streaming→strímovanie
+Príklady slovenských slov (NEMENIŤ): mobile→mobile, signálov→signálov, moderne→moderne, principe→principe, reálne→reálne` }],
       }),
     });
     const data = await res.json();
     const phonetics = JSON.parse(data.choices?.[0]?.message?.content || '{}').phonetics || {};
     for (const [en, sk] of Object.entries(phonetics) as [string, string][]) {
-      result = result.replace(new RegExp(`\\b${en}\\b`, 'g'), sk);
+      // Only apply if GPT actually changed the word (skip if returned unchanged)
+      if (en.toLowerCase() !== sk.toLowerCase()) {
+        result = result.replace(new RegExp(`\\b${en}\\b`, 'g'), sk);
+      }
     }
   } catch {}
 
