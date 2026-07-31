@@ -183,7 +183,7 @@ export async function generateBTSVoiceover(
   const skIntros = [
     'Ľudia sa ma často pýtajú:',
     'Niekedy za mnou niekto príde a pýta sa:',
-    'Ľudia mi niekedy napíšu že:',
+    'Ľudia mi niekedy napíšu:',
     'Včera za mnou prišiel týpek a pýta sa ma že:',
   ];
   const enIntros = [
@@ -203,10 +203,7 @@ export async function generateBTSVoiceover(
   const questionText = `"${prefix}, ${question.charAt(0).toLowerCase()}${question.slice(1)}"`;
 
   // Part 3a: "Nechaj ma" / "Leave me alone" / "Give me a break"
-  const dismissVariants = lang === 'sk'
-    ? ['Nechaj ma...', 'Daj mi pokoj...']
-    : ['Leave me alone...', 'Give me a break...'];
-  const dismiss = dismissVariants[Math.floor(Math.random() * dismissVariants.length)];
+  const dismiss = lang === 'sk' ? 'Nechaj ma...' : 'Leave me alone...';
   const answerPart1 = lang === 'sk'
     ? (isPastTense ? `A ja som mu odpovedal... ${dismiss}` : `A ja im odpoviem... ${dismiss}`)
     : (isPastTense ? `And I told him... ${dismiss}` : `And I tell them... ${dismiss}`);
