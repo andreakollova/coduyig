@@ -656,12 +656,14 @@ export async function generateByteFallVoiceover(
     const normPath = path.join(outputDir, `bytefall_${i}.mp3`);
     fs.writeFileSync(rawPath, audioBuffer);
 
-    // Normalize audio — short segments (abbreviation lines, intro) get volume boost
+    // Normalize audio — abbreviation line (index 1) and short segments get volume boost
+    // Index 1 is the term line e.g. "RL! Reinforcement Learning." — ElevenLabs says abbreviations very quietly
     const wordCount = line.split(/\s+/).length;
+    const isTermLine = i === 1 || i === script.length - 2; // "RL! Reinforcement Learning." lines
     const isShort = wordCount < 6;
-    const boost = isShort ? 'volume=2.0,' : '';
+    const boost = isTermLine ? 'volume=3.5,' : isShort ? 'volume=2.0,' : '';
     try {
-      execSync(`ffmpeg -y -i "${rawPath}" -af "${boost}acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=-14:TP=-1:LRA=7" "${normPath}" 2>/dev/null`);
+      execSync(`ffmpeg -y -i "${rawPath}" -af "${boost}acompressor=threshold=-20dB:ratio=6:attack=3:release=30:makeup=5,loudnorm=I=-12:TP=-1:LRA=5" "${normPath}" 2>/dev/null`);
       fs.unlinkSync(rawPath);
     } catch {
       fs.renameSync(rawPath, normPath);
