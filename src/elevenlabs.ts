@@ -675,8 +675,8 @@ const EN_ABBREV_ONLY = new Set(
 export function applyPhonetics(text: string, lang: 'en' | 'sk'): string {
   let result = text;
 
-  // Handle Python dunder methods (__str__, __init__, etc.)
-  result = result.replace(/__([a-z_]+)__/g, (_, name) => `dunder ${name}`);
+  // Handle Python dunder methods (__str__, __init__, etc.) - just read the name
+  result = result.replace(/__([a-z_]+)__/g, (_, name) => name);
 
   // Remove asterisks (*args → args, **kwargs → kwargs)
   result = result.replace(/\*+/g, '');

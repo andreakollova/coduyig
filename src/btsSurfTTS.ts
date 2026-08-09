@@ -275,7 +275,7 @@ export async function generateBTSVoiceover(
   const skIntros = [
     'Ľudia sa ma často pýtajú:',
     'Niekedy za mnou niekto príde a pýta sa:',
-    'Ľudia mi niekedy napíšu:',
+    'Ľudia sa ma niekedy spýtajú:',
     'Včera za mnou prišiel týpek a pýta sa ma že:',
   ];
   const enIntros = [
@@ -340,10 +340,10 @@ export async function generateBTSVoiceover(
   const p1 = await tts(intro, BYTE_VOICE, 1.0, 0.5, lang);
   const p2 = await tts(questionText, QUESTIONER_VOICE, 0.95, 0.8, lang);
   const p3a = await tts(answerPart1, BYTE_VOICE, 1.0, 0.5, lang);
-  const p3b = await tts(answerPart2, BYTE_VOICE, 1.0, 0.6, lang);
+  const p3b = await tts(answerPart2, BYTE_VOICE, 1.0, 0.4, lang);
   const p3c = await tts(answerPart3, BYTE_VOICE, 0.95, 0.4, lang);
   const p4 = await tts(script, BYTE_VOICE, 1.0, 0.5, lang);
-  const p5 = await tts(closing, BYTE_VOICE, 0.85, 0.6, lang);
+  const p5 = await tts(closing, BYTE_VOICE, 0.85, 0.4, lang);
 
   // Save and normalize audio parts, measure ACTUAL durations after normalization
   const parts = [p1, p2, p3a, p3b, p3c, p4, p5];
@@ -358,7 +358,7 @@ export async function generateBTSVoiceover(
     fs.writeFileSync(rawPath, parts[i].audio);
     try {
       const isShort = i !== 5; // everything except the main explanation
-      const boost = isShort ? 'volume=2.5,' : '';
+      const boost = (i === 3 || i === 6) ? 'volume=4.0,' : isShort ? 'volume=2.5,' : '';
       const target = '-14';
       execSync(`ffmpeg -y -i "${rawPath}" -af "${boost}acompressor=threshold=-25dB:ratio=4:attack=5:release=50:makeup=3,loudnorm=I=${target}:TP=-1:LRA=7" "${normPath}" 2>/dev/null`);
       fs.unlinkSync(rawPath);
