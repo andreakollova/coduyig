@@ -299,7 +299,7 @@ async function main() {
     });
     console.log(`🎉 [${lang}] Reel published: ${published.id}`);
 
-    // Delete old reels for same term+lang
+    // Delete old reels for same term+lang (from IG + from Supabase Storage)
     try {
       const { data: trackData } = await sb.storage.from('ig-media').download('tracking/bytefall_media.json');
       let mediaTrack: any[] = trackData ? JSON.parse(await trackData.text()) : [];
@@ -309,9 +309,14 @@ async function main() {
           const delRes = await fetch(`${API}/${old.mediaId}?access_token=${token}`, { method: 'DELETE' });
           console.log(delRes.ok ? `🗑️ Deleted old reel ${old.mediaId}` : `⚠️ Could not delete ${old.mediaId}`);
         } catch {}
+        // Delete old video from Storage
+        if (old.storagePath) {
+          await sb.storage.from('ig-media').remove([old.storagePath]);
+          console.log(`🗑️ Cleaned old storage: ${old.storagePath}`);
+        }
       }
       mediaTrack = mediaTrack.filter(r => !(r.termId === entry.id && r.lang === lang));
-      mediaTrack.push({ termId: entry.id, lang, mediaId: published.id, publishedAt: new Date().toISOString() });
+      mediaTrack.push({ termId: entry.id, lang, mediaId: published.id, storagePath, publishedAt: new Date().toISOString() });
       await sb.storage.from('ig-media').upload('tracking/bytefall_media.json', Buffer.from(JSON.stringify(mediaTrack)), { contentType: 'application/json', upsert: true });
     } catch (err) { console.log('⚠️ Media tracking failed (non-fatal):', err); }
 

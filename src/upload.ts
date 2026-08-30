@@ -19,6 +19,23 @@ export async function uploadSlides(lessonId: number, result: RenderResult, lang:
   const uploaded: UploadedSlide[] = [];
   const timestamp = Date.now();
 
+  // Clean old carousel files for this lesson before uploading new ones
+  try {
+    const dir = `carousels/${lessonId}`;
+    const { data: folders } = await sb.storage.from(BUCKET).list(dir);
+    if (folders?.length) {
+      for (const folder of folders) {
+        const folderPath = `${dir}/${folder.name}`;
+        const { data: files } = await sb.storage.from(BUCKET).list(folderPath);
+        if (files?.length) {
+          const toRemove = files.map(f => `${folderPath}/${f.name}`);
+          await sb.storage.from(BUCKET).remove(toRemove);
+        }
+      }
+      console.log(`🗑️ Cleaned ${folders.length} old carousel folders for lesson ${lessonId}`);
+    }
+  } catch (err) { console.log('⚠️ Old carousel cleanup failed (non-fatal):', err); }
+
   for (const file of result.files) {
     const ext = file.type === 'video' ? 'mp4' : 'png';
     const remotePath = `carousels/${lessonId}/${timestamp}/${lang}_slide${file.slideIndex}.${ext}`;

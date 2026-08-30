@@ -394,7 +394,7 @@ async function main() {
     console.error('⚠️ Story failed (non-fatal):', err);
   }
 
-  // Delete old reels on same topic
+  // Delete old reels on same topic (from IG + from Supabase Storage)
   let reels: any[] = [];
   try {
     const { data: existing } = await sb.storage.from(BUCKET).download('tracking/reels.json');
@@ -412,6 +412,19 @@ async function main() {
       }
     } catch (err) {
       console.log(`⚠️ Delete failed for ${old.mediaId}:`, err);
+    }
+    // Delete old video/audio files from Supabase Storage
+    if (old.videoUrl) {
+      const oldPath = old.videoUrl.split('/object/public/ig-media/')[1];
+      if (oldPath) {
+        const oldDir = oldPath.substring(0, oldPath.lastIndexOf('/'));
+        const { data: oldFiles } = await sb.storage.from(BUCKET).list(oldDir);
+        if (oldFiles?.length) {
+          const toRemove = oldFiles.map(f => `${oldDir}/${f.name}`);
+          await sb.storage.from(BUCKET).remove(toRemove);
+          console.log(`🗑️ Cleaned ${toRemove.length} old storage files from ${oldDir}`);
+        }
+      }
     }
   }
 
